@@ -9,6 +9,17 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v7.5.0 — 13/08/2026
+### Formulaires enfin lisibles
+Les éditeurs de **projets**, de **comptes d'épargne** et de **poches de répartition** alignaient des cases numériques dont le seul repère était un texte d'aide… qui disparaît dès la saisie. Sur un projet immobilier, « 0 », « 3.5 » et « 20 » ne disaient plus rien : lequel est le prix, le taux, la durée ? Même problème pour les taux d'intérêt des livrets.
+
+Chaque champ porte désormais une **étiquette permanente** au-dessus et son **unité** dans le champ :
+- **Projets** : nom, prix du bien, frais (notaire, agence), taux d'emprunt en %, durée en années, apport déjà constitué — ou objectif et somme de côté pour un projet non immobilier.
+- **Comptes** : nom, plafond légal en €, **taux d'intérêt annuel en %/an**, et solde avant le premier mois suivi (auparavant saisissable seulement depuis la page Épargne).
+- **Poches** : nom, règle de calcul, valeur avec l'unité qui s'adapte au mode choisi (% ou €), destination de l'argent.
+
+Chaque bloc se termine par son **bilan en clair** : pour un projet, l'apport constitué, l'emprunt nécessaire et la mensualité estimée ; pour un compte, la composition du solde (montant de départ + versements de la répartition + mouvements manuels), la place restante avant le plafond et les intérêts annuels estimés au taux saisi.
+
 ## v7.4.2 — 13/08/2026
 - **Import : données et affichage séparés.** La restauration de sécurité se déclenchait dès la moindre erreur, y compris quand celle-ci survenait au moment de **dessiner l'interface**, alors que les données importées étaient parfaitement valides — c'est ce qui s'est produit avec le bug de la 7.4.0 : l'import était annulé pour un problème d'affichage. L'opération est maintenant en deux temps : intégration et enregistrement des données d'abord, rendu ensuite. Un échec au premier temps restaure l'état précédent ; un échec au second conserve l'import et propose de recharger la page.
 

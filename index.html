@@ -459,6 +459,24 @@ details.etaler .eta-lab{flex:1}
 details.etaler .eta-total{width:96px;text-align:right;font-weight:600}
 details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
 
+/* ===== Champs étiquetés =====
+   Une étiquette permanente au-dessus de chaque champ : le placeholder disparaît
+   dès la saisie, l'étiquette non. Indispensable dès qu'un formulaire aligne
+   plusieurs nombres (un taux, une durée et un montant se ressemblent tous). */
+.champs{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:8px}
+.ch{display:flex;flex-direction:column;gap:3px;min-width:0}
+.ch>span{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--encre2)}
+.ch input, .ch select{border:1px solid var(--trait);border-radius:9px;padding:9px 10px;background:var(--carte);
+  color:var(--encre);font-size:14px;font-weight:600;width:100%}
+.ch .unite{position:relative}
+.ch .unite input{padding-right:32px}
+.ch .unite .u{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:12px;
+  font-weight:700;color:var(--encre2);pointer-events:none}
+.bloc-edit{border:1px solid var(--trait);border-radius:12px;padding:11px;margin-bottom:9px;background:var(--carte)}
+.bloc-edit .bloc-tete{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.bloc-edit .bloc-tete .titre-bloc{font-weight:800;font-size:14px;color:var(--encre);flex:1;min-width:0}
+.bloc-edit .bilan-bloc{font-size:11.5px;color:var(--encre2);margin-top:7px;line-height:1.5}
+
 /* ===== Poches de répartition ===== */
 .poche{display:grid;grid-template-columns:1fr 84px 72px 108px 30px;gap:5px;align-items:center;padding:5px 0;border-bottom:1px dashed var(--trait)}
 .poche input,.poche select{border:1px solid var(--trait);border-radius:7px;padding:7px 6px;background:var(--carte);width:100%;min-width:0;font-size:13px}
@@ -1032,8 +1050,12 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '7.4.2';
+const APP_VERSION = '7.5.0';
 const CHANGELOG = [
+  {v: '7.5.0', d: '13/08/2026', pts: [
+    "Éditeurs de projets, comptes et poches repensés : chaque champ porte une étiquette permanente et son unité (€, %, ans) — plus de cases numériques anonymes une fois remplies.",
+    "Chaque bloc affiche son bilan en clair : apport et mensualité pour un projet, composition du solde, place restante et intérêts annuels estimés pour un compte.",
+    "Le solde initial d'un compte se saisit désormais depuis les Réglages, à côté de son plafond et de son taux."]},
   {v: '7.4.2', d: '13/08/2026', pts: [
     "Import plus robuste : l'intégration des données et leur affichage sont désormais deux étapes distinctes. Un défaut d'affichage n'annule plus un import dont les données sont saines — elles restent enregistrées et l'application invite simplement à recharger."]},
   {v: '7.4.1', d: '13/08/2026', pts: [
@@ -3373,43 +3395,36 @@ function rendreReglages(){
     ['suivi', '→ Suivi'],
   ];
   // comptes
-  document.getElementById('comptes-liste').innerHTML = comptesActifs().map((c, i) => `
-    <div class="poche">
-      <input value="${echap(c.nom)}" data-cpt="${c.id}" data-cf="nom" placeholder="Nom du compte">
-      <input class="p-val" value="${c.plafond ?? ''}" data-cpt="${c.id}" data-cf="plafond" inputmode="decimal" placeholder="plafond €">
-      <input class="p-val" value="${c.taux ?? ''}" data-cpt="${c.id}" data-cf="taux" inputmode="decimal" placeholder="%/an">
-      <span class="note" style="font-size:11px">${(() => {
-        const l = calculerComptes().lignes.find(x => x.id === c.id);
-        return l ? (l.plafond == null ? fmt(l.solde) : `${fmt(l.solde)} / ${fmt(l.plafond)}${l.plein ? ' 🔒' : ''}`) : '';
-      })()}</span>
-      <button class="sup" data-cptsup="${c.id}" aria-label="Supprimer">✕</button>
-    </div>`).join('') || '<p class="note">Aucun compte — ajoute-en un ci-dessous.</p>';
-  const pl = document.getElementById('profils-liste');
-  if (pl){
-    const actif = profilActif();
-    pl.innerHTML = listeProfils().map(p => `
-      <div class="ligne">
-        <input class="lab" value="${echap(p.nom)}${p.id === actif ? '  ·  actif' : ''}" readonly
-          style="${p.id === actif ? 'font-weight:700;color:var(--laiton)' : ''}">
-        ${p.id === actif ? '' : `<button class="btn discret" data-profil="${p.id}" style="padding:5px 11px;font-size:12px">Ouvrir</button>`}
-        ${p.id === 'principal' ? '' : `<button class="sup" data-profilsup="${p.id}" aria-label="Supprimer">✕</button>`}
-      </div>`).join('');
-  }
-  const bl = document.getElementById('budgets-liste');
-  if (bl) bl.innerHTML = POSTES_BUDGET.map(([k, nom]) => `
-    <div class="ligne"><input class="lab" value="${nom}" readonly>
-      <input class="mnt" value="${(etat.config.budgets || {})[k] ?? ''}" data-budget="${k}" inputmode="decimal" placeholder="—"></div>`).join('');
-  const selDens = document.getElementById('cfg-densite');
-  if (selDens) selDens.value = (localStorage.getItem('bv4-densite') || 'normal');
-  const selDev = document.getElementById('cfg-devise');
-  if (selDev && !selDev.options.length)
-    selDev.innerHTML = DEVISES.map(d => `<option value="${d.code}">${d.nom}</option>`).join('');
-  if (selDev) selDev.value = etat.config.devise || 'EUR';
-  const champURL = document.getElementById('raccourci-url');
-  if (champURL) champURL.value = location.origin + location.pathname + '?ajout=INTITULÉ&montant=MONTANT';
-  const selIA = document.getElementById('ia-etude');
-  if (selIA && !selIA.options.length)
-    selIA.innerHTML = Object.entries(ETUDES_IA).map(([k, v]) => `<option value="${k}">${v.nom}</option>`).join('');
+  const situations = calculerComptes().lignes;
+  document.getElementById('comptes-liste').innerHTML = comptesActifs().map(c => {
+    const l = situations.find(x => x.id === c.id) || {solde: 0, cumul: 0};
+    return `<div class="bloc-edit">
+      <div class="bloc-tete">
+        <span class="titre-bloc">${echap(c.nom)}</span>
+        <span class="note" style="font-size:12px;font-weight:700;color:${l.plein ? 'var(--vert)' : 'var(--encre2)'}">${fmt(l.solde)}${l.plein ? ' 🔒' : ''}</span>
+        <button class="sup" data-cptsup="${c.id}" aria-label="Supprimer ce compte">✕</button>
+      </div>
+      <div class="champs">
+        <label class="ch"><span>Nom du compte</span>
+          <input value="${echap(c.nom)}" data-cpt="${c.id}" data-cf="nom" placeholder="ex. Livret A"></label>
+        <label class="ch"><span>Plafond légal (vide = aucun)</span>
+          <span class="unite"><input value="${c.plafond ?? ''}" data-cpt="${c.id}" data-cf="plafond"
+            inputmode="decimal" placeholder="aucun"><span class="u">${devise().sym}</span></span></label>
+        <label class="ch"><span>Taux d'intérêt annuel</span>
+          <span class="unite"><input value="${c.taux ?? ''}" data-cpt="${c.id}" data-cf="taux"
+            inputmode="decimal" placeholder="0"><span class="u">%/an</span></span></label>
+        <label class="ch"><span>Solde avant le 1er mois suivi</span>
+          <span class="unite"><input value="${c.initial ?? 0}" data-cpt="${c.id}" data-cf="initial"
+            inputmode="decimal" placeholder="0"><span class="u">${devise().sym}</span></span></label>
+      </div>
+      <div class="bilan-bloc">
+        ${fmt(c.initial || 0)} au départ + ${fmt(l.cumul)} versés par la répartition
+        ${(c.mouvements || []).length ? `+ ${(c.mouvements || []).length} mouvement(s) manuel(s) ` : ''}= <b>${fmt(l.solde)}</b>${
+          c.plafond ? ` · ${l.plein ? '<b>plafond atteint</b>' : `il reste ${fmt(l.reste)} avant le plafond`}` : ''}${
+          Number(c.taux) > 0 ? ` · intérêts estimés ${fmt(l.solde * Number(c.taux) / 100)}/an` : ''}
+      </div>
+    </div>`;
+  }).join('') || '<p class="note">Aucun compte — ajoute-en un ci-dessous.</p>';
   const selMod = document.getElementById('cpt-modele');
   if (selMod && !selMod.options.length)
     selMod.innerHTML = CATALOGUE_COMPTES.map(m =>
@@ -3419,31 +3434,68 @@ function rendreReglages(){
     ['av', '💵 Disponible à investir (TR)'], ['pea', '📈 Cash PEA'], ['per', '🛡️ Cash PER'], ['suivi', '🧺 Suivi simple']]
     .map(([v, l]) => `<option value="${v}" ${etat.config.debordement === v ? 'selected' : ''}>${l}</option>`).join('');
   // projets
-  document.getElementById('projets-liste').innerHTML = (etat.projets || []).map(p => `
-    <div class="poche" style="grid-template-columns:1fr 84px 72px 30px">
-      <input value="${echap(p.nom)}" data-proj="${p.id}" data-pjf="nom">
-      ${p.type === 'immo'
-        ? `<input class="p-val" value="${p.prix ?? ''}" data-proj="${p.id}" data-pjf="prix" inputmode="decimal" placeholder="prix €">
-           <input class="p-val" value="${p.taux ?? ''}" data-proj="${p.id}" data-pjf="taux" inputmode="decimal" placeholder="taux %">`
-        : `<input class="p-val" value="${p.objectif ?? ''}" data-proj="${p.id}" data-pjf="objectif" inputmode="decimal" placeholder="objectif €">
-           <span></span>`}
-      <button class="sup" data-projsup="${p.id}" aria-label="Supprimer">✕</button>
-    </div>
-    ${p.type === 'immo' ? `<div class="poche" style="grid-template-columns:1fr 84px 72px 30px">
-      <input value="Frais / durée / apport initial" readonly style="border:none;background:none;font-size:11px;color:var(--encre2)">
-      <input class="p-val" value="${p.frais ?? ''}" data-proj="${p.id}" data-pjf="frais" inputmode="decimal" placeholder="frais €">
-      <input class="p-val" value="${p.duree ?? ''}" data-proj="${p.id}" data-pjf="duree" inputmode="decimal" placeholder="ans">
-      <span></span></div>` : ''}`).join('');
+  const champ = (lab, val, proj, f, unite, ph) => `
+    <label class="ch"><span>${lab}</span>
+      ${unite ? `<span class="unite"><input value="${val ?? ''}" data-proj="${proj}" data-pjf="${f}"
+        inputmode="decimal" placeholder="${ph || ''}"><span class="u">${unite}</span></span>`
+      : `<input value="${echap(String(val ?? ''))}" data-proj="${proj}" data-pjf="${f}" placeholder="${ph || ''}">`}
+    </label>`;
+  document.getElementById('projets-liste').innerHTML = (etat.projets || []).map(p => {
+    const s = situationProjet(p);
+    const emprunt = Math.max(0, (Number(p.prix) || 0) + (Number(p.frais) || 0) - s.apport);
+    const mens = p.type === 'immo' ? mensualitePret(emprunt, p.taux, p.duree) : 0;
+    return `<div class="bloc-edit">
+      <div class="bloc-tete">
+        <span class="titre-bloc">${p.type === 'immo' ? '🏡' : '🎯'} ${echap(p.nom)}</span>
+        <button class="sup" data-projsup="${p.id}" aria-label="Supprimer ce projet">✕</button>
+      </div>
+      <div class="champs">
+        ${champ('Nom du projet', p.nom, p.id, 'nom', '', 'ex. Achat appartement')}
+        ${p.type === 'immo' ? `
+          ${champ('Prix du bien', p.prix, p.id, 'prix', devise().sym, '0')}
+          ${champ('Frais (notaire, agence)', p.frais, p.id, 'frais', devise().sym, '0')}
+          ${champ("Taux d'emprunt", p.taux, p.id, 'taux', '%', '3.5')}
+          ${champ('Durée du prêt', p.duree, p.id, 'duree', 'ans', '20')}
+          ${champ('Apport déjà constitué', p.apportInitial, p.id, 'apportInitial', devise().sym, '0')}
+        ` : `
+          ${champ('Objectif à atteindre', p.objectif, p.id, 'objectif', devise().sym, '0')}
+          ${champ('Somme déjà de côté', p.apportInitial, p.id, 'apportInitial', devise().sym, '0')}
+        `}
+      </div>
+      <div class="bilan-bloc">
+        ${p.type === 'immo'
+          ? `Apport constitué <b>${fmt(s.apport)}</b> · emprunt nécessaire <b>${fmt(emprunt)}</b>
+             · mensualité estimée <b>${fmt(mens)}</b> sur ${p.duree || 0} ans (hors assurance emprunteur).`
+          : `Constitué <b>${fmt(s.apport)}</b>${s.objectif ? ` sur ${fmt(s.objectif)} — ${s.pct.toFixed(0)} %` : ''}${
+             s.moisRestants ? ` · objectif atteint dans ~${s.moisRestants} mois au rythme actuel` : ''}.`}
+      </div>
+    </div>`;
+  }).join('') || '<p class="note">Aucun projet pour l\u2019instant.</p>';
   const MODES = [['part', libellePart(etat.config.poches)], ['pct', '% du NA'], ['fixe', '€ fixe'], ['reste', 'Reste']];
-  document.getElementById('poches-liste').innerHTML = etat.config.poches.map((p, i) => `
-    <div class="poche">
-      <input value="${echap(p.nom)}" data-poche="${i}" data-pf="nom" placeholder="Nom">
-      <select data-poche="${i}" data-pf="mode">${MODES.map(([v, l]) => `<option value="${v}" ${p.mode === v ? 'selected' : ''}>${l}</option>`).join('')}</select>
-      <input class="p-val" value="${p.mode === 'pct' || p.mode === 'fixe' ? (p.valeur ?? '') : ''}" data-poche="${i}" data-pf="valeur"
-             inputmode="decimal" placeholder="${p.mode === 'pct' ? '%' : p.mode === 'fixe' ? '€' : '—'}" ${p.mode === 'part' || p.mode === 'reste' ? 'disabled' : ''}>
-      <select class="p-dest" data-poche="${i}" data-pf="cible">${CIBLES.map(([v, l]) => `<option value="${v}" ${p.cible === v ? 'selected' : ''}>${l}</option>`).join('')}</select>
-      <button class="sup" data-pochesup="${i}" aria-label="Supprimer">✕</button>
-    </div>`).join('');
+  document.getElementById('poches-liste').innerHTML = etat.config.poches.map((p, i) => {
+    const unite = p.mode === 'pct' ? '%' : p.mode === 'fixe' ? devise().sym : '';
+    const fige = p.mode === 'part' || p.mode === 'reste';
+    return `<div class="bloc-edit">
+      <div class="bloc-tete">
+        <span class="titre-bloc">${echap(p.nom)}</span>
+        <button class="sup" data-pochesup="${i}" aria-label="Supprimer cette poche">✕</button>
+      </div>
+      <div class="champs">
+        <label class="ch"><span>Nom de la poche</span>
+          <input value="${echap(p.nom)}" data-poche="${i}" data-pf="nom" placeholder="ex. Livret A"></label>
+        <label class="ch"><span>Règle de calcul</span>
+          <select data-poche="${i}" data-pf="mode">${MODES.map(([v, l]) =>
+            `<option value="${v}" ${p.mode === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+        <label class="ch"><span>${p.mode === 'pct' ? 'Part du non attribué' : p.mode === 'fixe' ? 'Montant fixe' : 'Valeur (non requise)'}</span>
+          <span class="unite"><input value="${fige ? '' : (p.valeur ?? '')}" data-poche="${i}" data-pf="valeur"
+            inputmode="decimal" placeholder="${fige ? '—' : '0'}" ${fige ? 'disabled' : ''}>
+            ${unite ? `<span class="u">${unite}</span>` : ''}</span></label>
+        <label class="ch"><span>Destination de l'argent</span>
+          <select data-poche="${i}" data-pf="cible">${CIBLES.map(([v, l]) =>
+            `<option value="${v}" ${p.cible === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+      </div>
+    </div>`;
+  }).join('');
 }
 function rendreTout(){
   rendreAccueil(); rendreMois(); rendreLivrets(); rendreInvest(); rendreAV(); rendreReglages();
