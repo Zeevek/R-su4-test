@@ -9,6 +9,27 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v7.4.0 — 13/08/2026 — *refonte Achat-Vente et suivi transversal*
+
+### Achat-Vente repensé
+La page empilait deux tableaux à six colonnes (illisibles sur mobile), une carte de disponibles éclatée en trois, et **deux cartes portant exactement le même titre** — au point que replier l'une repliait l'autre. Elle est reconstruite autour de trois blocs :
+1. **Un formulaire unique** : sens (achat / vente en deux gros boutons), compte, position choisie dans une liste, montant, prix unitaire facultatif, date. Un aperçu montre l'effet sur le disponible **et** sur la position avant validation.
+2. **Un journal chronologique** de toutes les opérations, tous comptes confondus, en lignes lisibles sur mobile plutôt qu'en tableau à défilement horizontal.
+3. **Une seule carte « D'où vient l'argent disponible »**, qui déroule le calcul poste par poste jusqu'aux trois soldes.
+
+### Une opération met à jour le portefeuille
+Enregistrer un achat ajoute les parts correspondantes à la position et **recalcule le prix de revient moyen pondéré** ; une vente retire les parts en laissant le PRU inchangé, sans jamais descendre sous zéro. Le prix unitaire est facultatif : à défaut, le dernier cours connu sert de référence. Fini la double saisie « j'achète, puis je corrige la ligne du portefeuille ».
+
+### Suivi
+- **Budgets par poste** : un plafond mensuel facultatif par catégorie, avec jauge sur la page Mois et **alerte de rythme** — au 10 du mois, avoir consommé la moitié d'un budget est signalé avant que le plafond ne soit atteint.
+- **Bilan de l'année** sur l'Accueil : entrées, grandes catégories, investi, épargne totale, **taux d'épargne** et écarts avec l'année précédente ; sélecteur d'année dès qu'il y en a plusieurs.
+- **Étiquettes** : un mot précédé de `#` dans un libellé (« Révision #voiture », « Croquettes #chat ») regroupe automatiquement les dépenses d'un même sujet **à travers les catégories et les mois** — ce que coûte réellement une voiture, un animal, un projet. Recherchables via 🔍.
+- **Pointage bancaire** : chaque ligne porte un cercle qui devient une coche verte, pour cocher au fil du relevé.
+
+### Confort
+- **Profils multiples** : plusieurs budgets indépendants sur le même appareil (couple, ou perso / activité annexe), chacun avec ses propres mois, comptes et portefeuille dans un espace de stockage séparé.
+- **Raccourcis clavier** : 1 à 6 pour les onglets, `n` pour saisir une dépense, `/` ou Ctrl+K pour rechercher, Ctrl+Z pour annuler, `?` pour l'aide.
+
 ## v7.3.0 — 13/08/2026 — *ouvrir l'application à tout le monde*
 
 1. **Assistant de premier démarrage** — trois questions (revenus, budget de vie courante, comptes possédés, objectif) et l'application est configurée : enveloppe, comptes avec leurs plafonds, poches de répartition cohérentes avec la stratégie choisie (sécurité / équilibre / investissement), repli de plafond, et revenus pré-remplis dans le mois en cours. Fini l'écran vide avec des réglages hérités de quelqu'un d'autre.
