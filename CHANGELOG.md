@@ -9,6 +9,19 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v7.2.0 — 13/08/2026
+### Sens de circulation de l'argent enfin explicite
+La carte de transfert affichait deux menus identiques séparés d'une flèche : rien n'indiquait lequel était la source. Elle est repensée :
+- deux blocs étiquetés **« ➖ L'argent part de »** (liseré rouge) et **« ➕ et arrive sur »** (liseré vert) ;
+- un bouton **⇅ Inverser** pour permuter les deux d'un geste ;
+- un **aperçu en direct** sous la saisie : chaque compte affiche son solde *avant → après* sur fond rouge pour celui qui se vide, vert pour celui qui se remplit — le sens devient évident avant même de valider ;
+- le compte destinataire est initialisé sur un compte **différent** de la source ;
+- les blocages (solde insuffisant, plafond du destinataire, comptes identiques) sont annoncés **pendant la saisie**.
+
+### Interne
+- Les contrôles de transfert sont factorisés dans une fonction unique utilisée à la fois par l'aperçu et par la validation : impossible que l'un accepte ce que l'autre refuse.
+- Parcours complet rejoué sur la sauvegarde du 10/08 : migration d'une sauvegarde antérieure à la v6, soldes, cash PEA/PER, transferts, recherche, dossier IA et projection 30 ans — 24 vérifications, dont le solde exact du Livret A (1 438,51 €).
+
 ## v7.1.0 — 01/08/2026
 ### Corrections
 - **Le bouton « Transférer » ne faisait rien** : le gestionnaire avait été placé dans la délégation des *modifications de champ* au lieu de celle des *clics* — un bouton n'émet pas d'événement de modification. Le transfert et ses raccourcis fonctionnent désormais.

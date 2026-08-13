@@ -228,10 +228,30 @@ details.aide summary{cursor:pointer;font-weight:600;color:var(--laiton)}
 .sous-cartes{margin:6px -14px -12px;padding:8px 10px 4px;background:rgba(176,141,62,.05);
   border-top:1px solid var(--trait)}
 .sous-cartes .carte{margin-bottom:6px;box-shadow:none;border:1px solid var(--trait)}
-.transfert{display:grid;grid-template-columns:1fr;gap:4px;align-items:center}
-.transfert select{border:1px solid var(--trait);border-radius:9px;padding:10px;background:var(--carte);
-  font-weight:600;font-size:13px;width:100%}
-.transfert .fleche{text-align:center;color:var(--laiton);font-size:16px;font-weight:800;line-height:1}
+.transfert{display:grid;grid-template-columns:1fr;gap:2px}
+.tr-bloc{border:1px solid var(--trait);border-radius:11px;padding:8px 10px;background:var(--carte)}
+.tr-bloc.sortant{border-left:4px solid var(--rouge)}
+.tr-bloc.entrant{border-left:4px solid var(--vert)}
+.tr-eti{display:block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;
+  color:var(--encre2);margin-bottom:4px}
+.tr-bloc.sortant .tr-eti{color:var(--rouge)}
+.tr-bloc.entrant .tr-eti{color:var(--vert)}
+.transfert select{border:none;background:none;font-weight:700;font-size:14px;width:100%;color:var(--encre);padding:2px 0}
+.tr-milieu{display:flex;align-items:center;gap:10px;padding:3px 12px}
+.tr-fleche{color:var(--laiton);font-size:17px;font-weight:800;line-height:1}
+#tr-inverser{font-size:11px;font-weight:700;color:var(--laiton);background:none;padding:4px 8px;
+  border:1px solid var(--laiton);border-radius:99px;min-height:0}
+.tr-apercu{margin-top:8px}
+.tr-ligne{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:6px 10px;
+  border-radius:8px;font-size:13px;margin-bottom:4px}
+.tr-ligne.sortant{background:var(--rouge-fond)}
+.tr-ligne.entrant{background:var(--vert-fond)}
+.tr-ligne .tr-nom{font-weight:600;color:var(--encre)}
+.tr-ligne .tr-val{font-weight:700;white-space:nowrap;color:var(--encre2)}
+.tr-ligne .tr-hors{font-size:11px;color:var(--encre2);font-style:italic}
+.tr-resume{font-size:13px;font-weight:600;color:var(--encre);padding:6px 2px}
+.tr-resume .tr-hint{font-weight:400;font-size:11.5px;color:var(--encre2);margin-left:6px}
+.tr-alerte{font-size:12px;font-weight:600;color:var(--rouge);padding:6px 2px}
 .bascule{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:14px;font-weight:600;cursor:pointer}
 .bascule input{width:44px;height:26px;-webkit-appearance:none;appearance:none;background:var(--trait);
   border-radius:99px;position:relative;transition:background .18s ease;flex:none}
@@ -853,8 +873,12 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '7.1.0';
+const APP_VERSION = '7.2.0';
 const CHANGELOG = [
+  {v: '7.2.0', d: '13/08/2026', pts: [
+    "Transfert lisible d'un coup d'œil : blocs « l'argent part de » (liseré rouge) et « arrive sur » (liseré vert), bouton ⇅ pour inverser, et aperçu en direct des deux soldes avant → après.",
+    "Le compte destinataire n'est plus identique à la source par défaut, et les erreurs (solde insuffisant, plafond atteint) s'affichent avant de valider, pas après.",
+    "Contrôles de transfert factorisés : l'aperçu et la validation appliquent exactement les mêmes règles."]},
   {v: '7.1.0', d: '01/08/2026', pts: [
     "Correction : le bouton « Transférer » ne réagissait pas (le gestionnaire écoutait la modification d'un champ au lieu du clic).",
     "Un transfert vers le compte courant alimente désormais les remboursements du mois en cours ; dans l'autre sens, il en sort.",
@@ -1272,6 +1296,57 @@ function appliquerPlafonds(cleMois, repartition){
   }
   return out;
 }
+/* Aperçu du transfert : montre les deux soldes avant et après, pour que le sens
+   de circulation soit lisible avant de valider. */
+function majApercuTransfert(){
+  const zone = document.getElementById('tr-apercu');
+  if (!zone) return;
+  const de = document.getElementById('tr-de').value, vers = document.getElementById('tr-vers').value;
+  const noms = Object.fromEntries(destinationsTransfert().map(d => [d.id, d.nom]));
+  const m = evalMontant(document.getElementById('tr-montant').value);
+  if (de === vers){
+    zone.innerHTML = `<div class="tr-alerte">Choisis deux comptes différents.</div>`;
+    return;
+  }
+  if (isNaN(m) || Math.abs(m) < 0.005){
+    zone.innerHTML = `<div class="tr-resume">${echap(noms[de])} <b>→</b> ${echap(noms[vers])}
+      <span class="tr-hint">saisis un montant pour voir l'effet</span></div>`;
+    return;
+  }
+  const v = Math.abs(m);
+  const sDe = soldeDisponible(de), sVers = soldeDisponible(vers);
+  const ligne = (nom, avant, apres, sens) => `
+    <div class="tr-ligne ${sens}">
+      <span class="tr-nom">${echap(nom)}</span>
+      ${avant == null ? '<span class="tr-hors">hors suivi</span>'
+        : `<span class="tr-val">${fmt(avant)} <b>→</b> <span class="${cls(apres)}">${fmt(apres)}</span></span>`}
+    </div>`;
+  const r = transfertPossible(de, vers, v);
+  zone.innerHTML =
+    ligne(noms[de], sDe, sDe == null ? null : sDe - v, 'sortant') +
+    ligne(noms[vers], sVers, sVers == null ? null : sVers + v, 'entrant') +
+    (r.ok ? '' : `<div class="tr-alerte">⚠️ ${echap(r.msg)}</div>`);
+}
+/* Contrôles seuls, sans écrire : sert à l'aperçu comme à la validation */
+function transfertPossible(deId, versId, montant){
+  const m = Math.abs(+montant);
+  if (!(m > 0.004)) return {ok: false, msg: 'Montant invalide'};
+  if (deId === versId) return {ok: false, msg: 'Choisis deux comptes différents'};
+  const noms = Object.fromEntries(destinationsTransfert().map(d => [d.id, d.nom]));
+  const dispo = soldeDisponible(deId);
+  if (dispo != null && m > dispo + 0.004)
+    return {ok: false, msg: `Solde insuffisant : ${fmt(dispo)} disponible sur ${noms[deId]}`};
+  const cDest = compteParId(versId);
+  if (cDest && cDest.plafond != null){
+    const l = calculerComptes().lignes.find(x => x.id === versId);
+    const place = Math.max(0, cDest.plafond - (l ? l.solde : 0));
+    if (m > place + 0.004)
+      return {ok: false, msg: place < 0.01 ? `${noms[versId]} est déjà au plafond`
+        : `${noms[versId]} ne peut recevoir que ${fmt(place)} (plafond)`};
+  }
+  return {ok: true, msg: ''};
+}
+
 /* ===== Transferts entre poches d'argent =====
    Une même opération est écrite des deux côtés (sortie ici, entrée là), avec un
    libellé miroir, pour que les soldes restent cohérents sans double saisie. */
@@ -1319,22 +1394,10 @@ function ecrireMouvement(id, montant, libelle){
   return false;
 }
 function transferer(deId, versId, montant, note){
+  const controle = transfertPossible(deId, versId, montant);
+  if (!controle.ok) return controle;
   const m = Math.abs(+montant);
-  if (!(m > 0.004)) return {ok: false, msg: 'Montant invalide'};
-  if (deId === versId) return {ok: false, msg: 'Choisis deux comptes différents'};
   const noms = Object.fromEntries(destinationsTransfert().map(d => [d.id, d.nom]));
-  const dispo = soldeDisponible(deId);
-  if (dispo != null && m > dispo + 0.004)
-    return {ok: false, msg: `Solde insuffisant : ${fmt(dispo)} disponible sur ${noms[deId]}`};
-  // plafond de la destination
-  const cDest = compteParId(versId);
-  if (cDest && cDest.plafond != null){
-    const l = calculerComptes().lignes.find(x => x.id === versId);
-    const place = Math.max(0, cDest.plafond - (l ? l.solde : 0));
-    if (m > place + 0.004)
-      return {ok: false, msg: place < 0.01 ? `${noms[versId]} est déjà au plafond`
-        : `${noms[versId]} ne peut recevoir que ${fmt(place)} (plafond)`};
-  }
   const suffixe = note ? ' — ' + note : '';
   const dateTxt = new Date().toLocaleDateString('fr-FR');
   ecrireMouvement(deId, -m, `➡️ Vers ${noms[versId]} (${dateTxt})${suffixe}`);
@@ -2479,29 +2542,41 @@ function rendreLivrets(){
       <p class="note">Cumul depuis le premier mois — se remplit via les poches de répartition « → Suivi ».</p></div></div>` : '';
 
   const dests = destinationsTransfert();
-  const opts = (sel) => dests.map(d => {
+  const opts = (choisi) => dests.map(d => {
     const s = soldeDisponible(d.id);
-    return `<option value="${d.id}">${d.nom}${s != null ? ` — ${fmt(s)}` : ''}</option>`;
+    return `<option value="${d.id}" ${d.id === choisi ? 'selected' : ''}>${d.nom}${s != null ? ` — ${fmt(s)}` : ''}</option>`;
   }).join('');
+  const secondId = dests[1] ? dests[1].id : dests[0].id;
   const carteTransfert = `
     <div class="carte"><div class="tete"><h3>🔄 Transférer de l'argent</h3>${infoBtn('transfert')}</div>
       <div class="corps">
         <div class="transfert">
-          <select id="tr-de" aria-label="Depuis">${opts()}</select>
-          <span class="fleche">↓</span>
-          <select id="tr-vers" aria-label="Vers">${opts()}</select>
+          <div class="tr-bloc sortant">
+            <span class="tr-eti">➖ L'argent part de</span>
+            <select id="tr-de" aria-label="Compte source">${opts()}</select>
+          </div>
+          <div class="tr-milieu">
+            <span class="tr-fleche">↓</span>
+            <button id="tr-inverser" title="Inverser le sens">⇅ Inverser</button>
+          </div>
+          <div class="tr-bloc entrant">
+            <span class="tr-eti">➕ et arrive sur</span>
+            <select id="tr-vers" aria-label="Compte destinataire">${opts(secondId)}</select>
+          </div>
         </div>
-        <div class="saisie-rapide" style="margin-top:8px">
+        <div class="saisie-rapide" style="margin-top:10px">
           <input class="sl" id="tr-note" placeholder="Motif (facultatif : épargne de secours, vacances…)" autocomplete="off">
           <input class="sm" id="tr-montant" inputmode="text" placeholder="€" autocomplete="off">
           <button class="btn or" id="tr-go">Transférer</button>
         </div>
+        <div id="tr-apercu" class="tr-apercu"></div>
         <div class="chips" id="tr-raccourcis"></div>
         <p class="note">L'opération est écrite des deux côtés en une fois. Les soldes et les plafonds sont vérifiés avant validation :
         impossible de sortir plus que disponible, ni de dépasser le plafond du compte destinataire.</p>
       </div></div>`;
   document.getElementById('livrets-blocs').innerHTML =
     carteTransfert + cc.lignes.map(bloc).join('') + carteSuivi + carteProjets();
+  majApercuTransfert();
   // raccourcis : les transferts les plus courants, pré-remplis
   const rac = document.getElementById('tr-raccourcis');
   if (rac){
@@ -2976,6 +3051,10 @@ document.querySelector('main').addEventListener('click', e => {
       if (n > 0) toast(`↪ Retirée de ${n} mois suivant${n > 1 ? 's' : ''}`);
     }
     sauver(); rafraichirPage();
+  } else if (el.id === 'tr-inverser'){      // inverser le sens du transfert
+    const a = document.getElementById('tr-de'), b = document.getElementById('tr-vers');
+    [a.value, b.value] = [b.value, a.value];
+    majApercuTransfert();
   } else if (el.id === 'tr-go'){            // transfert entre poches (clic)
     const r = transferer(document.getElementById('tr-de').value,
                          document.getElementById('tr-vers').value,
@@ -2990,6 +3069,7 @@ document.querySelector('main').addEventListener('click', e => {
     document.getElementById('tr-de').value = de;
     document.getElementById('tr-vers').value = vers;
     document.getElementById('tr-montant').focus();
+    majApercuTransfert();
   } else if (el.hasAttribute('data-cgo')){
     ajouterViaComposeur(el.closest('[data-comp]'));
   } else if (e.target.closest && e.target.closest('[data-chipdel]')){
@@ -4094,6 +4174,14 @@ function dossierIA(opts = {}){
     'et ne constituent ni une prévision ni un conseil en investissement.*');
   return L.join('\n');
 }
+
+/* Aperçu du transfert tenu à jour à chaque frappe ou changement de compte */
+document.addEventListener('input', e => {
+  if (['tr-montant', 'tr-de', 'tr-vers'].includes(e.target.id)) majApercuTransfert();
+});
+document.addEventListener('change', e => {
+  if (['tr-de', 'tr-vers'].includes(e.target.id)) majApercuTransfert();
+});
 
 /* Recherche globale : ouverture, saisie temporisée, navigation vers le mois */
 (function(){
