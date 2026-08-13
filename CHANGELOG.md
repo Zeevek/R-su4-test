@@ -9,6 +9,10 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v7.4.1 — 13/08/2026
+- **Correctif bloquant** : le bouton de pointage introduit en 7.4 référençait `it` au lieu de `item` dans la fonction qui construit **toutes** les lignes éditables. Conséquence : dès qu'une carte contenant des lignes devait s'afficher, le rendu s'interrompait — les pages Mois, Épargne et Achat-Vente apparaissaient vides, et le patrimoine restait à zéro. Une seule lettre, toute l'application paralysée.
+- **Méthode de vérification renforcée** : jusqu'ici les contrôles portaient sur la syntaxe, les identifiants et le moteur de calcul — aucun ne construisait réellement l'interface. Le rendu complet est désormais rejoué **dans un navigateur simulé** (jsdom) avec une vraie sauvegarde : navigation entre les six onglets, saisie d'une dépense, transfert, opération d'achat, repli de carte, pointage. C'est ce test qui a mis ce bug en évidence en quelques secondes.
+
 ## v7.4.0 — 13/08/2026 — *refonte Achat-Vente et suivi transversal*
 
 ### Achat-Vente repensé

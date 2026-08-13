@@ -1032,8 +1032,11 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '7.4.0';
+const APP_VERSION = '7.4.1';
 const CHANGELOG = [
+  {v: '7.4.1', d: '13/08/2026', pts: [
+    "Correctif bloquant : le bouton de pointage ajouté en 7.4 utilisait un nom de variable erroné, ce qui faisait échouer l'affichage de toute ligne éditable — les pages Mois, Épargne et Achat-Vente restaient donc vides ou figées.",
+    "Vérification renforcée : le rendu complet de l'application est désormais rejoué dans un navigateur simulé avec un vrai jeu de données avant chaque livraison."]},
   {v: '7.4.0', d: '13/08/2026', pts: [
     "Achat-Vente entièrement repensé : un formulaire unique pour toute opération, un journal chronologique lisible, une seule carte de disponibles (le titre « Entrées / Sorties » existait en double).",
     "Une opération met à jour la position : parts ajoutées ou retirées et prix de revient moyen recalculé automatiquement.",
@@ -2627,8 +2630,8 @@ function ligneEditable(chemin, item, i){
   return `<div class="ligne">
     <input class="lab" value="${echap(item.label)}" data-ch="${chemin}" data-i="${i}" data-f="label" placeholder="Intitulé">
     <input class="mnt ${cls(item.montant)}" value="${item.montant ?? ''}" data-ch="${chemin}" data-i="${i}" data-f="montant" inputmode="text" placeholder="0">
-    <button class="pointe ${it.pointe ? 'ok' : ''}" data-pointe="${chemin}" data-i="${i}"
-      aria-label="${it.pointe ? 'Vérifié sur le relevé' : 'Marquer comme vérifié'}" title="Pointer sur le relevé bancaire">${it.pointe ? '✓' : '○'}</button>
+    <button class="pointe ${item.pointe ? 'ok' : ''}" data-pointe="${chemin}" data-i="${i}"
+      aria-label="${item.pointe ? 'Vérifié sur le relevé' : 'Marquer comme vérifié'}" title="Pointer sur le relevé bancaire">${item.pointe ? '✓' : '○'}</button>
     <button class="sup" data-supch="${chemin}" data-i="${i}" aria-label="Supprimer">✕</button>
   </div>`;
 }
