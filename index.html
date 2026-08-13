@@ -316,6 +316,17 @@ details.aide summary{cursor:pointer;font-weight:600;color:var(--laiton)}
 
 /* ===== Optimisation tactile Android / iOS ===== */
 html{touch-action:manipulation}
+/* Densité : « compact » resserre les listes, « confortable » agrandit les cibles.
+   Utile aussi bien sur un grand écran que pour une vue moins précise. */
+html[data-densite="compact"]{font-size:14px}
+html[data-densite="compact"] .ligne{padding:3px 0}
+html[data-densite="compact"] .carte{margin-bottom:8px}
+html[data-densite="compact"] .carte>.corps{padding:8px 12px}
+html[data-densite="confort"]{font-size:17px}
+html[data-densite="confort"] .ligne{padding:11px 0}
+html[data-densite="confort"] .carte>.corps{padding:16px 14px}
+html[data-densite="confort"] .ligne input.lab,
+html[data-densite="confort"] .ligne input.mnt{font-size:16px}
 button{min-height:34px}
 nav button{min-height:48px}
 @media (pointer:coarse){
@@ -325,6 +336,7 @@ nav button{min-height:48px}
   .ligne{padding:7px 0}
   .ligne .sup, .chip{min-height:34px}
 }
+
 
 /* ===== Recherche globale ===== */
 #btn-recherche{margin-left:auto;background:rgba(255,255,255,.12);color:var(--entete-texte);
@@ -345,11 +357,30 @@ nav button{min-height:48px}
 .rech-total{padding:10px 4px;font-size:12px;color:var(--encre2);border-top:2px solid var(--trait);margin-top:4px}
 
 /* ===== Retour en haut (pages longues) ===== */
+#toast button{margin-left:10px;background:var(--laiton);color:#fff;border-radius:8px;
+  padding:4px 10px;font-size:12px;font-weight:700;min-height:0}
 #haut{position:fixed;right:14px;bottom:calc(70px + env(safe-area-inset-bottom));z-index:40;
   width:42px;height:42px;border-radius:50%;background:var(--entete);color:var(--entete-texte);
   font-size:19px;font-weight:700;box-shadow:0 3px 12px rgba(0,0,0,.28);
   opacity:0;pointer-events:none;transition:opacity .2s ease}
 #haut.vu{opacity:.92;pointer-events:auto}
+
+/* ===== Assistant de premier démarrage ===== */
+#voile-bienvenue{position:fixed;inset:0;background:rgba(30,36,48,.6);z-index:150;display:none;
+  align-items:center;justify-content:center;padding:16px;overflow-y:auto}
+#voile-bienvenue.vu{display:flex}
+#panneau-bienvenue{background:var(--carte);border-radius:16px;max-width:460px;width:100%;padding:22px;
+  box-shadow:0 12px 44px rgba(0,0,0,.35);max-height:92vh;overflow-y:auto}
+#panneau-bienvenue h2{font-size:20px;margin-bottom:6px;color:var(--encre)}
+#panneau-bienvenue .intro{font-size:13px;color:var(--encre2);line-height:1.5;margin-bottom:16px}
+.bv-champ{display:block;margin-bottom:14px}
+.bv-champ>span{display:block;font-size:12px;font-weight:700;color:var(--encre2);margin-bottom:5px}
+.bv-champ input, .bv-champ select{width:100%;border:1px solid var(--trait);border-radius:9px;
+  padding:11px;background:var(--papier);color:var(--encre);font-size:15px;font-weight:600}
+.bv-boutons{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.bv-boutons .or{background:var(--laiton);color:#fff;padding:13px;border-radius:10px;font-weight:800;font-size:15px}
+.bv-boutons .discret{background:none;color:var(--encre2);padding:9px;font-weight:600;font-size:13px}
+#bv-comptes .chip.choisi{background:var(--laiton);color:#fff;border-color:var(--laiton)}
 
 /* ===== Écran de verrouillage ===== */
 #verrou{position:fixed;inset:0;background:var(--entete);z-index:200;display:none;
@@ -461,6 +492,10 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
       </div>
     </div>
     <div class="carte">
+      <div class="tete"><h3>📉 Tendances du mois</h3><button class="info-btn" data-infocle="tendances" aria-label="Informations">i</button></div>
+      <div class="corps" id="tendances-corps"></div>
+    </div>
+    <div class="carte">
       <div class="tete"><h3>🧭 Patrimoine total</h3><div class="tot" id="patri-total"></div></div>
       <div class="corps" id="patri-detail"></div>
     </div>
@@ -523,7 +558,16 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
             <option value="foret">🌲 Forêt</option>
             <option value="minuit">🌌 Minuit</option>
           </select></div>
-        <p class="note">« Automatique » suit le mode clair/sombre du téléphone. Le compte rendu PDF reste toujours clair.</p>
+        <div class="ligne"><input class="lab" value="Densité d'affichage" readonly>
+          <select id="cfg-densite" style="border:1px solid var(--trait);border-radius:8px;padding:8px;background:var(--carte);font-weight:600">
+            <option value="compact">Compact (plus de lignes à l'écran)</option>
+            <option value="normal">Normal</option>
+            <option value="confort">Confort (texte et boutons agrandis)</option>
+          </select></div>
+        <div class="ligne"><input class="lab" value="Devise" readonly>
+          <select id="cfg-devise" style="border:1px solid var(--trait);border-radius:8px;padding:8px;background:var(--carte);font-weight:600"></select></div>
+        <p class="note">« Automatique » suit le mode clair/sombre du téléphone. Le compte rendu PDF reste toujours clair.
+        Changer de devise ne convertit pas les montants : cela change le symbole et le format d'affichage.</p>
       </div>
     </div>
     <div class="carte">
@@ -600,6 +644,8 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
         <button class="btn ligne2" id="btn-export-json">⬇️ Exporter la sauvegarde (JSON)</button>
         <button class="btn ligne2 discret" id="btn-import-json">⬆️ Importer une sauvegarde (JSON)</button>
         <button class="btn ligne2 discret" id="btn-import-xlsx">📗 Importer depuis l'Excel (.xlsx)</button>
+        <button class="btn ligne2 discret" id="btn-demo">🎬 Charger un jeu de démonstration</button>
+        <button class="btn ligne2 discret" id="btn-export-csv">📊 Exporter les mois (CSV, pour tableur)</button>
         <input type="file" id="fic-json" accept="application/json" hidden>
         <input type="file" id="fic-xlsx" accept=".xlsx" hidden>
         <details class="aide"><summary>Comment ça marche ?</summary>
@@ -695,6 +741,27 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
     <button class="plus-tard" id="btn-rappel-plus-tard">Plus tard</button>
   </div>
 </div></div>
+<div id="voile-bienvenue"><div id="panneau-bienvenue">
+  <h2>👋 Bienvenue</h2>
+  <p class="intro">Trois questions pour configurer l'application à ta situation. Tout reste modifiable ensuite,
+  et rien ne quitte cet appareil.</p>
+  <label class="bv-champ"><span>Tes revenus mensuels nets (approximatifs)</span>
+    <input id="bv-revenus" inputmode="decimal" placeholder="ex. 2400"></label>
+  <label class="bv-champ"><span>Budget de vie courante (courses, sorties, imprévus)</span>
+    <input id="bv-enveloppe" inputmode="decimal" placeholder="ex. 800"></label>
+  <div class="bv-champ"><span>Quels comptes d'épargne possèdes-tu ?</span>
+    <div class="chips" id="bv-comptes"></div></div>
+  <div class="bv-champ"><span>Que veux-tu faire de ce qu'il te reste chaque mois ?</span>
+    <select id="bv-strategie">
+      <option value="secours">Constituer une épargne de sécurité (tout sur les livrets)</option>
+      <option value="equilibre" selected>Équilibrer épargne et investissement (moitié-moitié)</option>
+      <option value="investir">Investir en priorité (livrets pour le minimum)</option>
+    </select></div>
+  <div class="bv-boutons">
+    <button class="or" id="bv-valider">C'est parti</button>
+    <button class="discret" id="bv-passer">Configurer plus tard</button>
+  </div>
+</div></div>
 <div id="voile-info"><div id="panneau-info"><h4 id="info-titre"></h4><p id="info-texte"></p><button class="fermer" id="info-fermer">Compris</button></div></div>
 <button id="haut" aria-label="Revenir en haut">↑</button>
 <div id="voile-recherche"><div id="panneau-recherche">
@@ -721,6 +788,13 @@ function resoudreTheme(choix, systemeSombre){
   if (!choix || choix === 'auto') return systemeSombre ? 'sombre' : 'clair';
   return ['clair', 'sombre', 'foret', 'minuit'].includes(choix) ? choix : 'clair';
 }
+function appliquerDensite(d){
+  const v = ['compact', 'normal', 'confort'].includes(d) ? d : 'normal';
+  if (v === 'normal') document.documentElement.removeAttribute('data-densite');
+  else document.documentElement.setAttribute('data-densite', v);
+  try{ localStorage.setItem('bv4-densite', v); }catch(e){}
+}
+appliquerDensite((() => { try{ return localStorage.getItem('bv4-densite'); }catch(e){ return 'normal'; } })());
 function appliquerTheme(choix){
   const sombreSys = matchMedia('(prefers-color-scheme: dark)').matches;
   const t = resoudreTheme(choix, sombreSys);
@@ -852,6 +926,7 @@ const INFOS = {
   projection: ['Projection', "Trois scénarios construits à partir de ton allocation réelle par catégorie, à laquelle sont appliqués des taux annuels conventionnels (actions 2/6/9 %, obligations 1/3/4 %, crypto −50/+10/+40 %…). Le faisceau montre la zone probable plutôt qu'un trait illusoire : 10 % des trajectoires finissent sous la borne basse, 10 % au-dessus de la haute. À mesure que ton historique s'allonge, ton rendement réellement observé remplace progressivement la théorie. Ce sont des conventions de place, pas des prévisions."],
   cashcomptes: ['Cash dédié PEA / PER', "Une poche « → Cash PEA » ou « → Cash PER » met de l'argent de côté pour ces comptes, en plus de tes versements mensuels programmés (qui restent prélevés sur le budget du mois). Le cash PEA est consommé par tes achats directs PEA ; le cash PER par les versements exceptionnels que tu saisis ici. Si un achat PEA dépasse le cash dédié, le complément est pris sur le disponible général."],
   raccourci: ['Raccourci iOS / Android', "L'application peut enregistrer une dépense directement depuis une adresse : ?ajout=Boulangerie&montant=6 ajoute 6 € en dépenses libres du mois en cours, avec une confirmation à l'écran. Sur iPhone, l'app Raccourcis permet d'en faire un bouton d'écran d'accueil ou une commande Siri (« Dis Siri, ajoute une dépense »). Ajoute &cat=transport (ou une autre catégorie) pour changer la destination. L'adresse est nettoyée après enregistrement : recharger la page ne crée pas de doublon."],
+  tendances: ['Tendances du mois', "Chaque poste de dépense est comparé à sa moyenne des trois mois précédents, en tenant compte de la portion du mois déjà écoulée : au 10 du mois, on ne compare pas un mois complet à un tiers de mois. Seuls les écarts de plus de 25 % sont signalés, et les postes trop petits sont ignorés. C'est un repère, pas un jugement : un écart peut être parfaitement justifié (vacances, achat prévu, mois à cinq week-ends)."],
   transfert: ['Transférer de l\u2019argent', "Déplace une somme d'un compte vers un autre — Livret A vers LDDS quand le premier est plein, épargne vers le disponible à investir, cash vers le PEA ou le PER, ou sortie vers ton compte courant. L'opération est inscrite des deux côtés en une seule fois, avec un libellé miroir daté. Les contrôles sont automatiques : impossible de retirer plus que le solde, ni de dépasser le plafond du compte qui reçoit. Les raccourcis proposent les mouvements les plus utiles à ta situation du moment."],
   comptes: ['Comptes d\u2019épargne', "Ajoute ici tous les comptes que tu possèdes : Livret A, LDDS, LEP, Livret Jeune, PEL, CEL, compte à terme, livret bancaire, espèces… Les plafonds réglementaires sont pré-remplis et modifiables (ils changent au fil des années). Quand un compte atteint son plafond, la part de la répartition qui lui était destinée bascule automatiquement vers le compte de repli — pratique quand les livrets réglementés sont pleins."],
   projets: ['Projets', "Un projet (achat immobilier, voyage, véhicule…) crée sa propre poche d'épargne dans la répartition. Pour l'immobilier, renseigne le prix, les frais, le taux et la durée : l'app calcule l'emprunt nécessaire une fois l'apport déduit, et la mensualité correspondante. Ce sont des estimations hors assurance emprunteur — le taux réel dépend de ta banque et de ton dossier."],
@@ -868,13 +943,24 @@ function ouvrirInfo(cle){
   document.getElementById('voile-info').classList.add('vu');
 }
 document.addEventListener('click', e => {
+  if (e.target.id === 'toast-annuler'){ annulerDerniere(); return; }
+  if (e.target.id === 'btn-recharger'){ location.reload(); return; }
   const b = e.target.closest('[data-infocle]');
   if (b){ e.preventDefault(); ouvrirInfo(b.dataset.infocle); return; }
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '7.2.0';
+const APP_VERSION = '7.3.0';
 const CHANGELOG = [
+  {v: '7.3.0', d: '13/08/2026', pts: [
+    "Assistant de premier démarrage : trois questions configurent enveloppe, comptes et règle de répartition — l'application n'est plus vide à la première ouverture.",
+    "Mode démonstration : six mois fictifs cohérents pour explorer toutes les fonctions (ou montrer l'app) sans saisir ni exposer ses données.",
+    "Annulation : un bouton « Annuler » suit chaque suppression, ajout ou import.",
+    "Détection de doublon : une saisie identique déjà présente demande confirmation.",
+    "Devise configurable (€, CHF, $, £, DH, FCFA) et densité d'affichage (compact / normal / confort).",
+    "Tendances du mois sur l'Accueil : écarts marqués par rapport à la moyenne des trois derniers mois, au prorata du mois écoulé.",
+    "Export CSV des mois pour tableur, et import de sauvegarde vérifié avec aperçu du contenu et restauration si l'import échoue.",
+    "Notification quand une nouvelle version est prête, au lieu de rester sur une version en cache."]},
   {v: '7.2.0', d: '13/08/2026', pts: [
     "Transfert lisible d'un coup d'œil : blocs « l'argent part de » (liseré rouge) et « arrive sur » (liseré vert), bouton ⇅ pour inverser, et aperçu en direct des deux soldes avant → après.",
     "Le compte destinataire n'est plus identique à la source par défaut, et les erreurs (solde insuffisant, plafond atteint) s'affichent avant de valider, pas après.",
@@ -1106,8 +1192,27 @@ function migrer(){
 }
 
 /* ================= OUTILS ================= */
-const fmt = n => (n == null || isNaN(n)) ? '—' :
-  n.toLocaleString('fr-FR', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €';
+/* Devise et format : l'application n'est plus liée à l'euro ni à la France.
+   Le symbole s'affiche avant ou après le montant selon l'usage local. */
+const DEVISES = [
+  {code: 'EUR', sym: '€',   apres: true,  loc: 'fr-FR', nom: 'Euro (€)'},
+  {code: 'CHF', sym: 'CHF', apres: true,  loc: 'fr-CH', nom: 'Franc suisse (CHF)'},
+  {code: 'USD', sym: '$',   apres: false, loc: 'en-US', nom: 'Dollar US ($)'},
+  {code: 'CAD', sym: '$',   apres: true,  loc: 'fr-CA', nom: 'Dollar canadien ($)'},
+  {code: 'GBP', sym: '£',   apres: false, loc: 'en-GB', nom: 'Livre sterling (£)'},
+  {code: 'MAD', sym: 'DH',  apres: true,  loc: 'fr-MA', nom: 'Dirham marocain (DH)'},
+  {code: 'XOF', sym: 'FCFA', apres: true, loc: 'fr-FR', nom: 'Franc CFA (FCFA)'},
+];
+function devise(){
+  const code = (etat && etat.config && etat.config.devise) || 'EUR';
+  return DEVISES.find(d => d.code === code) || DEVISES[0];
+}
+const fmt = n => {
+  if (n == null || isNaN(n)) return '—';
+  const d = devise();
+  const v = n.toLocaleString(d.loc, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  return d.apres ? `${v} ${d.sym}` : `${d.sym}${v}`;
+};
 const fmtS = n => (n > 0 ? '+' : '') + fmt(n);
 const cls = n => n > 0.004 ? 'pos' : (n < -0.004 ? 'neg' : 'neutre');
 const arrondiSup = (n, d=2) => { // ROUNDUP Excel : s'éloigne de zéro
@@ -2202,6 +2307,37 @@ function carteProjection(){
 }
 
 
+/* ===== Tendances par catégorie =====
+   Compare le mois en cours à la moyenne des mois précédents et signale les
+   écarts marquants. Aide à repérer une dérive avant la fin du mois. */
+function tendances(cleMois, nbRef = 3){
+  const cles = clesMois().filter(k => k < cleMois && k <= cleAujourdhui()).slice(-nbRef);
+  if (!cles.length) return [];
+  const postes = [
+    ['tLibres', '🛒 Dépenses libres'], ['tTrans', '🚗 Transport'],
+    ['tAboO', '📱 Abo obligatoires'], ['tLoisirs', '🎮 Abo loisirs'],
+    ['tCharges', '🏠 Charges fixes'], ['tVac', '🏖️ Vacances'],
+  ];
+  const c = calculerMois(cleMois);
+  if (!c) return [];
+  // proportion du mois écoulée, pour comparer ce qui est comparable
+  const auj = new Date();
+  const partMois = cleMois === cleAujourdhui()
+    ? Math.max(0.15, auj.getDate() / joursDansMois(cleMois)) : 1;
+  const out = [];
+  for (const [champ, nom] of postes){
+    const moy = cles.reduce((s, k) => s + Math.abs(calculerMois(k)[champ] || 0), 0) / cles.length;
+    const reel = Math.abs(c[champ] || 0);
+    const attendu = moy * partMois;
+    if (moy < 20 && reel < 20) continue;            // trop petit pour être parlant
+    const ecart = attendu > 0 ? (reel - attendu) / attendu : (reel > 0 ? 1 : 0);
+    if (Math.abs(ecart) < 0.25) continue;           // moins de 25 % : bruit normal
+    out.push({nom, reel, moy, attendu, ecart, mois: cles.length,
+              partiel: partMois < 0.98});
+  }
+  return out.sort((a, b) => Math.abs(b.ecart) - Math.abs(a.ecart)).slice(0, 4);
+}
+
 /* ===== Recherche globale =====
    Parcourt toutes les lignes de tous les mois, les mouvements de comptes et les
    positions. Utile dès que l'historique dépasse quelques mois. */
@@ -2308,6 +2444,13 @@ function composeur(chemin, signe, exemple){
     <button class="btn or" data-cgo aria-label="Ajouter">＋</button>
   </div>`;
 }
+/* Deux saisies identiques le même jour sont presque toujours un double tap.
+   On demande confirmation plutôt que de créer la ligne en double en silence. */
+function doublonProbable(liste, label, montant){
+  const l = String(label).trim().toLowerCase();
+  return (liste || []).some(x => String(x.label).trim().toLowerCase() === l
+    && Math.abs((+x.montant || 0) - montant) < 0.005);
+}
 function ajouterViaComposeur(zone){
   const chemin = zone.dataset.comp, signe = zone.dataset.signe;
   const labEl = zone.querySelector('[data-cl]'), mntEl = zone.querySelector('[data-cm]');
@@ -2318,7 +2461,11 @@ function ajouterViaComposeur(zone){
   // « 12 » devient −12 dans une dépense, +12 dans une entrée
   const montant = +((signe === '-' ? (v > 0 ? -v : v) : (v < 0 ? -v : v))).toFixed(2);
   const ligne = {label, montant};
-  resoudre(chemin).push(ligne);
+  const liste = resoudre(chemin);
+  if (doublonProbable(liste, label, montant)
+      && !confirm(`« ${label} » ${fmt(montant)} figure déjà dans cette liste.\n\nL'ajouter une seconde fois ?`)) return;
+  memoriserPourAnnuler(`ajout de « ${label} »`);
+  liste.push(ligne);
   const parts = chemin.split('.');
   let sup = '';
   if (parts[0] === 'months'){
@@ -2392,6 +2539,18 @@ function rendreAccueil(){
   }
   document.getElementById('est-grille').innerHTML = g;
 
+  const tds = tendances(cleAujourdhui());
+  document.getElementById('tendances-corps').innerHTML = tds.length ? `
+    ${tds.map(t => `<div class="ligne">
+      <input class="lab" value="${echap(t.nom)}" readonly>
+      <span class="mnt ${t.ecart > 0 ? 'neg' : 'pos'}">${t.ecart > 0 ? '▲' : '▼'} ${Math.abs(t.ecart * 100).toFixed(0)} %</span>
+    </div>
+    <p class="note" style="margin:-2px 0 8px">${fmt(t.reel)} ${t.partiel ? 'à ce stade du mois' : 'ce mois-ci'}
+      · attendu ${fmt(t.attendu)} d'après la moyenne des ${t.mois} derniers mois (${fmt(t.moy)}/mois)</p>`).join('')}
+    ` : `<p class="note">Rien à signaler : tes postes de dépenses suivent leurs moyennes habituelles.
+      ${clesMois().filter(k => k < cleAujourdhui()).length < 2 ? ' (Il faut au moins deux mois d\u2019historique pour comparer.)' : ''}</p>`;
+  const bandeau = document.getElementById('statut-sync');
+  if (bandeau && etat.config.demo) bandeau.textContent = '🎬 Mode démonstration';
   document.getElementById('patri-total').textContent = fmt(liv.total + inv.total + avc.totalDispo);
   document.getElementById('patri-detail').innerHTML = `
     <div class="ligne"><input class="lab" value="💰 Livrets (A + LDDS)" readonly><span class="mnt" style="width:auto">${fmt(liv.total)}</span></div>
@@ -2897,6 +3056,12 @@ function rendreReglages(){
       })()}</span>
       <button class="sup" data-cptsup="${c.id}" aria-label="Supprimer">✕</button>
     </div>`).join('') || '<p class="note">Aucun compte — ajoute-en un ci-dessous.</p>';
+  const selDens = document.getElementById('cfg-densite');
+  if (selDens) selDens.value = (localStorage.getItem('bv4-densite') || 'normal');
+  const selDev = document.getElementById('cfg-devise');
+  if (selDev && !selDev.options.length)
+    selDev.innerHTML = DEVISES.map(d => `<option value="${d.code}">${d.nom}</option>`).join('');
+  if (selDev) selDev.value = etat.config.devise || 'EUR';
   const champURL = document.getElementById('raccourci-url');
   if (champURL) champURL.value = location.origin + location.pathname + '?ajout=INTITULÉ&montant=MONTANT';
   const selIA = document.getElementById('ia-etude');
@@ -2943,9 +3108,25 @@ function rendreTout(){
 }
 
 /* ================= INTERACTIONS ================= */
-function toast(msg){
+/* ===== Annulation =====
+   Une suppression ou un ajout accidentel se répare en un tap, sans passer par
+   une sauvegarde. On garde le dernier état complet en mémoire (pas sur disque). */
+let _annulation = null;
+function memoriserPourAnnuler(description){
+  _annulation = {description, etat: JSON.parse(JSON.stringify(etat)), quand: Date.now()};
+}
+function annulerDerniere(){
+  if (!_annulation) return toast('Rien à annuler');
+  etat = _annulation.etat;
+  const quoi = _annulation.description;
+  _annulation = null;
+  invaliderCalculs(); sauver(); rendreTout();
+  toast('↩️ Annulé : ' + quoi);
+}
+function toast(msg, annulable){
   const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('vu');
+  t.innerHTML = echap(msg) + (annulable ? ' <button id="toast-annuler">Annuler</button>' : '');
+  t.classList.add('vu');
   clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('vu'), 2400);
 }
 function pageActive(){ return document.querySelector('.page.actif').id.replace('page-', ''); }
@@ -3042,7 +3223,8 @@ document.querySelector('main').addEventListener('click', e => {
     resoudre(el.dataset.addch).push({label: '', montant: 0});
     sauver(); rafraichirPage();
   } else if (el.dataset.supch){
-    if (!confirm('Supprimer cette ligne ?')) return;
+    const apercu = resoudre(el.dataset.supch)[+el.dataset.i];
+    memoriserPourAnnuler(`suppression de « ${apercu && apercu.label ? apercu.label : 'la ligne'} »`);
     const chemin = el.dataset.supch.split('.');
     const [ligne] = resoudre(el.dataset.supch).splice(+el.dataset.i, 1);
     if (chemin[0] === 'months' && CATS_RECURRENTES.includes(chemin[2]) && ligne && ligne.label.trim() !== ''
@@ -3700,6 +3882,16 @@ document.getElementById('btn-rappel-plus-tard').onclick = () => {
   sauver();
   document.getElementById('voile-rappel').classList.remove('vu');
 };
+document.getElementById('cfg-densite').addEventListener('change', e => {
+  appliquerDensite(e.target.value);
+  etat.config.densite = e.target.value; sauver();
+  toast('Affichage : ' + e.target.selectedOptions[0].textContent.split(' (')[0]);
+});
+document.getElementById('cfg-devise').addEventListener('change', e => {
+  etat.config.devise = e.target.value;
+  sauver(); rendreTout();
+  toast('Devise : ' + devise().nom + ' — les montants ne sont pas convertis');
+});
 document.getElementById('cfg-theme').addEventListener('change', e => {
   etat.config.theme = e.target.value;
   appliquerTheme(e.target.value);
@@ -3725,17 +3917,77 @@ document.getElementById('pin-saisie').addEventListener('input', async e => {
   if (await hachagePIN(v, conf.sel) === conf.pin) ouvrirVerrou();
   else if (v.length >= 6){ document.getElementById('pin-err').textContent = 'Code incorrect'; e.target.value = ''; }
 });
+document.getElementById('btn-demo').onclick = () => {
+  if (!confirm("Charger six mois de données fictives pour explorer l'application ?\n\n"
+    + "Tes données actuelles seront remplacées — pense à les exporter avant si elles comptent.\n"
+    + "Un bouton « Annuler » apparaîtra juste après.")) return;
+  memoriserPourAnnuler('chargement de la démonstration');
+  etat = jeuDemo(); migrer(); invaliderCalculs(); sauver(); rendreTout();
+  toast('🎬 Démonstration chargée — explore librement', true);
+};
+document.getElementById('btn-export-csv').onclick = () => {
+  const blob = new Blob([moisEnCSV()], {type: 'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'budget-mois-' + jourISO() + '.csv';
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('📊 CSV exporté — ouvrable dans Excel, Numbers ou LibreOffice');
+};
 document.getElementById('btn-import-json').onclick = () => document.getElementById('fic-json').click();
+/* Contrôle d'une sauvegarde avant import : on décrit ce qu'elle contient et on
+   refuse proprement un fichier qui n'est pas une sauvegarde de l'application. */
+function verifierSauvegarde(data){
+  const pb = [];
+  if (!data || typeof data !== 'object') return {ok: false, pb: ['ce n\u2019est pas un fichier de sauvegarde']};
+  if (!data.months || typeof data.months !== 'object') pb.push('aucun mois');
+  if (!data.config) pb.push('aucun paramètre');
+  if (data.months && !Object.keys(data.months).every(k => /^\d{4}-\d{2}$/.test(k)))
+    pb.push('des mois ont un format inattendu');
+  if (pb.length) return {ok: false, pb};
+  const mois = Object.keys(data.months).sort();
+  const nbPositions = ['positionsTR', 'positionsPEA', 'positionsPER']
+    .reduce((s, k) => s + ((data.investissements || {})[k] || []).length, 0);
+  return {ok: true, pb: [],
+    resume: `${mois.length} mois (${mois[0]} → ${mois[mois.length - 1]})`
+      + `, ${(data.comptes || []).length || Object.keys(data.livrets || {}).length} compte(s)`
+      + `, ${nbPositions} position(s)`
+      + (data.historique ? `, ${data.historique.length} relevé(s)` : '')};
+}
 document.getElementById('fic-json').addEventListener('change', async e => {
   const f = e.target.files[0]; if (!f) return;
-  try{
-    const data = JSON.parse(await f.text());
-    if (!data.months || !data.config) throw new Error('structure inattendue');
-    if (!confirm('Remplacer toutes les données actuelles par cette sauvegarde ?')) return;
-    etat = data; migrer(); sauver(); rendreTout(); toast('Sauvegarde importée ✅');
-  }catch(err){ toast('Fichier illisible : ' + err.message); }
   e.target.value = '';
+  let data;
+  try{ data = JSON.parse(await f.text()); }
+  catch(err){ return toast('⚠️ Fichier illisible : ce n\u2019est pas un JSON valide'); }
+  const v = verifierSauvegarde(data);
+  if (!v.ok) return toast('⚠️ Sauvegarde invalide — ' + v.pb.join(', '));
+  if (!confirm(`Cette sauvegarde contient :\n${v.resume}\n\nElle remplacera toutes tes données actuelles.\n`
+    + `Un retour en arrière restera possible via « Annuler » juste après.\n\nContinuer ?`)) return;
+  memoriserPourAnnuler('import de sauvegarde');
+  const avant = JSON.parse(JSON.stringify(etat));
+  try{
+    etat = data; migrer(); invaliderCalculs(); sauver(); rendreTout();
+    toast('✅ Sauvegarde importée — ' + v.resume, true);
+  }catch(err){
+    etat = avant; migrer(); invaliderCalculs(); rendreTout();
+    toast('⚠️ Import annulé (' + err.message + ') — tes données sont intactes');
+  }
 });
+
+/* ===== 6) Export CSV : ouvrir ses mois dans un tableur ===== */
+function moisEnCSV(){
+  const sep = ';';   // Excel francophone
+  const lignes = [['Mois', 'Categorie', 'Libelle', 'Montant'].join(sep)];
+  const cats = {...LIBELLES_CATS};
+  for (const cle of clesMois())
+    for (const [cat, titre] of Object.entries(cats))
+      for (const it of (etat.months[cle][cat] || [])){
+        const lab = String(it.label || '').replace(/"/g, '""');
+        lignes.push([cle, titre.replace(/^\S+\s/, ''), `"${lab}"`,
+          String(+it.montant || 0).replace('.', ',')].join(sep));
+      }
+  return '\uFEFF' + lignes.join('\n');   // BOM : accents corrects dans Excel
+}
 function optionsIA(){
   return {etude: document.getElementById('ia-etude').value,
           anonyme: document.getElementById('ia-anonyme').checked,
@@ -4175,6 +4427,33 @@ function dossierIA(opts = {}){
   return L.join('\n');
 }
 
+/* Assistant de démarrage : n'apparaît qu'une fois, sur une application vierge */
+(function(){
+  const voile = document.getElementById('voile-bienvenue');
+  const choisis = new Set(['livretA']);
+  document.getElementById('bv-comptes').innerHTML = CATALOGUE_COMPTES
+    .filter(m => m.reglemente || m.modele === 'courant')
+    .map(m => `<button class="chip ${m.modele === 'livretA' ? 'choisi' : ''}" data-bvc="${m.modele}">${m.nom}</button>`).join('');
+  document.getElementById('bv-comptes').addEventListener('click', e => {
+    const b = e.target.closest('[data-bvc]'); if (!b) return;
+    const id = b.dataset.bvc;
+    if (choisis.has(id)) choisis.delete(id); else choisis.add(id);
+    b.classList.toggle('choisi');
+  });
+  document.getElementById('bv-passer').onclick = () => {
+    etat.config.bienvenueFaite = true; sauver(); voile.classList.remove('vu');
+    toast('Configuration disponible à tout moment dans Réglages');
+  };
+  document.getElementById('bv-valider').onclick = () => {
+    const r = appliquerBienvenue(
+      evalMontant(document.getElementById('bv-revenus').value),
+      evalMontant(document.getElementById('bv-enveloppe').value),
+      [...choisis], document.getElementById('bv-strategie').value);
+    sauver(); rendreTout(); voile.classList.remove('vu');
+    toast(`✅ Prêt : ${r.comptes} compte(s) et ${r.poches} poche(s) configurés`);
+  };
+})();
+
 /* Aperçu du transfert tenu à jour à chaque frappe ou changement de compte */
 document.addEventListener('input', e => {
   if (['tr-montant', 'tr-de', 'tr-vers'].includes(e.target.id)) majApercuTransfert();
@@ -4231,6 +4510,112 @@ document.addEventListener('change', e => {
   b.onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
 })();
 
+/* ===== Mode démonstration =====
+   Remplit l'application avec six mois cohérents et fictifs : on peut tout
+   essayer (projections, transferts, compte rendu) avant de saisir quoi que ce
+   soit — et le montrer à quelqu'un sans dévoiler ses propres finances. */
+function jeuDemo(){
+  const auj = new Date();
+  const cles = [];
+  for (let i = 5; i >= 0; i--){
+    const d = new Date(auj.getFullYear(), auj.getMonth() - i, 1);
+    cles.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+  }
+  const alea = (min, max) => +(min + Math.random() * (max - min)).toFixed(2);
+  const months = {};
+  cles.forEach((cle, i) => {
+    const m = moisVide();
+    m.entrees = [{label: '💼 Salaire', montant: 2450 + (i > 3 ? 90 : 0)}];
+    if (i === 2) m.entrees.push({label: '🎁 Cadeau anniversaire', montant: 120});
+    m.chargesFixes = [{label: 'Loyer', montant: -720}, {label: 'Électricité', montant: -68},
+                      {label: 'Assurance habitation', montant: -19}];
+    m.aboObligatoires = [{label: 'Forfait mobile', montant: -14.99}, {label: 'Internet', montant: -29.99},
+                         {label: 'Mutuelle', montant: -42}];
+    m.aboLoisirs = [{label: 'Musique', montant: -10.99}, {label: 'Salle de sport', montant: -29.90}];
+    m.transport = [{label: 'Carburant', montant: alea(-140, -70)}, {label: 'Abonnement transports', montant: -37}];
+    m.depensesLibres = [
+      {label: 'Courses', montant: alea(-320, -240)}, {label: 'Boulangerie', montant: alea(-28, -12)},
+      {label: 'Restaurant', montant: alea(-70, -25)}, {label: 'Pharmacie', montant: alea(-30, -9)},
+    ];
+    if (i === 1){ m.vacancesActives = true;
+      m.vacHotel = [{label: 'Hôtel bord de mer', montant: -380}];
+      m.vacAlim = [{label: 'Restaurants vacances', montant: -160}];
+      m.vacRemb = [{label: "Part d'un ami", montant: 190}]; }
+    m.trActions = [{label: 'Plan actions', montant: -100}];
+    m.trETF = [{label: 'Plan ETF Monde', montant: -150}];
+    m.invPEA = -100; m.invPER = -50;
+    months[cle] = m;
+  });
+  return {
+    config: {eurParJour: 30, resteInitial: 250, moisDebut: cles[0], enveloppeFixe: 900,
+             poches: [
+               {id: 'pla', nom: '🅰️ Livret A', mode: 'part', valeur: 0, cible: 'livretA'},
+               {id: 'pld', nom: '🏦 LDDS', mode: 'part', valeur: 0, cible: 'ldds'},
+               {id: 'pav', nom: '📈 À investir', mode: 'reste', valeur: 0, cible: 'av'},
+             ],
+             debordement: 'ldds', theme: 'auto', bienvenueFaite: true, demo: true,
+             horizonProjection: 20, chipsMasquees: [], triPositions: {}},
+    months,
+    comptes: [
+      {id: 'livretA', modele: 'livretA', nom: '🅰️ Livret A', plafond: 22950, taux: 1.7, initial: 4200, mouvements: []},
+      {id: 'ldds', modele: 'ldds', nom: '🏦 LDDS', plafond: 12000, taux: 1.7, initial: 1800, mouvements: []},
+    ],
+    investissements: {initiaux: {tr: 0, pea: 0, per: 0},
+      positionsTR: [
+        {type: 'ETFs', label: 'ETF Monde (démo)', nb: 12.5, pru: 92, prix: 104.30, symbole: 'manuel'},
+        {type: 'Actions', label: 'Action énergie (démo)', nb: 20, pru: 48, prix: 55.10, symbole: 'manuel'},
+        {type: 'Cryptos', label: 'Bitcoin (démo)', nb: 0.012, pru: 52000, prix: 61000, symbole: 'manuel'},
+        {type: 'Métaux / ETC', label: 'Or (démo)', nb: 3, pru: 210, prix: 232, symbole: 'manuel'},
+      ],
+      positionsPEA: [{type: 'Actions', label: 'Action industrie (démo)', nb: 15, pru: 130, prix: 141.20, symbole: 'manuel'}],
+      positionsPER: [{type: 'ETFs', label: 'Fonds retraite (démo)', nb: 8, pru: 118, prix: 124.50, symbole: 'manuel'}]},
+    achatVente: {initial: 0, sorties: [], txTR: [], txPEA: [], versPER: []},
+    historique: [], projets: [
+      {id: 'pjdemo', nom: 'Achat appartement', type: 'immo', prix: 210000, frais: 17000,
+       taux: 3.4, duree: 25, apportInitial: 8000, objectif: 45000}],
+  };
+}
+
+/* Assistant : propose une configuration cohérente à partir de trois réponses,
+   au lieu de laisser un nouvel utilisateur devant des réglages vides. */
+function appliquerBienvenue(revenus, enveloppe, comptesChoisis, strategie){
+  const env = Number(enveloppe) || 0;
+  if (env > 0){
+    etat.config.enveloppeFixe = +env.toFixed(2);
+    etat.config.eurParJour = +(env / 30).toFixed(2);
+  }
+  if (comptesChoisis.length){
+    etat.comptes = comptesChoisis.map(mod => {
+      const m = CATALOGUE_COMPTES.find(x => x.modele === mod);
+      return {id: mod, modele: mod, nom: m.nom, plafond: m.plafond, taux: m.taux,
+              initial: 0, mouvements: []};
+    });
+  }
+  // poches adaptées à l'objectif choisi
+  const c = etat.comptes.map(x => x.id);
+  const p = [];
+  if (strategie === 'secours'){
+    c.forEach((id, i) => p.push({id: 'p' + id, nom: etat.comptes[i].nom, mode: i === c.length - 1 ? 'reste' : 'part', valeur: 0, cible: id}));
+    if (!c.length) p.push({id: 'pav', nom: '📈 À investir', mode: 'reste', valeur: 0, cible: 'av'});
+  } else if (strategie === 'investir'){
+    c.forEach((id, i) => p.push({id: 'p' + id, nom: etat.comptes[i].nom, mode: 'pct', valeur: Math.round(30 / Math.max(1, c.length)), cible: id}));
+    p.push({id: 'pav', nom: '📈 À investir', mode: 'reste', valeur: 0, cible: 'av'});
+  } else {
+    c.forEach((id, i) => p.push({id: 'p' + id, nom: etat.comptes[i].nom, mode: 'part', valeur: 0, cible: id}));
+    p.push({id: 'pav', nom: '📈 À investir', mode: 'reste', valeur: 0, cible: 'av'});
+  }
+  etat.config.poches = p;
+  etat.config.debordement = c.length > 1 ? c[1] : 'av';
+  // un salaire pré-rempli dans le mois en cours : le premier mois n'est pas vide
+  const rev = Number(revenus) || 0;
+  const cle = cleAujourdhui();
+  if (rev > 0 && etat.months[cle] && !etat.months[cle].entrees.some(x => Math.abs(+x.montant || 0) > 0))
+    etat.months[cle].entrees.push({label: '💼 Revenus', montant: +rev.toFixed(2)});
+  etat.config.bienvenueFaite = true;
+  invaliderCalculs();
+  return {poches: p.length, comptes: c.length};
+}
+
 /* ===== Ajout par URL : socle des raccourcis iOS et des widgets =====
    Format : ...index.html?ajout=Boulangerie&montant=6[&cat=depensesLibres]
    Un raccourci Siri ouvre cette adresse : la dépense est enregistrée et
@@ -4272,6 +4657,9 @@ function traiterAjoutURL(){
   if (selTheme) selTheme.value = etat.config.theme || 'auto';
   rendreTout();
   if (traiterAjoutURL()) rendreTout();
+  // première ouverture, application vierge → assistant
+  if (!etat.config.bienvenueFaite && !clesMois().some(k => somme(etat.months[k].entrees) > 0))
+    document.getElementById('voile-bienvenue').classList.add('vu');
   if (doitRappelerSauvegarde(etat.config))
     document.getElementById('voile-rappel').classList.add('vu');
   // filet : si aucune page n'est active (état inattendu), afficher l'Accueil
@@ -4279,7 +4667,22 @@ function traiterAjoutURL(){
     document.getElementById('page-accueil').classList.add('actif');
   majStatut('prêt');
   if ('serviceWorker' in navigator){
-    try{ await navigator.serviceWorker.register('sw.js'); }catch(e){}
+    try{
+      const reg = await navigator.serviceWorker.register('sw.js');
+      // Une version plus récente est en attente : on prévient au lieu de laisser
+      // l'utilisateur avec une ancienne version en cache sans le savoir.
+      reg.addEventListener('updatefound', () => {
+        const sw = reg.installing;
+        if (!sw) return;
+        sw.addEventListener('statechange', () => {
+          if (sw.state === 'installed' && navigator.serviceWorker.controller){
+            const t = document.getElementById('statut-sync');
+            if (t) t.innerHTML = '🆕 Nouvelle version prête — <button id="btn-recharger">recharger</button>';
+          }
+        });
+      });
+      setInterval(() => reg.update().catch(() => {}), 60 * 60 * 1000);   // vérif horaire
+    }catch(e){}
   }
 })();
 </script>

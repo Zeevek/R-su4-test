@@ -9,6 +9,22 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v7.3.0 — 13/08/2026 — *ouvrir l'application à tout le monde*
+
+1. **Assistant de premier démarrage** — trois questions (revenus, budget de vie courante, comptes possédés, objectif) et l'application est configurée : enveloppe, comptes avec leurs plafonds, poches de répartition cohérentes avec la stratégie choisie (sécurité / équilibre / investissement), repli de plafond, et revenus pré-remplis dans le mois en cours. Fini l'écran vide avec des réglages hérités de quelqu'un d'autre.
+2. **Mode démonstration** — six mois fictifs mais cohérents (salaire, loyer, courses, un mois de vacances, plans d'épargne, portefeuille, projet immobilier). Permet de tout essayer avant de saisir quoi que ce soit, ou de montrer l'application sans dévoiler ses finances. Les positions sont en « prix manuel » : aucun appel réseau.
+3. **Annulation** — un bouton « Annuler » apparaît dans la confirmation après une suppression, un ajout ou un import. Plus besoin de ressaisir après une fausse manœuvre.
+4. **Détection de doublon** — saisir deux fois le même libellé au même montant dans la même liste demande confirmation, au lieu de créer silencieusement la ligne en double (double tap sur mobile).
+5. **Devise configurable** — euro, franc suisse, dollar US, dollar canadien, livre sterling, dirham, franc CFA : symbole, position et format numérique suivent. Les montants ne sont pas convertis, seul l'affichage change.
+6. **Densité d'affichage** — compact (plus de lignes à l'écran), normal, ou confort (texte et cibles agrandis) : confort de lecture sur grand écran comme accessibilité.
+7. **Tendances du mois** — sur l'Accueil, les postes qui s'écartent de plus de 25 % de leur moyenne des trois derniers mois, **au prorata du mois écoulé** (au 10 du mois, on ne compare pas un mois entier à un tiers de mois). Les petits montants sont ignorés pour éviter le bruit.
+8. **Export CSV** — tous les mois, toutes catégories, en un fichier ouvrable dans Excel, Numbers ou LibreOffice (séparateur point-virgule, virgule décimale, BOM pour les accents).
+9. **Import vérifié** — le fichier est contrôlé avant remplacement, son contenu est résumé (nombre de mois, période, comptes, positions), un fichier invalide est refusé avec une explication, et si l'import échoue en cours de route les données précédentes sont restaurées.
+10. **Notification de mise à jour** — quand une nouvelle version est déployée, un message « Nouvelle version prête — recharger » s'affiche, au lieu de laisser l'utilisateur sur une version en cache sans le savoir (vérification horaire).
+
+### Correction
+- Un bloc de code JavaScript avait été inséré **à l'intérieur de la feuille de style** lors d'une modification automatique : la fonction existait en double, dont une copie inerte au milieu du CSS. Supprimée, et une vérification « pas de JavaScript dans le CSS » est ajoutée aux contrôles.
+
 ## v7.2.0 — 13/08/2026
 ### Sens de circulation de l'argent enfin explicite
 La carte de transfert affichait deux menus identiques séparés d'une flèche : rien n'indiquait lequel était la source. Elle est repensée :
