@@ -9,6 +9,9 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v7.4.2 — 13/08/2026
+- **Import : données et affichage séparés.** La restauration de sécurité se déclenchait dès la moindre erreur, y compris quand celle-ci survenait au moment de **dessiner l'interface**, alors que les données importées étaient parfaitement valides — c'est ce qui s'est produit avec le bug de la 7.4.0 : l'import était annulé pour un problème d'affichage. L'opération est maintenant en deux temps : intégration et enregistrement des données d'abord, rendu ensuite. Un échec au premier temps restaure l'état précédent ; un échec au second conserve l'import et propose de recharger la page.
+
 ## v7.4.1 — 13/08/2026
 - **Correctif bloquant** : le bouton de pointage introduit en 7.4 référençait `it` au lieu de `item` dans la fonction qui construit **toutes** les lignes éditables. Conséquence : dès qu'une carte contenant des lignes devait s'afficher, le rendu s'interrompait — les pages Mois, Épargne et Achat-Vente apparaissaient vides, et le patrimoine restait à zéro. Une seule lettre, toute l'application paralysée.
 - **Méthode de vérification renforcée** : jusqu'ici les contrôles portaient sur la syntaxe, les identifiants et le moteur de calcul — aucun ne construisait réellement l'interface. Le rendu complet est désormais rejoué **dans un navigateur simulé** (jsdom) avec une vraie sauvegarde : navigation entre les six onglets, saisie d'une dépense, transfert, opération d'achat, repli de carte, pointage. C'est ce test qui a mis ce bug en évidence en quelques secondes.

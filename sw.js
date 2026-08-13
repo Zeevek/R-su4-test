@@ -1,5 +1,5 @@
 // Service Worker — Budget v4 (cache-first, offline total)
-const CACHE = 'budget-v4-r33';
+const CACHE = 'budget-v4-r34';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {

@@ -1032,8 +1032,10 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '7.4.1';
+const APP_VERSION = '7.4.2';
 const CHANGELOG = [
+  {v: '7.4.2', d: '13/08/2026', pts: [
+    "Import plus robuste : l'intégration des données et leur affichage sont désormais deux étapes distinctes. Un défaut d'affichage n'annule plus un import dont les données sont saines — elles restent enregistrées et l'application invite simplement à recharger."]},
   {v: '7.4.1', d: '13/08/2026', pts: [
     "Correctif bloquant : le bouton de pointage ajouté en 7.4 utilisait un nom de variable erroné, ce qui faisait échouer l'affichage de toute ligne éditable — les pages Mois, Épargne et Achat-Vente restaient donc vides ou figées.",
     "Vérification renforcée : le rendu complet de l'application est désormais rejoué dans un navigateur simulé avec un vrai jeu de données avant chaque livraison."]},
@@ -4374,12 +4376,22 @@ document.getElementById('fic-json').addEventListener('change', async e => {
     + `Un retour en arrière restera possible via « Annuler » juste après.\n\nContinuer ?`)) return;
   memoriserPourAnnuler('import de sauvegarde');
   const avant = JSON.parse(JSON.stringify(etat));
+  // Deux étapes distinctes : intégrer les données, puis les afficher. Un défaut
+  // d'affichage ne doit pas faire perdre un import dont les données sont saines.
   try{
-    etat = data; migrer(); invaliderCalculs(); sauver(); rendreTout();
+    etat = data; migrer(); invaliderCalculs(); sauver();
+  }catch(err){
+    etat = avant; migrer(); invaliderCalculs();
+    try{ rendreTout(); }catch(e2){}
+    return toast('⚠️ Import impossible (' + err.message + ') — tes données sont intactes');
+  }
+  try{
+    rendreTout();
     toast('✅ Sauvegarde importée — ' + v.resume, true);
   }catch(err){
-    etat = avant; migrer(); invaliderCalculs(); rendreTout();
-    toast('⚠️ Import annulé (' + err.message + ') — tes données sont intactes');
+    // Les données sont en place et enregistrées : on le dit, et on invite à recharger
+    // plutôt que de tout annuler pour un problème d'affichage.
+    toast('✅ Données importées, mais l\u2019affichage a échoué (' + err.message + ') — recharge la page', true);
   }
 });
 
