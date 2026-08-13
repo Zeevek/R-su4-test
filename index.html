@@ -224,6 +224,17 @@ details.aide summary{cursor:pointer;font-weight:600;color:var(--laiton)}
 .saisie-rapide button{flex:none;padding:9px 14px}
 .sel-rapide{width:100%;margin-top:6px;border:1px solid var(--trait);border-radius:9px;padding:9px 10px;
   background:var(--carte);color:var(--encre);font-weight:600;font-size:13px}
+.transfert{display:grid;grid-template-columns:1fr;gap:4px;align-items:center}
+.transfert select{border:1px solid var(--trait);border-radius:9px;padding:10px;background:var(--carte);
+  font-weight:600;font-size:13px;width:100%}
+.transfert .fleche{text-align:center;color:var(--laiton);font-size:16px;font-weight:800;line-height:1}
+.bascule{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:14px;font-weight:600;cursor:pointer}
+.bascule input{width:44px;height:26px;-webkit-appearance:none;appearance:none;background:var(--trait);
+  border-radius:99px;position:relative;transition:background .18s ease;flex:none}
+.bascule input::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .18s ease}
+.bascule input:checked{background:var(--laiton)}
+.bascule input:checked::after{transform:translateX(18px)}
 .jauge{height:7px;border-radius:99px;background:var(--trait);overflow:hidden}
 .jauge-barre{height:100%;background:linear-gradient(90deg,var(--laiton),var(--laiton-clair));border-radius:99px}
 .jauge-barre.pleine{background:linear-gradient(90deg,var(--vert),#7FC5A3)}
@@ -290,6 +301,24 @@ nav button{min-height:48px}
   .ligne{padding:7px 0}
   .ligne .sup, .chip{min-height:34px}
 }
+
+/* ===== Recherche globale ===== */
+#btn-recherche{margin-left:auto;background:rgba(255,255,255,.12);color:var(--entete-texte);
+  width:34px;height:34px;border-radius:9px;font-size:15px;flex:none}
+#voile-recherche{position:fixed;inset:0;background:rgba(30,36,48,.55);z-index:90;display:none;
+  align-items:flex-start;justify-content:center;padding:14px}
+#voile-recherche.vu{display:flex}
+#panneau-recherche{background:var(--papier);border-radius:14px;max-width:560px;width:100%;
+  max-height:82vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.rech-tete{display:flex;gap:8px;padding:12px;background:var(--carte);border-bottom:1px solid var(--trait)}
+.rech-tete input{flex:1;border:1px solid var(--trait);border-radius:9px;padding:10px;background:var(--papier);color:var(--encre)}
+.rech-tete button{width:38px;border-radius:9px;background:var(--trait);color:var(--encre)}
+#rech-resultats{overflow-y:auto;padding:6px 12px 14px}
+.rech-item{display:flex;gap:10px;align-items:baseline;padding:9px 4px;border-bottom:1px dashed var(--trait);font-size:13px}
+.rech-item .lab{flex:1;min-width:0;font-weight:600;color:var(--encre)}
+.rech-item .meta{font-size:11px;color:var(--encre2);white-space:nowrap}
+.rech-item .mt{font-weight:700;white-space:nowrap}
+.rech-total{padding:10px 4px;font-size:12px;color:var(--encre2);border-top:2px solid var(--trait);margin-top:4px}
 
 /* ===== Retour en haut (pages longues) ===== */
 #haut{position:fixed;right:14px;bottom:calc(70px + env(safe-area-inset-bottom));z-index:40;
@@ -366,6 +395,7 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
 <body>
 <header>
   <div class="titre">📒 Budget Personnel<small id="ver">·</small></div>
+  <button id="btn-recherche" aria-label="Rechercher">🔍</button>
   <div class="statut" id="statut-sync">—</div>
 </header>
 
@@ -630,6 +660,13 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
 </div></div>
 <div id="voile-info"><div id="panneau-info"><h4 id="info-titre"></h4><p id="info-texte"></p><button class="fermer" id="info-fermer">Compris</button></div></div>
 <button id="haut" aria-label="Revenir en haut">↑</button>
+<div id="voile-recherche"><div id="panneau-recherche">
+  <div class="rech-tete">
+    <input id="rech-champ" placeholder="Rechercher un libellé, une position…" autocomplete="off" autocapitalize="off">
+    <button id="rech-fermer" aria-label="Fermer">✕</button>
+  </div>
+  <div id="rech-resultats"></div>
+</div></div>
 <div id="toast"></div>
 <datalist id="dl-suggestions"></datalist>
 <div id="rapport"></div>
@@ -777,6 +814,7 @@ const INFOS = {
   perfreelle: ['Performance réelle (TRI / TWR)', "Deux façons de mesurer, calculées sans aucune saisie : le TRI est le taux annuel que ton argent a réellement rapporté compte tenu du calendrier de tes versements — c'est ta performance à toi. Le TWR neutralise l'effet des versements : c'est celui qu'on compare à un indice. Si le TRI dépasse le TWR, tes versements sont tombés à de bons moments. Il faut au moins deux mois enregistrés, et une dizaine pour que ce soit parlant."],
   projection: ['Projection', "Trois scénarios construits à partir de ton allocation réelle par catégorie, à laquelle sont appliqués des taux annuels conventionnels (actions 2/6/9 %, obligations 1/3/4 %, crypto −50/+10/+40 %…). Le faisceau montre la zone probable plutôt qu'un trait illusoire : 10 % des trajectoires finissent sous la borne basse, 10 % au-dessus de la haute. À mesure que ton historique s'allonge, ton rendement réellement observé remplace progressivement la théorie. Ce sont des conventions de place, pas des prévisions."],
   cashcomptes: ['Cash dédié PEA / PER', "Une poche « → Cash PEA » ou « → Cash PER » met de l'argent de côté pour ces comptes, en plus de tes versements mensuels programmés (qui restent prélevés sur le budget du mois). Le cash PEA est consommé par tes achats directs PEA ; le cash PER par les versements exceptionnels que tu saisis ici. Si un achat PEA dépasse le cash dédié, le complément est pris sur le disponible général."],
+  transfert: ['Transférer de l\u2019argent', "Déplace une somme d'un compte vers un autre — Livret A vers LDDS quand le premier est plein, épargne vers le disponible à investir, cash vers le PEA ou le PER, ou sortie vers ton compte courant. L'opération est inscrite des deux côtés en une seule fois, avec un libellé miroir daté. Les contrôles sont automatiques : impossible de retirer plus que le solde, ni de dépasser le plafond du compte qui reçoit. Les raccourcis proposent les mouvements les plus utiles à ta situation du moment."],
   comptes: ['Comptes d\u2019épargne', "Ajoute ici tous les comptes que tu possèdes : Livret A, LDDS, LEP, Livret Jeune, PEL, CEL, compte à terme, livret bancaire, espèces… Les plafonds réglementaires sont pré-remplis et modifiables (ils changent au fil des années). Quand un compte atteint son plafond, la part de la répartition qui lui était destinée bascule automatiquement vers le compte de repli — pratique quand les livrets réglementés sont pleins."],
   projets: ['Projets', "Un projet (achat immobilier, voyage, véhicule…) crée sa propre poche d'épargne dans la répartition. Pour l'immobilier, renseigne le prix, les frais, le taux et la durée : l'app calcule l'emprunt nécessaire une fois l'apport déduit, et la mensualité correspondante. Ce sont des estimations hors assurance emprunteur — le taux réel dépend de ta banque et de ton dossier."],
   dossierIA: ['Dossier pour une IA', "Génère un document Markdown avec ta situation patrimoniale, tes flux mensuels, ta règle de répartition, ton portefeuille et tes projets, suivi d'une question adaptée à l'angle choisi. Tu peux le télécharger ou le copier, puis le donner à ChatGPT, Claude ou Gemini. L'option « anonymiser » ne garde que des totaux, sans libellé de dépense ni nom de position — utile avant de partager avec un service tiers."],
@@ -797,8 +835,14 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '6.1.0';
+const APP_VERSION = '7.0.0';
 const CHANGELOG = [
+  {v: '7.0.0', d: '01/08/2026', pts: [
+    "Mise à jour des cours 7 à 8 fois plus rapide : requêtes par lots de 6 en parallèle, relais réseau mémorisé (l'appel direct bloqué n'est plus retenté à chaque ligne) et un seul appel par devise. Le temps écoulé est affiché.",
+    "Transferts entre comptes : carte dédiée en tête de la page Épargne — Livret A vers LDDS, épargne vers investissement, cash PEA/PER, sortie vers l'extérieur. Écriture des deux côtés en une fois, contrôle du solde et du plafond, raccourcis adaptés à ta situation.",
+    "Budget vacances activable par mois : décoché, les six cartes de détail disparaissent de la page Mois. Les montants déjà saisis restent comptés.",
+    "Recherche globale (🔍 dans l'en-tête) : retrouve un libellé dans tous les mois, les mouvements de comptes et les positions ; un tap ouvre le mois concerné.",
+    "Correction importante : une « sortie » du disponible à investir l'augmentait au lieu de le diminuer. Le montant signé s'ajoute désormais au solde, comme partout ailleurs."]},
   {v: '6.1.0', d: '01/08/2026', pts: [
     "Cartes repliables : un tap sur l'en-tête d'une carte replie ou déplie son contenu, le total restant visible. Le choix est mémorisé — les pages Mois et Réglages tiennent enfin dans un écran ou deux.",
     "Bouton ↑ de retour en haut sur les pages longues.",
@@ -1203,6 +1247,66 @@ function appliquerPlafonds(cleMois, repartition){
   }
   return out;
 }
+/* ===== Transferts entre poches d'argent =====
+   Une même opération est écrite des deux côtés (sortie ici, entrée là), avec un
+   libellé miroir, pour que les soldes restent cohérents sans double saisie. */
+function destinationsTransfert(){
+  return [
+    ...comptesActifs().map(c => ({id: c.id, nom: c.nom, type: 'compte'})),
+    {id: 'av', nom: '💵 Disponible à investir (TR)', type: 'av'},
+    {id: 'pea', nom: '📈 Cash PEA', type: 'pea'},
+    {id: 'per', nom: '🛡️ Cash PER', type: 'per'},
+    {id: 'externe', nom: '🏦 Compte courant / extérieur', type: 'externe'},
+  ];
+}
+function soldeDisponible(id){
+  const c = compteParId(id);
+  if (c){
+    const l = calculerComptes().lignes.find(x => x.id === id);
+    return l ? l.solde : 0;
+  }
+  const a = calculerAchatVente();
+  if (id === 'av') return a.dispo;
+  if (id === 'pea') return a.dispoPEA;
+  if (id === 'per') return a.dispoPER;
+  return null;   // extérieur : pas de solde suivi
+}
+function ecrireMouvement(id, montant, libelle){
+  const c = compteParId(id);
+  if (c){ c.mouvements.push({label: libelle, montant: +montant.toFixed(2)}); return true; }
+  if (id === 'av'){ etat.achatVente.sorties.push({label: libelle, montant: +montant.toFixed(2)}); return true; }
+  if (id === 'per'){ etat.achatVente.versPER.push({label: libelle, montant: +montant.toFixed(2)}); return true; }
+  if (id === 'pea'){   // le cash PEA se consomme par un achat direct
+    etat.achatVente.txPEA.push({date: jourISO(), sens: montant < 0 ? 'Achat' : 'Vente',
+      type: 'Transfert', label: libelle, montant: Math.abs(+montant.toFixed(2))});
+    return true;
+  }
+  return id === 'externe';   // extérieur : rien à écrire, l'argent quitte le suivi
+}
+function transferer(deId, versId, montant, note){
+  const m = Math.abs(+montant);
+  if (!(m > 0.004)) return {ok: false, msg: 'Montant invalide'};
+  if (deId === versId) return {ok: false, msg: 'Choisis deux comptes différents'};
+  const noms = Object.fromEntries(destinationsTransfert().map(d => [d.id, d.nom]));
+  const dispo = soldeDisponible(deId);
+  if (dispo != null && m > dispo + 0.004)
+    return {ok: false, msg: `Solde insuffisant : ${fmt(dispo)} disponible sur ${noms[deId]}`};
+  // plafond de la destination
+  const cDest = compteParId(versId);
+  if (cDest && cDest.plafond != null){
+    const l = calculerComptes().lignes.find(x => x.id === versId);
+    const place = Math.max(0, cDest.plafond - (l ? l.solde : 0));
+    if (m > place + 0.004)
+      return {ok: false, msg: place < 0.01 ? `${noms[versId]} est déjà au plafond`
+        : `${noms[versId]} ne peut recevoir que ${fmt(place)} (plafond)`};
+  }
+  const suffixe = note ? ' — ' + note : '';
+  const dateTxt = new Date().toLocaleDateString('fr-FR');
+  ecrireMouvement(deId, -m, `➡️ Vers ${noms[versId]} (${dateTxt})${suffixe}`);
+  ecrireMouvement(versId, m, `⬅️ De ${noms[deId]} (${dateTxt})${suffixe}`);
+  return {ok: true, msg: `${fmt(m)} transféré de ${noms[deId]} vers ${noms[versId]}`};
+}
+
 /* Situation de chaque compte : solde, plafond, place restante */
 function calculerComptes(){
   const cr = cumulsRepartition();
@@ -1346,7 +1450,9 @@ function calculerAchatVente(){
   const versPER = somme(av.versPER || []);
   const soldePER = cr.cashPER + versPER;
   const dispoPER = Math.max(0, soldePER), deficitPER = Math.min(0, soldePER);
-  const dispo = (Number(av.initial) || 0) + cr.inv - somme(av.sorties) - netTR + deficitPEA + deficitPER;
+  // av.sorties : montants signés (négatif = sortie, positif = entrée), cohérent
+  // avec le reste de l'application où une dépense est négative.
+  const dispo = (Number(av.initial) || 0) + cr.inv + somme(av.sorties) - netTR + deficitPEA + deficitPER;
   return {dispo, dispoPEA, dispoPER, cashPEA: cr.cashPEA, cashPER: cr.cashPER,
           netTR, netPEA, versPER, cumulEpargne: cr.inv,
           totalDispo: dispo + dispoPEA + dispoPER};
@@ -1630,17 +1736,26 @@ function prixDepuisChart(d){
   // casse préservée : 'GBp' (pence) et 'GBP' (livres) ne diffèrent que par elle
   return {prix: meta.regularMarketPrice, devise: String(meta.currency || '')};
 }
+/* Relais mémorisé : sur GitHub Pages l'appel direct à Yahoo est bloqué par CORS.
+   Sans mémorisation, chaque position perdait un aller-retour à essayer le direct.
+   On retient donc le premier relais qui répond et on commence par lui ensuite. */
+let _relaiPrefere = 0;
+const RELAIS = [
+  u => u,
+  u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
+  u => 'https://corsproxy.io/?url=' + encodeURIComponent(u),
+];
 async function recupJSON(url){
-  const essais = [url,
-    'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
-    'https://corsproxy.io/?url=' + encodeURIComponent(url)];
-  for (const u of essais){
+  const ordre = [_relaiPrefere, ...RELAIS.map((_, i) => i).filter(i => i !== _relaiPrefere)];
+  let derniere = null;
+  for (const i of ordre){
     try{
-      const r = await fetch(u, {cache: 'no-store'});
-      if (r.ok) return await r.json();
-    }catch(e){ /* essai suivant */ }
+      const r = await fetch(RELAIS[i](url), {cache: 'no-store'});
+      if (r.ok){ _relaiPrefere = i; return await r.json(); }
+      derniere = new Error('HTTP ' + r.status);
+    }catch(e){ derniere = e; }
   }
-  throw new Error('réseau inaccessible');
+  throw derniere || new Error('réseau inaccessible');
 }
 /* Codes marqués « prix manuel » : la position est volontairement exclue de la
    mise à jour automatique (fonds non cotés, private equity, immobilier…). */
@@ -1706,50 +1821,64 @@ async function mettreAJourCours(){
   if (!avec.length) return toast('Renseigne d\u2019abord un ISIN ou un ticker dans la colonne 🔗');
   btn.disabled = true;
   const run = Date.now();
-  let maj = 0, convertis = 0;
+  const t0 = performance.now();
+  let maj = 0, convertis = 0, faits = 0;
   const echecs = [], taux = {}, devisesRatees = new Set();
   const nomDe = p => (p.symbole || '').trim() || p.label || '?';
-  try{
-    for (let i = 0; i < avec.length; i++){
-      const p = avec[i];
-      btn.textContent = `⏳ ${i + 1}/${avec.length} — ${nomDe(p).slice(0, 20)}…`;
-      try{
-        const sym = await resoudreSymbole(p.symbole);
-        if (!sym) {
-          echecs.push(nomDe(p) + ' : introuvable — essaie le ticker de la place (ex. SGLN.L, TSM) ou inscris « manuel »');
-          continue;
-        }
-        if (sym !== p.symbole.trim().toUpperCase()) p.symbole = sym;   // mémorise le symbole résolu
-        const c = await coursSymbole(sym);
-        if (!c) {
-          echecs.push(nomDe(p) + ' : pas de cours' + (estCodeCrypto(p.symbole) ? ` — essaie ${String(p.symbole).toUpperCase()}-EUR` : ''));
-          continue;
-        }
-        const {code} = normaliserDevise(c.devise);
-        // taux récupéré une seule fois par devise, à la volée
-        if (code && code !== 'EUR' && taux[code] == null && !devisesRatees.has(code)){
-          btn.textContent = `💱 taux ${code}→EUR…`;
-          const t = await tauxVersEuro(code);
-          if (t) taux[code] = t; else devisesRatees.add(code);
-        }
-        const conv = convertirEnEuro(c.prix, c.devise, taux);
-        if (!conv) { echecs.push(nomDe(p) + ' : taux ' + code + ' indisponible'); continue; }
-        p.prix = +conv.montant.toFixed(4);
-        p.majAuto = run;                     // trace de la dernière mise à jour réussie
-        maj++; if (conv.converti) convertis++;
-        await new Promise(res => setTimeout(res, 120));   // on reste courtois avec l'API
-      }catch(e){ echecs.push(nomDe(p) + ' : ' + (e.message || 'erreur')); }
+  const LOT = 6;              // requêtes simultanées : rapide sans saturer l'API
+
+  /* Un seul appel par devise, partagé entre toutes les positions du lot */
+  const tauxEnCours = {};
+  async function tauxPour(code){
+    if (!code || code === 'EUR') return 1;
+    if (taux[code] != null) return taux[code];
+    if (devisesRatees.has(code)) return null;
+    if (!tauxEnCours[code]) tauxEnCours[code] = tauxVersEuro(code).then(t => {
+      if (t) taux[code] = t; else devisesRatees.add(code);
+      return t;
+    }).catch(() => { devisesRatees.add(code); return null; });
+    return tauxEnCours[code];
+  }
+  async function traiter(p){
+    try{
+      const sym = await resoudreSymbole(p.symbole);
+      if (!sym){
+        echecs.push(nomDe(p) + ' : introuvable — essaie le ticker de la place (ex. SGLN.L, TSM) ou inscris « manuel »');
+        return;
+      }
+      if (sym !== p.symbole.trim().toUpperCase()) p.symbole = sym;   // mémorise le symbole résolu
+      const c = await coursSymbole(sym);
+      if (!c){
+        echecs.push(nomDe(p) + ' : pas de cours' + (estCodeCrypto(p.symbole) ? ` — essaie ${String(p.symbole).toUpperCase()}-EUR` : ''));
+        return;
+      }
+      const {code} = normaliserDevise(c.devise);
+      await tauxPour(code);
+      const conv = convertirEnEuro(c.prix, c.devise, taux);
+      if (!conv){ echecs.push(nomDe(p) + ' : taux ' + code + ' indisponible'); return; }
+      p.prix = +conv.montant.toFixed(4);
+      p.majAuto = run;
+      maj++; if (conv.converti) convertis++;
+    }catch(e){ echecs.push(nomDe(p) + ' : ' + (e.message || 'erreur')); }
+    finally {
+      faits++;
+      btn.textContent = `⏳ ${faits}/${avec.length}…`;
     }
+  }
+  try{
+    for (let i = 0; i < avec.length; i += LOT)
+      await Promise.all(avec.slice(i, i + LOT).map(traiter));
   } finally {
     btn.disabled = false;
     btn.textContent = '🔄 Mettre à jour les cours';
   }
+  const secondes = Math.max(1, Math.round((performance.now() - t0) / 1000));
   etat.config.tauxChange = {date: run, taux};
   etat.config.derniereMajCours = run;
   sauver(); rendreInvest();
   const sans = positions.length - avec.length;
   const devises = Object.keys(taux);
-  let msg = `📈 ${maj} cours mis à jour`;
+  let msg = `📈 ${maj} cours en ${secondes} s`;
   if (convertis) msg += ` (${convertis} converti${convertis > 1 ? 's' : ''} en EUR, taux du jour)`;
   if (echecs.length) msg += ` — ${echecs.length} échec${echecs.length > 1 ? 's' : ''}`;
   if (sans) msg += ` — ${sans} sans ticker`;
@@ -1975,6 +2104,55 @@ function carteProjection(){
 }
 
 
+/* ===== Recherche globale =====
+   Parcourt toutes les lignes de tous les mois, les mouvements de comptes et les
+   positions. Utile dès que l'historique dépasse quelques mois. */
+const LIBELLES_CATS = {
+  entrees: '💵 Entrées', chargesFixes: '🏠 Charges fixes', aboObligatoires: '📱 Abo obligatoires',
+  aboLoisirs: '🎮 Abo loisirs', echelonnes: '💳 Échelonnés', transport: '🚗 Transport',
+  depensesLibres: '🛒 Dépenses libres', remboursements: '💵 Remboursements',
+  vacHotel: '🏨 Vacances hôtel', vacTransport: '✈️ Vacances transport', vacAlim: '🍽️ Vacances repas',
+  vacLoisirs: '🎢 Vacances loisirs', vacAutres: '📦 Vacances autres', vacRemb: '💶 Vacances remb.',
+  trActions: '📈 TR actions', trETF: '📈 TR ETF', trMetaux: '📈 TR métaux',
+  trCrypto: '📈 TR crypto', trPE: '📈 TR private equity',
+};
+function normaliserTexte(s){
+  return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+function rechercher(terme, max = 60){
+  const q = normaliserTexte(terme).trim();
+  if (q.length < 2) return [];
+  const res = [];
+  for (const cle of clesMois().slice().reverse()){
+    const m = etat.months[cle];
+    for (const [cat, titre] of Object.entries(LIBELLES_CATS))
+      for (const it of (m[cat] || []))
+        if (normaliserTexte(it.label).includes(q))
+          res.push({ou: libelleMois(cle), quoi: titre, label: it.label, montant: +it.montant || 0, page: 'mois', cle});
+  }
+  for (const c of comptesActifs())
+    for (const it of (c.mouvements || []))
+      if (normaliserTexte(it.label).includes(q))
+        res.push({ou: c.nom, quoi: '🏦 Mouvement', label: it.label, montant: +it.montant || 0, page: 'livrets'});
+  for (const [compte, nom] of [['positionsTR', '🏦 Trade Republic'], ['positionsPEA', '📈 PEA'], ['positionsPER', '🛡️ PER']])
+    for (const p of (etat.investissements[compte] || []))
+      if (normaliserTexte(p.label).includes(q) || normaliserTexte(p.symbole).includes(q))
+        res.push({ou: nom, quoi: '📊 Position', label: p.label,
+                  montant: (+p.nb || 0) * (+p.prix || 0), page: 'invest'});
+  return res.slice(0, max);
+}
+function totalRecherche(resultats){ return resultats.reduce((s, r) => s + r.montant, 0); }
+
+/* Le bloc vacances n'apparaît que s'il est activé pour ce mois — ou si des
+   montants y figurent déjà (on ne masque jamais des données saisies). */
+function vacancesActives(cle){
+  const m = etat.months[cle];
+  if (!m) return false;
+  if (m.vacancesActives != null) return !!m.vacancesActives;
+  return ['vacHotel','vacTransport','vacAlim','vacLoisirs','vacAutres','vacRemb']
+    .some(k => (m[k] || []).some(x => Math.abs(+x.montant || 0) > 0.004));
+}
+
 /* ===== Cartes repliables (mémorisé d'une session à l'autre) =====
    L'état est retenu par titre de carte : les cartes sont recréées à chaque
    rendu, un identifiant stable est donc nécessaire. */
@@ -2180,13 +2358,22 @@ function rendreMois(){
         ${m.depensesLibres.map((it, i) => ligneEditable(P + 'depensesLibres', it, i)).reverse().join('') || '<p class="note">Aucune dépense libre ce mois-ci.</p>'}
       </div></div>
     ${carteListe('💵 Remboursements / entrées', P + 'remboursements', m.remboursements, {signe:'+'})}
-    <div class="carte"><div class="tete"><h3>🏖️ Vacances</h3><div class="tot ${cls(totVacBloc)}">${fmt(totVacBloc)}</div></div><div class="corps"><p class="note">Détail ci-dessous — inclus dans l'enveloppe, hors « Total sorties » (comme le classeur).</p></div></div>
+    <div class="carte"><div class="tete"><h3>🏖️ Vacances</h3>
+      <div class="tot ${cls(totVacBloc)}">${vacancesActives(moisActif) ? fmt(totVacBloc) : ''}</div></div>
+      <div class="corps">
+        <label class="bascule"><input type="checkbox" id="vac-actif" ${vacancesActives(moisActif) ? 'checked' : ''}>
+          <span>Budget vacances ce mois-ci</span></label>
+        <p class="note">${vacancesActives(moisActif)
+          ? "Détail ci-dessous — inclus dans l'enveloppe, hors « Total sorties » (comme le classeur)."
+          : "Décoché : les six cartes de détail sont masquées. Elles réapparaissent avec leurs montants si tu recoches."}</p>
+      </div></div>
+    ${vacancesActives(moisActif) ? `
     ${carteListe('🏨 Vacances · Hôtel / Airbnb', P + 'vacHotel', m.vacHotel)}
     ${carteListe('✈️ Vacances · Transport', P + 'vacTransport', m.vacTransport)}
     ${carteListe('🍽️ Vacances · Alimentation', P + 'vacAlim', m.vacAlim)}
     ${carteListe('🎢 Vacances · Loisirs', P + 'vacLoisirs', m.vacLoisirs)}
     ${carteListe('📦 Vacances · Autres', P + 'vacAutres', m.vacAutres)}
-    ${carteListe('💶 Vacances · Remboursements reçus', P + 'vacRemb', m.vacRemb, {signe: '+', exemple: 'Part de Léa (hôtel)'})}
+    ${carteListe('💶 Vacances · Remboursements reçus', P + 'vacRemb', m.vacRemb, {signe: '+', exemple: 'Part de Léa (hôtel)'})}` : ''}
     <div class="sep"></div>
     <div class="carte"><div class="tete"><h3>📈 Détail Trade Republic</h3>${infoBtn('recurrents')}<div class="tot neg">${fmt(detTR)}</div></div>
       <div class="corps"><p class="note">Plans d'épargne du mois — astuce : tape « -8*4 » pour 4 semaines à 8 €.</p></div></div>
@@ -2252,8 +2439,43 @@ function rendreLivrets(){
       <div class="corps">${lignesSuivi.map(x => `<div class="ligne"><input class="lab" value="${echap(x.nom)}" readonly><span class="mnt ${cls(x.cum)}">${fmt(x.cum)}</span></div>`).join('')}
       <p class="note">Cumul depuis le premier mois — se remplit via les poches de répartition « → Suivi ».</p></div></div>` : '';
 
+  const dests = destinationsTransfert();
+  const opts = (sel) => dests.map(d => {
+    const s = soldeDisponible(d.id);
+    return `<option value="${d.id}">${d.nom}${s != null ? ` — ${fmt(s)}` : ''}</option>`;
+  }).join('');
+  const carteTransfert = `
+    <div class="carte"><div class="tete"><h3>🔄 Transférer de l'argent</h3>${infoBtn('transfert')}</div>
+      <div class="corps">
+        <div class="transfert">
+          <select id="tr-de" aria-label="Depuis">${opts()}</select>
+          <span class="fleche">↓</span>
+          <select id="tr-vers" aria-label="Vers">${opts()}</select>
+        </div>
+        <div class="saisie-rapide" style="margin-top:8px">
+          <input class="sl" id="tr-note" placeholder="Motif (facultatif : épargne de secours, vacances…)" autocomplete="off">
+          <input class="sm" id="tr-montant" inputmode="text" placeholder="€" autocomplete="off">
+          <button class="btn or" id="tr-go">Transférer</button>
+        </div>
+        <div class="chips" id="tr-raccourcis"></div>
+        <p class="note">L'opération est écrite des deux côtés en une fois. Les soldes et les plafonds sont vérifiés avant validation :
+        impossible de sortir plus que disponible, ni de dépasser le plafond du compte destinataire.</p>
+      </div></div>`;
   document.getElementById('livrets-blocs').innerHTML =
-    cc.lignes.map(bloc).join('') + carteSuivi + carteProjets();
+    carteTransfert + cc.lignes.map(bloc).join('') + carteSuivi + carteProjets();
+  // raccourcis : les transferts les plus courants, pré-remplis
+  const rac = document.getElementById('tr-raccourcis');
+  if (rac){
+    const paires = [];
+    const plein = cc.lignes.find(c => c.plein);
+    const libre = cc.lignes.find(c => !c.plein && c.plafond != null);
+    if (plein && libre) paires.push([plein.id, libre.id, `${plein.nom} → ${libre.nom}`]);
+    if (cc.lignes.find(c => c.id === 'livretA') && cc.lignes.find(c => c.id === 'ldds'))
+      paires.push(['livretA', 'ldds', 'Livret A → LDDS']);
+    if (cc.lignes.length) paires.push([cc.lignes[0].id, 'av', `${cc.lignes[0].nom} → Investir`]);
+    rac.innerHTML = paires.slice(0, 3).map(([d, v, l]) =>
+      `<button class="chip" data-trrac="${d}|${v}">${echap(l)}</button>`).join('');
+  }
 }
 
 /* ===== Projets (achat immobilier, voyage, véhicule…) ===== */
@@ -2515,7 +2737,8 @@ function rendreAV(){
           <input class="mnt" value="${av.initial}" data-init="avInitial" inputmode="text"></div>
         <div class="ligne"><input class="lab" value="Total cumulé au fil des mois (auto : 1/3 investissements)" readonly><span class="mnt pos">${fmt(a.cumulEpargne)}</span></div>
       </div></div>
-    ${carteListe('➖ Sorties (renflouement dépenses)', 'achatVente.sorties', av.sorties)}
+    ${carteListe('➕ Entrées / ➖ Sorties du disponible', 'achatVente.sorties', av.sorties,
+      {exemple: 'Motif (ex. renflouement dépenses)'})}
     ${txTable('🏦 Trade Republic — achats / ventes directs', 'txTR', av.txTR)}
     ${txTable('📈 PEA Bourse Direct — achats / ventes directs', 'txPEA', av.txPEA)}
     <div class="carte"><div class="tete"><h3>💰 Cash dédié PEA / PER</h3>${infoBtn('cashcomptes')}</div>
@@ -2660,6 +2883,32 @@ document.querySelector('main').addEventListener('change', e => {
     if (isNaN(v)) { toast('Montant invalide'); return; }
     etat.achatVente.initial = v;
     sauver(); rafraichirPage();
+  } else if (el.id === 'tr-go'){            // transfert entre poches
+    const r = transferer(document.getElementById('tr-de').value,
+                         document.getElementById('tr-vers').value,
+                         evalMontant(document.getElementById('tr-montant').value),
+                         document.getElementById('tr-note').value.trim());
+    if (!r.ok) return toast('⚠️ ' + r.msg);
+    document.getElementById('tr-montant').value = '';
+    document.getElementById('tr-note').value = '';
+    sauver(); rendreTout(); toast('✅ ' + r.msg);
+  } else if (el.dataset.trrac != null){     // raccourci de transfert
+    const [de, vers] = el.dataset.trrac.split('|');
+    document.getElementById('tr-de').value = de;
+    document.getElementById('tr-vers').value = vers;
+    document.getElementById('tr-montant').focus();
+  } else if (el.id === 'vac-actif'){        // budget vacances du mois
+    const m = etat.months[moisActif];
+    m.vacancesActives = el.checked;
+    if (!el.checked){
+      const reste = ['vacHotel','vacTransport','vacAlim','vacLoisirs','vacAutres','vacRemb']
+        .reduce((s, k) => s + (m[k] || []).length, 0);
+      if (reste && !confirm(`Masquer le budget vacances ?\n\n${reste} ligne(s) déjà saisie(s) seront conservées et continueront de compter dans l\u2019enveloppe.`)){
+        m.vacancesActives = true; el.checked = true; return;
+      }
+    }
+    sauver(); rendreMois();
+    toast(el.checked ? '🏖️ Budget vacances activé' : 'Budget vacances masqué');
   } else if (el.dataset.tri){               // tri d'un portefeuille
     etat.config.triPositions = etat.config.triPositions || {};
     etat.config.triPositions[el.dataset.tri] = el.value;
@@ -3608,7 +3857,8 @@ function importerClasseur(wb){
         if (lab === ''){ if (++vides >= 2) break; continue; }
         vides = 0;
         if (lab === 'Intitulé' || lab.startsWith('TOTAL')) continue;
-        if (val != null) res.achatVente.sorties.push({label: lab, montant: +val.toFixed(2)});
+        // le classeur note les sorties en positif : on les stocke en négatif
+        if (val != null) res.achatVente.sorties.push({label: lab, montant: -Math.abs(+val.toFixed(2))});
       }
     }
     const txBloc = motif => {
@@ -3798,6 +4048,46 @@ function dossierIA(opts = {}){
     'et ne constituent ni une prévision ni un conseil en investissement.*');
   return L.join('\n');
 }
+
+/* Recherche globale : ouverture, saisie temporisée, navigation vers le mois */
+(function(){
+  const voile = document.getElementById('voile-recherche');
+  const champ = document.getElementById('rech-champ');
+  const zone = document.getElementById('rech-resultats');
+  const ouvrir = () => { voile.classList.add('vu'); champ.value = ''; zone.innerHTML =
+    '<p class="note" style="padding:12px 4px">Tape au moins deux lettres — la recherche couvre tous les mois, les mouvements de comptes et les positions.</p>';
+    setTimeout(() => champ.focus(), 60); };
+  const fermer = () => voile.classList.remove('vu');
+  document.getElementById('btn-recherche').onclick = ouvrir;
+  document.getElementById('rech-fermer').onclick = fermer;
+  voile.addEventListener('click', e => { if (e.target === voile) fermer(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') fermer(); });
+  let minuteur;
+  champ.addEventListener('input', () => {
+    clearTimeout(minuteur);
+    minuteur = setTimeout(() => {
+      const r = rechercher(champ.value);
+      if (!r.length){
+        zone.innerHTML = champ.value.trim().length < 2
+          ? '<p class="note" style="padding:12px 4px">Tape au moins deux lettres.</p>'
+          : `<p class="note" style="padding:12px 4px">Aucun résultat pour « ${echap(champ.value)} ».</p>`;
+        return;
+      }
+      zone.innerHTML = r.map((x, i) => `
+        <div class="rech-item" data-rech="${i}" ${x.cle ? `data-mois="${x.cle}"` : ''}>
+          <span class="lab">${echap(x.label)}</span>
+          <span class="meta">${echap(x.quoi)} · ${echap(x.ou)}</span>
+          <span class="mt ${cls(x.montant)}">${fmt(x.montant)}</span>
+        </div>`).join('')
+        + `<div class="rech-total">${r.length} résultat${r.length > 1 ? 's' : ''} · total ${fmt(totalRecherche(r))}</div>`;
+      zone.querySelectorAll('[data-mois]').forEach(el => el.onclick = () => {
+        moisActif = el.dataset.mois;
+        document.querySelector('nav button[data-page="mois"]').click();
+        rendreMois(); appliquerReplis(); fermer();
+      });
+    }, 180);
+  });
+})();
 
 /* Bouton de retour en haut : visible seulement quand on a défilé */
 (function(){

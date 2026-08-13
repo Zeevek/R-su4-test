@@ -9,6 +9,24 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v7.0.0 — 01/08/2026 — *performance, transferts et recherche*
+
+### Cours de bourse : 7 à 8 fois plus rapides
+Trois causes de lenteur cumulées, toutes corrigées : les positions étaient traitées **une par une** (désormais par lots de 6 en parallèle), l'appel direct à Yahoo — systématiquement bloqué par CORS depuis GitHub Pages — était **retenté pour chaque ligne** (le relais qui fonctionne est maintenant mémorisé pour la session), et une pause de 120 ms séparait chaque position (supprimée, la limitation du parallélisme suffit). Le taux de change n'est demandé qu'une fois par devise même en parallèle. Mesure sur un cas de 37 positions : **13,7 s → 1,8 s**, et 68 requêtes inutiles économisées. Le temps écoulé s'affiche dans le message final.
+
+### Transferts entre comptes
+Nouvelle carte en tête de la page Épargne : choisir une source, une destination, un montant et un motif facultatif. L'opération est **écrite des deux côtés en une seule fois**, avec un libellé miroir daté. Destinations possibles : n'importe quel compte d'épargne, le disponible à investir, le cash PEA, le cash PER, ou une sortie vers l'extérieur. **Contrôles automatiques** : impossible de retirer plus que le solde disponible, ni de dépasser le plafond du compte destinataire. Des raccourcis proposent les mouvements pertinents (par exemple d'un livret plein vers un livret qui a encore de la place).
+
+### Budget vacances activable
+Une bascule en tête du bloc vacances de la page Mois : décochée, les **six cartes de détail disparaissent**. Les montants déjà saisis sont conservés et continuent de compter dans l'enveloppe — l'application demande confirmation avant de masquer un bloc non vide, et réaffiche automatiquement le bloc d'un mois qui contient des dépenses de vacances.
+
+### Recherche globale
+Un bouton 🔍 dans l'en-tête ouvre une recherche qui parcourt **tous les mois**, les mouvements de comptes et les positions (libellé ou ticker). Insensible à la casse et aux accents, résultats situés (mois, catégorie, montant) avec total, et un tap ouvre directement le mois concerné.
+
+### Correction importante
+- **Disponible à investir** : une ligne saisie dans « Sorties » **augmentait** le disponible au lieu de le diminuer. La convention est désormais celle du reste de l'application — le montant signé s'ajoute au solde (négatif = sortie, positif = entrée) — et la carte est renommée « Entrées / Sorties du disponible ». L'import de classeur inverse le signe des sorties en conséquence.
+- Non-régression vérifiée : 17 agrégats identiques à la version précédente sur des données réelles.
+
 ## v6.1.0 — 01/08/2026
 ### Ergonomie
 - **Cartes repliables** : un tap sur l'en-tête d'une carte replie ou déplie son contenu, le montant total restant visible dans l'en-tête. Le choix est mémorisé d'une session à l'autre. Les pages Mois (14 cartes) et Réglages (13 cartes) ne se parcourent plus en défilement continu. Au premier lancement, les cartes de configuration rarement touchées (Apparence, Verrouillage, Journal des versions, Compte rendu, Analyse IA, Zone sensible) sont repliées d'emblée.
