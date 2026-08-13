@@ -224,6 +224,10 @@ details.aide summary{cursor:pointer;font-weight:600;color:var(--laiton)}
 .saisie-rapide button{flex:none;padding:9px 14px}
 .sel-rapide{width:100%;margin-top:6px;border:1px solid var(--trait);border-radius:9px;padding:9px 10px;
   background:var(--carte);color:var(--encre);font-weight:600;font-size:13px}
+/* Sous-cartes rattachées à leur carte parente (plans Trade Republic) */
+.sous-cartes{margin:6px -14px -12px;padding:8px 10px 4px;background:rgba(176,141,62,.05);
+  border-top:1px solid var(--trait)}
+.sous-cartes .carte{margin-bottom:6px;box-shadow:none;border:1px solid var(--trait)}
 .transfert{display:grid;grid-template-columns:1fr;gap:4px;align-items:center}
 .transfert select{border:1px solid var(--trait);border-radius:9px;padding:10px;background:var(--carte);
   font-weight:600;font-size:13px;width:100%}
@@ -413,7 +417,7 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
       <div class="tete"><h3>⚡ Dépense rapide</h3><div class="tot" id="dl-acc-mois" style="font-size:12px;color:var(--encre2)"></div></div>
       <div class="corps">
         <div class="saisie-rapide">
-          <input class="sl" id="dl-acc-label" list="dl-suggestions" placeholder="Quoi ? (ex. Boulangerie)" autocomplete="off">
+          <input class="sl" id="dl-acc-label" placeholder="Quoi ? (ex. Boulangerie)" autocomplete="off">
           <input class="sm" id="dl-acc-mnt" inputmode="text" placeholder="€" autocomplete="off">
           <button class="btn or" id="dl-acc-btn">＋</button>
         </div>
@@ -598,6 +602,19 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
     <div class="carte">
       <div class="tete"><h3>📜 Journal des versions</h3></div>
       <div class="corps" id="changelog-corps"></div>
+    </div>
+    <div class="carte">
+      <div class="tete"><h3>📱 Raccourci iOS / Android</h3><button class="info-btn" data-infocle="raccourci" aria-label="Informations">i</button></div>
+      <div class="corps">
+        <p class="note">Crée un raccourci « Ajouter une dépense » qui enregistre une dépense sans ouvrir l'app ni naviguer.
+        Sur iPhone : app <b>Raccourcis</b> → ＋ → <i>Demander une entrée</i> (texte : l'intitulé), puis une seconde
+        <i>Demander une entrée</i> (nombre : le montant), puis <i>Ouvrir l'URL</i> avec l'adresse ci-dessous où tu insères
+        les deux réponses. Ajoute-le à l'écran d'accueil ou demande-le à Siri.</p>
+        <div class="ligne"><input class="lab" id="raccourci-url" readonly value=""></div>
+        <button class="btn ligne2 discret" id="btn-raccourci-copier">📋 Copier le modèle d'adresse</button>
+        <p class="note">Catégories acceptées via <code>&cat=</code> : depensesLibres (par défaut), transport, chargesFixes,
+        aboLoisirs, entrees, remboursements, vacAlim…</p>
+      </div>
     </div>
     <div class="carte">
       <div class="tete"><h3>🤖 Analyse par une IA</h3><button class="info-btn" data-infocle="dossierIA" aria-label="Informations">i</button></div>
@@ -814,6 +831,7 @@ const INFOS = {
   perfreelle: ['Performance réelle (TRI / TWR)', "Deux façons de mesurer, calculées sans aucune saisie : le TRI est le taux annuel que ton argent a réellement rapporté compte tenu du calendrier de tes versements — c'est ta performance à toi. Le TWR neutralise l'effet des versements : c'est celui qu'on compare à un indice. Si le TRI dépasse le TWR, tes versements sont tombés à de bons moments. Il faut au moins deux mois enregistrés, et une dizaine pour que ce soit parlant."],
   projection: ['Projection', "Trois scénarios construits à partir de ton allocation réelle par catégorie, à laquelle sont appliqués des taux annuels conventionnels (actions 2/6/9 %, obligations 1/3/4 %, crypto −50/+10/+40 %…). Le faisceau montre la zone probable plutôt qu'un trait illusoire : 10 % des trajectoires finissent sous la borne basse, 10 % au-dessus de la haute. À mesure que ton historique s'allonge, ton rendement réellement observé remplace progressivement la théorie. Ce sont des conventions de place, pas des prévisions."],
   cashcomptes: ['Cash dédié PEA / PER', "Une poche « → Cash PEA » ou « → Cash PER » met de l'argent de côté pour ces comptes, en plus de tes versements mensuels programmés (qui restent prélevés sur le budget du mois). Le cash PEA est consommé par tes achats directs PEA ; le cash PER par les versements exceptionnels que tu saisis ici. Si un achat PEA dépasse le cash dédié, le complément est pris sur le disponible général."],
+  raccourci: ['Raccourci iOS / Android', "L'application peut enregistrer une dépense directement depuis une adresse : ?ajout=Boulangerie&montant=6 ajoute 6 € en dépenses libres du mois en cours, avec une confirmation à l'écran. Sur iPhone, l'app Raccourcis permet d'en faire un bouton d'écran d'accueil ou une commande Siri (« Dis Siri, ajoute une dépense »). Ajoute &cat=transport (ou une autre catégorie) pour changer la destination. L'adresse est nettoyée après enregistrement : recharger la page ne crée pas de doublon."],
   transfert: ['Transférer de l\u2019argent', "Déplace une somme d'un compte vers un autre — Livret A vers LDDS quand le premier est plein, épargne vers le disponible à investir, cash vers le PEA ou le PER, ou sortie vers ton compte courant. L'opération est inscrite des deux côtés en une seule fois, avec un libellé miroir daté. Les contrôles sont automatiques : impossible de retirer plus que le solde, ni de dépasser le plafond du compte qui reçoit. Les raccourcis proposent les mouvements les plus utiles à ta situation du moment."],
   comptes: ['Comptes d\u2019épargne', "Ajoute ici tous les comptes que tu possèdes : Livret A, LDDS, LEP, Livret Jeune, PEL, CEL, compte à terme, livret bancaire, espèces… Les plafonds réglementaires sont pré-remplis et modifiables (ils changent au fil des années). Quand un compte atteint son plafond, la part de la répartition qui lui était destinée bascule automatiquement vers le compte de repli — pratique quand les livrets réglementés sont pleins."],
   projets: ['Projets', "Un projet (achat immobilier, voyage, véhicule…) crée sa propre poche d'épargne dans la répartition. Pour l'immobilier, renseigne le prix, les frais, le taux et la durée : l'app calcule l'emprunt nécessaire une fois l'apport déduit, et la mensualité correspondante. Ce sont des estimations hors assurance emprunteur — le taux réel dépend de ta banque et de ton dossier."],
@@ -835,8 +853,15 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '7.0.0';
+const APP_VERSION = '7.1.0';
 const CHANGELOG = [
+  {v: '7.1.0', d: '01/08/2026', pts: [
+    "Correction : le bouton « Transférer » ne réagissait pas (le gestionnaire écoutait la modification d'un champ au lieu du clic).",
+    "Un transfert vers le compte courant alimente désormais les remboursements du mois en cours ; dans l'autre sens, il en sort.",
+    "Correction : l'horizon 30 ans de la projection n'affichait aucun jalon au-delà de 20 ans.",
+    "Les plans Trade Republic sont regroupés à l'intérieur de leur carte, avec leur total en tête.",
+    "Menu déroulant de suggestions retiré de la dépense rapide : les puces suffisent et prennent moins de place.",
+    "Raccourci iOS / Android : ouvrir l'app avec ?ajout=Boulangerie&montant=6 enregistre la dépense directement — de quoi créer un bouton d'écran d'accueil ou une commande Siri."]},
   {v: '7.0.0', d: '01/08/2026', pts: [
     "Mise à jour des cours 7 à 8 fois plus rapide : requêtes par lots de 6 en parallèle, relais réseau mémorisé (l'appel direct bloqué n'est plus retenté à chaque ligne) et un seul appel par devise. Le temps écoulé est affiché.",
     "Transferts entre comptes : carte dédiée en tête de la page Épargne — Livret A vers LDDS, épargne vers investissement, cash PEA/PER, sortie vers l'extérieur. Écriture des deux côtés en une fois, contrôle du solde et du plafond, raccourcis adaptés à ta situation.",
@@ -1281,7 +1306,17 @@ function ecrireMouvement(id, montant, libelle){
       type: 'Transfert', label: libelle, montant: Math.abs(+montant.toFixed(2))});
     return true;
   }
-  return id === 'externe';   // extérieur : rien à écrire, l'argent quitte le suivi
+  if (id === 'externe'){
+    // Le compte courant alimente le budget : l'opération apparaît dans les
+    // remboursements du mois en cours (positif = argent reçu sur le courant).
+    const cle = cleAujourdhui();
+    while (!etat.months[cle]) creerMoisSuivant();
+    // montant tel quel : positif quand l'argent arrive sur le courant (entrée du
+    // budget), négatif quand il en part vers l'épargne.
+    etat.months[cle].remboursements.push({label: libelle, montant: +montant.toFixed(2)});
+    return true;
+  }
+  return false;
 }
 function transferer(deId, versId, montant, note){
   const m = Math.abs(+montant);
@@ -2063,7 +2098,7 @@ function carteProjection(){
     opti: projeter(V0, apports, tp.opti, mois),
   };
   const mc = monteCarlo(V0, apports, mel.taux, tp.vol, mois);
-  const jalons = [1, 3, 5, 10, 15, 20].filter(a => a <= annees);
+  const jalons = [1, 3, 5, 10, 15, 20, 25, 30].filter(a => a <= annees);
   const lignes = jalons.map(an => {
     const i = an * 12, m = mc.find(x => x.annee === an);
     const verse = V0 + apports * i;
@@ -2376,12 +2411,16 @@ function rendreMois(){
     ${carteListe('💶 Vacances · Remboursements reçus', P + 'vacRemb', m.vacRemb, {signe: '+', exemple: 'Part de Léa (hôtel)'})}` : ''}
     <div class="sep"></div>
     <div class="carte"><div class="tete"><h3>📈 Détail Trade Republic</h3>${infoBtn('recurrents')}<div class="tot neg">${fmt(detTR)}</div></div>
-      <div class="corps"><p class="note">Plans d'épargne du mois — astuce : tape « -8*4 » pour 4 semaines à 8 €.</p></div></div>
+      <div class="corps">
+        <p class="note">Plans d'épargne du mois — astuce : tape « -8*4 » pour 4 semaines à 8 €.</p>
+        <div class="sous-cartes">
     ${carteListe('📊 TR · Actions', P + 'trActions', m.trActions)}
     ${carteListe('📈 TR · ETF', P + 'trETF', m.trETF)}
     ${carteListe('🥇 TR · Métaux', P + 'trMetaux', m.trMetaux)}
     ${carteListe('₿ TR · Crypto', P + 'trCrypto', m.trCrypto)}
     ${carteListe('🏦 TR · Private Equity', P + 'trPE', m.trPE)}
+        </div>
+      </div></div>
     <div class="carte"><div class="tete"><h3>📋 Résumé par catégorie</h3><div class="tot">${fmt(c.totalSorties + c.tRemb + c.tVac)}</div></div>
       <div class="corps">${[
         ['Charges fixes', c.tCharges], ['Abo. obligatoires', c.tAboO], ['Abo. loisirs', c.tLoisirs],
@@ -2783,6 +2822,8 @@ function rendreReglages(){
       })()}</span>
       <button class="sup" data-cptsup="${c.id}" aria-label="Supprimer">✕</button>
     </div>`).join('') || '<p class="note">Aucun compte — ajoute-en un ci-dessous.</p>';
+  const champURL = document.getElementById('raccourci-url');
+  if (champURL) champURL.value = location.origin + location.pathname + '?ajout=INTITULÉ&montant=MONTANT';
   const selIA = document.getElementById('ia-etude');
   if (selIA && !selIA.options.length)
     selIA.innerHTML = Object.entries(ETUDES_IA).map(([k, v]) => `<option value="${k}">${v.nom}</option>`).join('');
@@ -2883,20 +2924,6 @@ document.querySelector('main').addEventListener('change', e => {
     if (isNaN(v)) { toast('Montant invalide'); return; }
     etat.achatVente.initial = v;
     sauver(); rafraichirPage();
-  } else if (el.id === 'tr-go'){            // transfert entre poches
-    const r = transferer(document.getElementById('tr-de').value,
-                         document.getElementById('tr-vers').value,
-                         evalMontant(document.getElementById('tr-montant').value),
-                         document.getElementById('tr-note').value.trim());
-    if (!r.ok) return toast('⚠️ ' + r.msg);
-    document.getElementById('tr-montant').value = '';
-    document.getElementById('tr-note').value = '';
-    sauver(); rendreTout(); toast('✅ ' + r.msg);
-  } else if (el.dataset.trrac != null){     // raccourci de transfert
-    const [de, vers] = el.dataset.trrac.split('|');
-    document.getElementById('tr-de').value = de;
-    document.getElementById('tr-vers').value = vers;
-    document.getElementById('tr-montant').focus();
   } else if (el.id === 'vac-actif'){        // budget vacances du mois
     const m = etat.months[moisActif];
     m.vacancesActives = el.checked;
@@ -2949,6 +2976,20 @@ document.querySelector('main').addEventListener('click', e => {
       if (n > 0) toast(`↪ Retirée de ${n} mois suivant${n > 1 ? 's' : ''}`);
     }
     sauver(); rafraichirPage();
+  } else if (el.id === 'tr-go'){            // transfert entre poches (clic)
+    const r = transferer(document.getElementById('tr-de').value,
+                         document.getElementById('tr-vers').value,
+                         evalMontant(document.getElementById('tr-montant').value),
+                         document.getElementById('tr-note').value.trim());
+    if (!r.ok) return toast('⚠️ ' + r.msg);
+    document.getElementById('tr-montant').value = '';
+    document.getElementById('tr-note').value = '';
+    sauver(); rendreTout(); toast('✅ ' + r.msg);
+  } else if (el.dataset.trrac != null){     // raccourci de transfert
+    const [de, vers] = el.dataset.trrac.split('|');
+    document.getElementById('tr-de').value = de;
+    document.getElementById('tr-vers').value = vers;
+    document.getElementById('tr-montant').focus();
   } else if (el.hasAttribute('data-cgo')){
     ajouterViaComposeur(el.closest('[data-comp]'));
   } else if (e.target.closest && e.target.closest('[data-chipdel]')){
@@ -3620,6 +3661,11 @@ function optionsIA(){
           anonyme: document.getElementById('ia-anonyme').checked,
           mois: Math.max(1, Math.min(60, parseInt(document.getElementById('ia-mois').value, 10) || 6))};
 }
+document.getElementById('btn-raccourci-copier').onclick = async () => {
+  const url = document.getElementById('raccourci-url').value;
+  try{ await navigator.clipboard.writeText(url); toast('📋 Adresse copiée'); }
+  catch(e){ toast('Copie refusée — sélectionne le texte à la main'); }
+};
 document.getElementById('btn-ia-fichier').onclick = () => {
   const txt = dossierIA(optionsIA());
   const blob = new Blob([txt], {type: 'text/markdown;charset=utf-8'});
@@ -4097,6 +4143,30 @@ function dossierIA(opts = {}){
   b.onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
 })();
 
+/* ===== Ajout par URL : socle des raccourcis iOS et des widgets =====
+   Format : ...index.html?ajout=Boulangerie&montant=6[&cat=depensesLibres]
+   Un raccourci Siri ouvre cette adresse : la dépense est enregistrée et
+   confirmée à l'écran, sans navigation ni saisie. */
+function traiterAjoutURL(){
+  const p = new URLSearchParams(location.search);
+  const label = (p.get('ajout') || '').trim();
+  if (!label) return false;
+  const brut = evalMontant(p.get('montant') || '');
+  if (isNaN(brut) || Math.abs(brut) < 0.005){ toast('⚠️ Raccourci : montant manquant'); return false; }
+  let cat = p.get('cat') || 'depensesLibres';
+  const connues = [...CATS_RAPIDES.map(c => c[0]), ...SOUS_CATS_VAC.map(c => c[0])];
+  if (!connues.includes(cat) || cat === 'vac') cat = 'depensesLibres';
+  const signe = signeCategorie(cat);
+  const montant = +((signe === '-' ? (brut > 0 ? -brut : brut) : (brut < 0 ? -brut : brut))).toFixed(2);
+  const cle = cleAujourdhui();
+  while (!etat.months[cle]) creerMoisSuivant();
+  etat.months[cle][cat].push({label, montant});
+  sauver();
+  history.replaceState(null, '', location.pathname);   // évite un doublon si la page est rechargée
+  toast(`✅ ${label} ${fmt(montant)} enregistré`);
+  return true;
+}
+
 /* ================= DÉMARRAGE ================= */
 (async function init(){
   peuplerCatRapide();
@@ -4113,6 +4183,7 @@ function dossierIA(opts = {}){
   const selTheme = document.getElementById('cfg-theme');
   if (selTheme) selTheme.value = etat.config.theme || 'auto';
   rendreTout();
+  if (traiterAjoutURL()) rendreTout();
   if (doitRappelerSauvegarde(etat.config))
     document.getElementById('voile-rappel').classList.add('vu');
   // filet : si aucune page n'est active (état inattendu), afficher l'Accueil

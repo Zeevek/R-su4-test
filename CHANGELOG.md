@@ -9,6 +9,17 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v7.1.0 — 01/08/2026
+### Corrections
+- **Le bouton « Transférer » ne faisait rien** : le gestionnaire avait été placé dans la délégation des *modifications de champ* au lieu de celle des *clics* — un bouton n'émet pas d'événement de modification. Le transfert et ses raccourcis fonctionnent désormais.
+- **Transfert vers le compte courant** : l'opération alimente maintenant les **remboursements du mois en cours** (montant positif, l'argent entre dans le budget) ; dans l'autre sens, du courant vers l'épargne, la ligne est négative.
+- **Projection sur 30 ans** : le tableau s'arrêtait à 20 ans faute de jalons au-delà. Les échéances 25 et 30 ans sont ajoutées.
+- **Plans Trade Republic** : les cinq listes (actions, ETF, métaux, crypto, private equity) sont désormais imbriquées dans la carte « Détail Trade Republic », qui portait son total sans rien contenir — l'ensemble se replie d'un seul geste.
+- **Dépense rapide** : le menu déroulant de suggestions natif est retiré. Il masquait l'écran, proposait pêle-mêle des libellés à usage unique, et faisait double emploi avec les puces.
+
+### Raccourci iOS / Android
+Ouvrir l'application avec une adresse du type `?ajout=Boulangerie&montant=6` enregistre la dépense dans le mois en cours et l'annonce à l'écran, sans navigation. Sur iPhone, l'app **Raccourcis** permet d'en faire un bouton d'écran d'accueil ou une commande Siri ; le paramètre `&cat=` choisit la catégorie (transport, entrees, vacAlim…). L'adresse est nettoyée après enregistrement, donc recharger la page ne crée pas de doublon. Le mode d'emploi et le modèle d'adresse figurent dans Réglages → 📱.
+
 ## v7.0.0 — 01/08/2026 — *performance, transferts et recherche*
 
 ### Cours de bourse : 7 à 8 fois plus rapides
