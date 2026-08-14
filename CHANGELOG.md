@@ -9,6 +9,15 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v8.1.0 — 13/08/2026
+Corrections issues d'un retour d'usage sur la v8.0.
+
+- **Secteurs et zones désormais automatiques.** Un bouton « 🔎 Compléter automatiquement » récupère le secteur d'activité et le pays de chaque valeur auprès des données publiques, et les traduit (Utilities → Services publics, United States → Amérique du Nord). Les **ETF et matières premières ne publient pas ces champs** — ils sont diversifiés par nature : ils sont alors classés d'après leur intitulé (« MSCI World » → Monde, « Or physique » → Matériaux). Tout reste modifiable à la main.
+- **Dividendes : net ou brut enfin explicite.** La case à cocher ne disait pas ce qu'elle cochait. Deux boutons la remplacent : **« 💶 J'ai reçu ce montant »** ou **« 🧾 Montant avant prélèvements »**. Le champ de prélèvements n'apparaît que dans le second cas, et l'aperçu précise « X crédités sur ton compte » ou « X annoncés par l'émetteur − 30 % = Y réellement crédités ».
+- **Indice de référence : comparaison immédiate.** Il fallait attendre plusieurs enregistrements mensuels pour voir quoi que ce soit. Un bouton **« 📥 Récupérer l'historique de l'indice »** rapatrie les cours mensuels sur cinq ans et complète d'un coup tous les relevés déjà enregistrés. Le texte indique désormais explicitement de quelle carte proviennent les relevés (« 📝 Enregistrer le mois dans l'historique »).
+- **Correctif : carte « Emprunts et dettes » en double** dans les Réglages, avec des identifiants dupliqués — le second exemplaire est supprimé.
+- **Allocation cible : un vrai diagnostic.** Le tableau de pourcentages laissait l'interprétation au lecteur. Un encadré en français la fait : « Tu es surexposé à Actions de 3 230 € (59,3 % au lieu de 50 %). Il te manque 1 600 € sur Métaux / ETC et Private Equity. À ton rythme d'épargne (832 €/mois), 3 mois de versements dirigés vers ces lignes suffisent — sans rien vendre. » S'y ajoutent des remarques de bon sens : concentration excessive sur une ligne, part de cryptos élevée.
+
 ## v8.0.0 — 13/08/2026 — *patrimoine net, pilotage du portefeuille et sécurité*
 
 Fonctionnalités inspirées d'une étude des applications de référence (Firefly III, Actual Budget, Ghostfolio, Wealthfolio, Portfolio Performance, YNAB), adaptées au fonctionnement hors-ligne et sans serveur de l'application.

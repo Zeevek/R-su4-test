@@ -171,6 +171,9 @@ td.px-manuel input{color:var(--vert)}
 .legende-prix .px-fige{background:#ECEEF4;color:#4A5570}
 td.px-fige{background:#F4F5F8}
 td.px-fige input{color:#4A5570;font-style:italic}
+.diagnostic{background:var(--tete);border-left:3px solid var(--laiton);border-radius:9px;padding:10px 12px;margin-bottom:10px}
+.diagnostic p{font-size:13px;line-height:1.55;color:var(--encre);margin-bottom:6px}
+.diagnostic p:last-child{margin-bottom:0}
 .barre-rep{display:flex;height:12px;border-radius:99px;overflow:hidden;margin:6px 0 8px;background:var(--trait)}
 .barre-rep span{display:block;height:100%}
 .barre-tri{display:flex;align-items:center;gap:7px;padding:2px 0 8px;font-size:11px;color:var(--encre2)}
@@ -688,19 +691,6 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
         <div id="passifs-liste"></div>
         <div class="saisie-rapide" style="margin-top:8px">
           <input class="sl" id="passif-nom" placeholder="Nom (ex. Prêt appartement)" autocomplete="off">
-          <select id="passif-type" style="border:1px solid var(--trait);border-radius:9px;padding:9px;background:var(--carte);width:126px"></select>
-          <button class="btn or" id="passif-ajouter">＋</button>
-        </div>
-        <p class="note">Le capital restant dû est recalculé chaque mois à partir du capital emprunté, du taux et de la mensualité.
-        Il est déduit de ton patrimoine pour afficher un <b>patrimoine net</b>.</p>
-      </div>
-    </div>
-    <div class="carte">
-      <div class="tete"><h3>🏦 Emprunts et dettes</h3><button class="info-btn" data-infocle="passifs" aria-label="Informations">i</button></div>
-      <div class="corps">
-        <div id="passifs-liste"></div>
-        <div class="saisie-rapide" style="margin-top:8px">
-          <input class="sl" id="passif-nom" placeholder="Nom (ex. Prêt appartement)" autocomplete="off">
           <select id="passif-type" style="border:1px solid var(--trait);border-radius:9px;padding:9px;background:var(--carte);width:120px"></select>
           <button class="btn or" id="passif-ajouter">＋</button>
         </div>
@@ -1101,8 +1091,14 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '8.0.0';
+const APP_VERSION = '8.1.0';
 const CHANGELOG = [
+  {v: '8.1.0', d: '13/08/2026', pts: [
+    "Secteurs et zones remplis automatiquement : un bouton récupère le secteur et le pays de chaque valeur ; les ETF et métaux, qui ne publient pas ces données, sont classés d'après leur intitulé.",
+    "Dividendes : la case à cocher ambiguë est remplacée par deux boutons — « J'ai reçu ce montant » ou « Montant avant prélèvements ».",
+    "Indice de référence : un bouton récupère l'historique de l'indice et complète d'un coup tous les relevés déjà enregistrés, sans attendre les mois à venir.",
+    "Correctif : la carte « Emprunts et dettes » apparaissait deux fois dans les Réglages.",
+    "Allocation cible : un diagnostic en français remplace la lecture de pourcentages — ce qui est surexposé, ce qui manque, et en combien de mois les versements corrigent l'écart."]},
   {v: '8.0.0', d: '13/08/2026', pts: [
     "Emprunts et patrimoine net : capital restant dû calculé par amortissement, mensualités restantes, date de fin — le patrimoine de l'Accueil devient net de dettes.",
     "Allocation cible et rééquilibrage : dérive par catégorie et répartition suggérée du prochain versement, sans jamais proposer de vendre.",
@@ -1683,6 +1679,93 @@ const INDICES = [
   {sym: 'IMAE.AS', nom: 'MSCI Europe'},
   {sym: 'BTC-EUR', nom: 'Bitcoin'},
 ];
+/* Historique mensuel d'un symbole : permet de remplir rétroactivement les
+   relevés déjà enregistrés, au lieu d'attendre plusieurs mois. */
+async function historiqueMensuel(symbole, annees = 3){
+  const d = await recupJSON('https://query1.finance.yahoo.com/v8/finance/chart/'
+    + encodeURIComponent(symbole) + `?range=${annees}y&interval=1mo`);
+  const r = d && d.chart && d.chart.result && d.chart.result[0];
+  if (!r || !r.timestamp) return {};
+  const closes = (((r.indicators || {}).quote || [])[0] || {}).close || [];
+  const par = {};
+  r.timestamp.forEach((t, i) => {
+    const v = closes[i];
+    if (v == null) return;
+    const dt = new Date(t * 1000);
+    par[`${String(dt.getMonth() + 1).padStart(2, '0')}.${dt.getFullYear()}`] = +v.toFixed(4);
+  });
+  return par;
+}
+/* Profil d'une valeur : secteur d'activité et pays, quand l'émetteur les publie.
+   Les ETF n'exposent pas ces champs (ils sont diversifiés par nature) : ils sont
+   alors classés d'après leur intitulé, et restent modifiables à la main. */
+async function profilSymbole(symbole){
+  try{
+    const d = await recupJSON('https://query1.finance.yahoo.com/v10/finance/quoteSummary/'
+      + encodeURIComponent(symbole) + '?modules=assetProfile');
+    const p = (((d.quoteSummary || {}).result || [])[0] || {}).assetProfile;
+    if (p && (p.sector || p.country)) return {secteur: p.sector || '', pays: p.country || ''};
+  }catch(e){ /* profil indisponible */ }
+  return null;
+}
+const SECTEURS_EN = {
+  'Technology': 'Technologie', 'Healthcare': 'Santé', 'Financial Services': 'Finance',
+  'Energy': 'Énergie', 'Industrials': 'Industrie', 'Consumer Cyclical': 'Consommation',
+  'Consumer Defensive': 'Consommation', 'Real Estate': 'Immobilier',
+  'Communication Services': 'Télécoms', 'Utilities': 'Services publics', 'Basic Materials': 'Matériaux',
+};
+const PAYS_ZONE = {
+  'France': 'France', 'Germany': 'Zone euro', 'Netherlands': 'Zone euro', 'Spain': 'Zone euro',
+  'Italy': 'Zone euro', 'Belgium': 'Zone euro', 'Ireland': 'Zone euro', 'Portugal': 'Zone euro',
+  'Austria': 'Zone euro', 'Finland': 'Zone euro', 'Luxembourg': 'Zone euro',
+  'United Kingdom': 'Europe hors euro', 'Switzerland': 'Europe hors euro', 'Sweden': 'Europe hors euro',
+  'Norway': 'Europe hors euro', 'Denmark': 'Europe hors euro',
+  'United States': 'Amérique du Nord', 'Canada': 'Amérique du Nord',
+  'Japan': 'Asie développée', 'South Korea': 'Asie développée', 'Australia': 'Asie développée',
+  'Singapore': 'Asie développée', 'Hong Kong': 'Asie développée', 'Taiwan': 'Asie développée',
+  'China': 'Marchés émergents', 'India': 'Marchés émergents', 'Brazil': 'Marchés émergents',
+  'South Africa': 'Marchés émergents', 'Mexico': 'Marchés émergents',
+};
+/* Classement d'après l'intitulé, pour les ETF et les produits diversifiés */
+function devinerProfil(label){
+  const s = normaliserTexte(label);
+  const zone = /world|monde|msci w|acwi/.test(s) ? 'Monde'
+    : /emerging|emergent|chine|china|inde|india|bresil/.test(s) ? 'Marchés émergents'
+    : /s&p|sp500|nasdaq|usa|us |amerique|america/.test(s) ? 'Amérique du Nord'
+    : /europe|stoxx|eurozone|dax|cac/.test(s) ? 'Zone euro'
+    : /japon|japan|nikkei|topix/.test(s) ? 'Asie développée' : '';
+  const secteur = /or\b|gold|argent|silver|platine|platinum|cuivre|copper|palladium/.test(s) ? 'Matériaux'
+    : /bitcoin|ethereum|solana|crypto|btc|eth/.test(s) ? 'Diversifié'
+    : /world|monde|msci|s&p|nasdaq|stoxx|acwi|etf/.test(s) ? 'Diversifié' : '';
+  return {secteur, zone};
+}
+async function completerProfils(btn){
+  const positions = ['positionsTR', 'positionsPEA', 'positionsPER']
+    .flatMap(k => etat.investissements[k] || []);
+  const aFaire = positions.filter(p => !p.secteur || !p.zone);
+  if (!aFaire.length) return {maj: 0, devines: 0, total: 0};
+  let maj = 0, devines = 0;
+  for (let i = 0; i < aFaire.length; i++){
+    const p = aFaire[i];
+    if (btn) btn.textContent = `⏳ ${i + 1}/${aFaire.length}…`;
+    const sym = (p.symbole || '').trim();
+    let profil = null;
+    if (sym && !estManuel(sym) && !estISIN(sym)) profil = await profilSymbole(sym);
+    if (profil){
+      if (!p.secteur && profil.secteur) p.secteur = SECTEURS_EN[profil.secteur] || profil.secteur;
+      if (!p.zone && profil.pays) p.zone = PAYS_ZONE[profil.pays] || 'Autre';
+      maj++;
+    } else {
+      const d = devinerProfil(p.label);
+      if ((!p.secteur && d.secteur) || (!p.zone && d.zone)){
+        if (!p.secteur && d.secteur) p.secteur = d.secteur;
+        if (!p.zone && d.zone) p.zone = d.zone;
+        devines++;
+      }
+    }
+  }
+  return {maj, devines, total: aFaire.length};
+}
 function performanceBenchmark(){
   const h = (etat.historique || []).filter(x => x.indice != null && x.indice > 0);
   if (h.length < 2) return null;
@@ -1764,6 +1847,42 @@ function ecartsAllocation(){
   return {total: a.total, sommeCible, lignes,
           derive: +Math.max(...lignes.map(l => Math.abs(l.ecartPct))).toFixed(1)};
 }
+/* Diagnostic en français : ce que la dérive signifie concrètement, et en combien
+   de temps les versements habituels la corrigent. Plus utile qu'un tableau de
+   pourcentages, qui laisse le lecteur faire lui-même l'interprétation. */
+function diagnosticAllocation(){
+  const e = ecartsAllocation();
+  if (!e) return null;
+  const apports = apportsMensuelsMoyens(3);
+  const sous = e.lignes.filter(l => l.ecartEur < -1).sort((a, b) => a.ecartEur - b.ecartEur);
+  const sur = e.lignes.filter(l => l.ecartEur > 1).sort((a, b) => b.ecartEur - a.ecartEur);
+  const aCombler = sous.reduce((s, l) => s - l.ecartEur, 0);
+  const moisRetour = apports > 0 ? Math.ceil(aCombler / apports) : null;
+  const phrases = [];
+  if (e.derive < 2)
+    phrases.push(`Ton portefeuille est <b>conforme à ta cible</b> (écart maximal ${e.derive} point). Rien à corriger : continue tes versements comme prévu.`);
+  else {
+    if (sur.length)
+      phrases.push(`Tu es <b>surexposé à ${echap(sur[0].cat)}</b> de ${fmt(sur[0].ecartEur)} (${sur[0].reelPct.toFixed(1)} % au lieu de ${sur[0].ciblePct.toFixed(0)} %)`
+        + (sur.length > 1 ? `, et dans une moindre mesure à ${echap(sur[1].cat)}.` : '.'));
+    if (sous.length)
+      phrases.push(`Il te manque ${fmt(aCombler)} sur ${sous.slice(0, 2).map(l => echap(l.cat)).join(' et ')}`
+        + (sous.length > 2 ? ` (et ${sous.length - 2} autre${sous.length > 3 ? 's' : ''})` : '') + ' pour revenir à ta cible.');
+    if (moisRetour != null && moisRetour <= 36)
+      phrases.push(`À ton rythme d'épargne (${fmt(apports)}/mois), <b>${moisRetour} mois</b> de versements dirigés vers ces lignes suffisent — sans rien vendre.`);
+    else if (moisRetour != null)
+      phrases.push(`Combler cet écart uniquement par les versements demanderait ${moisRetour} mois : l'écart est important, un arbitrage partiel peut se discuter (mais il déclenche l'imposition des plus-values).`);
+  }
+  // remarques de bon sens, indépendantes de la cible
+  const conc = concentration();
+  if (conc.premiere && conc.premiere.pct > 25)
+    phrases.push(`⚠️ <b>${echap(conc.premiere.label)}</b> pèse ${conc.premiere.pct.toFixed(0)} % de ton portefeuille : une seule mauvaise nouvelle sur cette ligne se verrait beaucoup.`);
+  const crypto = e.lignes.find(l => l.cat === 'Cryptos');
+  if (crypto && crypto.reelPct > 15)
+    phrases.push(`Les cryptos représentent ${crypto.reelPct.toFixed(0)} % du total — une classe très volatile, dont la valeur peut être divisée par deux en quelques semaines.`);
+  return {derive: e.derive, phrases, moisRetour, apports, aCombler};
+}
+
 /* Répartition d'un versement pour réduire l'écart, sans jamais vendre */
 function planVersement(montant){
   const e = ecartsAllocation();
@@ -2744,6 +2863,8 @@ function carteAllocation(){
         Laisse tout vide pour désactiver le suivi de cible.</p>
       ${e ? `
         <div class="separateur"></div>
+        ${(() => { const d = diagnosticAllocation();
+          return d ? `<div class="diagnostic">${d.phrases.map(p => `<p>${p}</p>`).join('')}</div>` : ''; })()}
         ${e.lignes.slice().sort((a, b) => b.valeur - a.valeur).map(l => `
           <div class="ligne" style="border:none;padding-bottom:2px">
             <input class="lab" value="${echap(l.cat)}" readonly>
@@ -2793,7 +2914,11 @@ function carteRepartitions(){
       ${conc.premiere ? `<p class="note">Ligne la plus lourde : <b>${echap(conc.premiere.label)}</b> ${conc.premiere.pct.toFixed(1)} % du portefeuille
         · les 5 premières en représentent ${conc.top5pct.toFixed(0)} %.
         ${conc.premiere.pct > 25 ? ' ⚠️ Concentration élevée sur une seule ligne.' : ''}</p>` : ''}
-      ${bloc('🏭 Par secteur', sect, 'Renseigne le secteur de tes positions (colonne Secteur) pour voir cette répartition.')}
+      <button class="btn or ligne2" id="btn-profils" style="margin-top:0">🔎 Compléter automatiquement secteurs et zones</button>
+      <p class="note">Récupère le secteur et le pays de chaque valeur auprès des données publiques (connexion requise).
+      Les ETF ne publient pas ces informations : ils sont classés d'après leur intitulé (« MSCI World » → Monde, « Or » → Matériaux).
+      Tout reste modifiable à la main dans les colonnes 🏭 et 🌍 des tableaux de positions.</p>
+      ${bloc('🏭 Par secteur', sect, 'Aucun secteur renseigné pour l\u2019instant — utilise le bouton ci-dessus, ou saisis-les dans les tableaux.')}
       ${bloc('🌍 Par zone géographique', zone, 'Renseigne la zone de tes positions pour voir cette répartition.')}
     </div></div>`;
 }
@@ -2847,11 +2972,13 @@ function carteDividendes(){
           <input id="div-date" type="date" value="${jourISO()}"></label>
         <label class="ch"><span>Montant perçu</span>
           <span class="unite"><input id="div-montant" inputmode="text" placeholder="0"><span class="u">${devise().sym}</span></span></label>
-        <label class="ch"><span>Prélèvements (si brut)</span>
-          <span class="unite"><input id="div-taux" inputmode="decimal" value="${PFU_DEFAUT}" disabled><span class="u">%</span></span></label>
+        <label class="ch" id="div-champ-taux" style="${etat.config.divBrutDefaut ? '' : 'display:none'}"><span>Prélèvements retenus</span>
+          <span class="unite"><input id="div-taux" inputmode="decimal" value="${etat.config.divTaux ?? PFU_DEFAUT}"><span class="u">%</span></span></label>
       </div>
-      <label class="bascule" style="margin-top:8px"><input type="checkbox" id="div-brut">
-        <span>Montant saisi <b>brut</b> (avant prélèvements)</span></label>
+      <div class="op-sens" style="margin-top:10px">
+        <button class="op-choix ${etat.config.divBrutDefaut ? '' : 'actif'}" data-divtype="net">💶 J'ai reçu ce montant</button>
+        <button class="op-choix ${etat.config.divBrutDefaut ? 'actif' : ''}" data-divtype="brut">🧾 Montant avant prélèvements</button>
+      </div>
       <div id="div-apercu" class="tr-apercu"></div>
       <button class="btn or ligne2" id="div-valider">＋ Enregistrer le dividende</button>
       <p class="note">Un dividende perçu ce mois-ci est comptabilisé dans les entrées du <b>mois suivant</b>,
@@ -2873,11 +3000,12 @@ function carteDividendes(){
 function majApercuDividende(){
   const zone = document.getElementById('div-apercu');
   if (!zone) return;
-  const brut = document.getElementById('div-brut').checked;
+  const brut = (document.querySelector('[data-divtype].actif') || {dataset: {}}).dataset.divtype === 'brut';
   const v = Math.abs(evalMontant(document.getElementById('div-montant').value));
   const date = document.getElementById('div-date').value || jourISO();
   const taux = Number(document.getElementById('div-taux').value) || 0;
-  document.getElementById('div-taux').disabled = !brut;
+  const champTaux = document.getElementById('div-champ-taux');
+  if (champTaux) champTaux.style.display = brut ? '' : 'none';
   if (isNaN(v) || v < 0.005){
     zone.innerHTML = `<div class="tr-resume">Sera compté dans les entrées de <b>${libelleMois(moisSuivantDe(date))}</b>
       <span class="tr-hint">saisis un montant</span></div>`;
@@ -2889,8 +3017,9 @@ function majApercuDividende(){
       <span class="tr-nom">Entrée de ${echap(libelleMois(moisSuivantDe(date)))}</span>
       <span class="tr-val">+${fmt(net)}</span>
     </div>
-    ${brut ? `<div class="tr-resume" style="font-size:12px">${fmt(v)} brut − ${taux} % de prélèvements
-      (${fmt(v - net)}) = <b>${fmt(net)}</b> net encaissé.</div>` : ''}`;
+    ${brut ? `<div class="tr-resume" style="font-size:12px">${fmt(v)} annoncés par l'émetteur − ${taux} % de prélèvements
+      (${fmt(v - net)}) = <b>${fmt(net)}</b> réellement crédités sur ton compte.</div>`
+      : `<div class="tr-resume" style="font-size:12px">${fmt(v)} crédités sur ton compte, sans retraitement.</div>`}`;
 }
 function blocBenchmark(){
   const b = performanceBenchmark();
@@ -2902,16 +3031,20 @@ function blocBenchmark(){
   if (!choix) return `<div class="separateur"></div><div class="champs">${sel}</div>
     <p class="note">Choisis un indice : sa valeur sera relevée à chaque « Enregistrer » mensuel, et ta performance lui sera comparée.</p>`;
   if (!b) return `<div class="separateur"></div><div class="champs">${sel}</div>
-    <p class="note">Il faut au moins deux relevés mensuels avec l'indice pour comparer. Appuie sur « Enregistrer » à la fin de ce mois
-    (l'indice sera récupéré automatiquement si tu es connecté).</p>`;
+    <button class="btn or ligne2" id="btn-indice-hist" style="margin-top:6px">📥 Récupérer l'historique de l'indice</button>
+    <p class="note">Remplit d'un coup la valeur de l'indice pour tous tes relevés mensuels déjà enregistrés
+    (${(etat.historique || []).length} relevé${(etat.historique || []).length > 1 ? 's' : ''}), sans attendre les mois à venir.
+    Connexion requise. Ensuite, chaque « ✅ Enregistrer » mensuel relèvera l'indice automatiquement.</p>`;
   return `<div class="separateur"></div><div class="champs">${sel}</div>
     <div class="ligne"><input class="lab" value="Ton portefeuille (TWR)" readonly>
       <span class="mnt ${cls(b.twr)}">${b.twr != null ? (b.twr * 100).toFixed(1) + ' %/an' : '—'}</span></div>
     <div class="ligne"><input class="lab" value="${echap(b.nom)}" readonly>
       <span class="mnt ${cls(b.indiceAnnualise)}">${(b.indiceAnnualise * 100).toFixed(1)} %/an</span></div>
+    <button class="btn ligne2 discret" id="btn-indice-hist" style="margin-top:6px">🔄 Actualiser l'historique de l'indice</button>
     ${b.ecart != null ? `<div class="ligne"><input class="lab" value="Écart" readonly>
       <span class="mnt ${cls(b.ecart)}"><b>${b.ecart >= 0 ? '+' : ''}${(b.ecart * 100).toFixed(1)} pt</b></span></div>` : ''}
-    <p class="note">Comparaison sur ${b.mois} mois (${b.debut} → ${b.fin}).
+    <p class="note">Comparaison sur ${b.mois} mois (${b.debut} → ${b.fin}), à partir des relevés de la carte
+    « 📝 Enregistrer le mois dans l'historique » ci-dessus.
     ${b.ecart != null ? (b.ecart >= 0
       ? 'Ton portefeuille fait mieux que l\u2019indice sur la période — attention, quelques mois ne prouvent rien.'
       : 'L\u2019indice fait mieux sur la période. Sur longue durée, battre un indice large est rare, y compris pour les professionnels.') : ''}</p>`;
@@ -4358,14 +4491,45 @@ document.querySelector('main').addEventListener('click', e => {
       if (n > 0) toast(`↪ Retirée de ${n} mois suivant${n > 1 ? 's' : ''}`);
     }
     sauver(); rafraichirPage();
+  } else if (el.dataset.divtype){           // net reçu / brut avant prélèvements
+    document.querySelectorAll('[data-divtype]').forEach(b => b.classList.toggle('actif', b === el));
+    etat.config.divBrutDefaut = el.dataset.divtype === 'brut';
+    sauver(); majApercuDividende();
+  } else if (el.id === 'btn-profils'){      // secteurs et zones automatiques
+    el.disabled = true;
+    const libelle = el.textContent;
+    completerProfils(el).then(r => {
+      el.disabled = false; el.textContent = libelle;
+      sauver(); rendreInvest(); appliquerReplis();
+      toast(r.total === 0 ? '✅ Toutes les positions sont déjà renseignées'
+        : `🔎 ${r.maj} récupéré(s) en ligne, ${r.devines} déduit(s) de l'intitulé, sur ${r.total}`);
+    }).catch(e => { el.disabled = false; el.textContent = libelle; toast('⚠️ ' + e.message); });
+  } else if (el.id === 'btn-indice-hist'){   // historique de l'indice de référence
+    const sym = etat.config.indiceRef;
+    if (!sym) return toast('Choisis d\u2019abord un indice');
+    if (!(etat.historique || []).length) return toast('Enregistre d\u2019abord au moins un mois dans l\u2019historique');
+    el.disabled = true;
+    const libelle = el.textContent;
+    el.textContent = '⏳ récupération…';
+    historiqueMensuel(sym, 5).then(par => {
+      let n = 0;
+      for (const h of etat.historique){
+        if (par[h.periode] != null){ h.indice = par[h.periode]; h.indiceSym = sym; n++; }
+      }
+      el.disabled = false; el.textContent = libelle;
+      if (!n) return toast('Aucune correspondance trouvée pour tes périodes');
+      sauver(); rendreInvest(); appliquerReplis();
+      toast(`📥 ${n} relevé${n > 1 ? 's' : ''} complété${n > 1 ? 's' : ''} avec l'indice`);
+    }).catch(e => { el.disabled = false; el.textContent = libelle; toast('⚠️ Récupération impossible : ' + e.message); });
   } else if (el.id === 'div-valider'){      // enregistrer un dividende
     const r = enregistrerDividende({
       source: document.getElementById('div-source').value,
       date: document.getElementById('div-date').value,
       montant: evalMontant(document.getElementById('div-montant').value),
-      brut: document.getElementById('div-brut').checked,
+      brut: (document.querySelector('[data-divtype].actif') || {dataset: {}}).dataset.divtype === 'brut',
       taux: Number(document.getElementById('div-taux').value),
     });
+    etat.config.divTaux = Number(document.getElementById('div-taux').value) || PFU_DEFAUT;
     if (!r.ok) return toast('⚠️ ' + r.msg);
     memoriserPourAnnuler('saisie du dividende');
     sauver(); rendreTout();
