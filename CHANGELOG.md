@@ -9,6 +9,45 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v8.0.0 — 13/08/2026 — *patrimoine net, pilotage du portefeuille et sécurité*
+
+Fonctionnalités inspirées d'une étude des applications de référence (Firefly III, Actual Budget, Ghostfolio, Wealthfolio, Portfolio Performance, YNAB), adaptées au fonctionnement hors-ligne et sans serveur de l'application.
+
+### Emprunts et patrimoine net
+Le patrimoine affiché était **brut** : un prêt immobilier n'y figurait pas. On enregistre désormais ses emprunts (capital, taux, mensualité, date de départ) et le **capital restant dû est recalculé chaque mois par amortissement**, avec le nombre de mensualités restantes et la date de fin estimée. Un capital relevé sur un extrait bancaire peut prendre le pas sur le calcul. L'Accueil affiche le **patrimoine net**, le brut et le détail des dettes.
+
+### Allocation cible et rééquilibrage
+Une part souhaitée par catégorie, et l'application mesure la **dérive** puis propose une **répartition du prochain versement** pour s'en rapprocher. Le rééquilibrage se fait **par les apports**, jamais par des ventes — vendre déclencherait l'imposition des plus-values. Les cibles sont normalisées à 100 % si leur somme diffère, et **rien n'est appliqué automatiquement** : ce sont des suggestions.
+
+### Répartition sectorielle et géographique
+Deux colonnes (secteur, zone) sur chaque position, avec listes de suggestions, et une carte qui affiche les deux répartitions en barres. Un **indicateur de concentration** signale le poids de la plus grosse ligne et des cinq premières.
+
+### Comparaison à un indice
+Choix d'un indice de référence (MSCI World, S&P 500, CAC 40, Euro Stoxx 50…) dont la valeur est **relevée automatiquement à chaque enregistrement mensuel**. La carte Performance compare alors ton TWR à celui de l'indice sur la même période, écart annualisé à l'appui.
+
+### Indépendance financière
+Capital nécessaire = dépenses annuelles ÷ taux de retrait (4 % par défaut, modifiable), dépenses pré-remplies depuis les six derniers mois. L'application estime la **durée pour l'atteindre** au rythme d'épargne actuel, puis **combien de temps le capital tiendrait** avec des retraits indexés sur l'inflation.
+
+### Sauvegarde chiffrée
+Nouveau bouton d'export protégé par mot de passe : **AES-GCM 256 bits**, clé dérivée par **PBKDF2 (210 000 itérations, recommandation OWASP)**, via les fonctions cryptographiques du navigateur — aucune bibliothèque externe. Le format est détecté à l'import, qui demande alors le mot de passe. Celui-ci n'est stocké nulle part : perdu, le fichier est définitivement illisible.
+
+### Correctif important
+Quatre cartes des Réglages — **emprunts, budgets par poste, profils, apparence (densité, devise, dossier IA, raccourci)** — étaient présentes dans la page mais **jamais remplies par le code** : elles s'affichaient vides. Les vérifications portaient sur les éléments appelés par le script, pas sur les conteneurs déclarés dans la page et laissés à l'abandon. Un contrôle **« tout conteneur vide doit être peuplé »** est ajouté à la procédure, en plus du parcours interactif complet dans un navigateur simulé.
+
+## v7.6.0 — 13/08/2026
+### Dividendes perçus
+Nouvelle carte sur la page Investissements, avec quatre champs étiquetés :
+- **Source** — société ou ETF, avec suggestion automatique des positions du portefeuille et des sources déjà utilisées ;
+- **Date de perception** — le jour même par défaut, modifiable ;
+- **Montant perçu** ;
+- **Brut ou net** — une case à cocher ; si le montant est brut, un champ de prélèvements apparaît (30 % par défaut : 12,8 % d'impôt et 17,2 % de prélèvements sociaux, taux modifiable).
+
+**Décalage automatique d'un mois** : un dividende perçu en juillet est comptabilisé dans les entrées d'**août**, comme sur un relevé bancaire — la convention que tu appliquais déjà à la main. Le libellé reprend le format habituel (« Dividende TotalEnergies (05/08/2026) »), et un aperçu annonce le mois de rattachement avant validation.
+
+Quand le montant est saisi en brut, c'est le **net réellement encaissé** qui entre au budget (le brut fausserait le solde), le montant brut et le taux appliqué restant enregistrés sur la ligne. Le journal des derniers versements et le **cumul annuel, net et brut**, s'affichent sous le formulaire — utile au moment de la déclaration de revenus.
+
+Le journal est reconstruit à partir des mois plutôt que stocké séparément : il ne peut donc jamais se désynchroniser des entrées, et supprimer un dividende retire bien la ligne du budget.
+
 ## v7.5.0 — 13/08/2026
 ### Formulaires enfin lisibles
 Les éditeurs de **projets**, de **comptes d'épargne** et de **poches de répartition** alignaient des cases numériques dont le seul repère était un texte d'aide… qui disparaît dès la saisie. Sur un projet immobilier, « 0 », « 3.5 » et « 20 » ne disaient plus rien : lequel est le prix, le taux, la durée ? Même problème pour les taux d'intérêt des livrets.
