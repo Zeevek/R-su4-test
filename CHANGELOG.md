@@ -9,6 +9,30 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v8.2.1 — 13/08/2026 — *revue de sécurité, correction et optimisation*
+
+### Faille corrigée : injection de code par une sauvegarde
+Les noms de comptes, de positions, de projets et leurs identifiants étaient insérés dans la page **sans échappement**. Saisis par soi-même, le risque est nul ; mais l'application permet d'**importer une sauvegarde**, et un fichier reçu d'un tiers pouvait contenir un nom de compte porteur de code, exécuté à l'ouverture. Toutes ces valeurs passent désormais par l'échappement HTML, y compris dans les listes déroulantes et les attributs. Vérifié avec une sauvegarde piégée : le code n'est plus exécuté.
+
+### Bug corrigé : relevé de l'indice dupliqué sept fois
+Le bloc qui relève la valeur de l'indice de référence avait été inséré **sept fois**, et — plus gênant — dans le gestionnaire de **suppression** d'une période au lieu de celui d'enregistrement, avec une variable qui n'y existait pas. Conséquence : sept requêtes réseau identiques et un relevé qui ne se faisait jamais au bon moment. Une seule copie subsiste, au bon endroit.
+
+### Rendu six fois plus rapide
+`rendreTout()` reconstruisait les **six pages** à chaque saisie, alors qu'une seule est visible — un demi-mégaoctet de HTML régénéré pour afficher une ligne de dépense. Seule la page active est désormais reconstruite ; les autres sont marquées obsolètes et régénérées à leur affichage. Mesure sur une vraie sauvegarde : **519 ms → 90 ms**, 3 279 → 834 éléments dans la page, et 178 → 68 calculs mensuels.
+
+### Robustesse
+Des garde-fous centralisés garantissent qu'une sauvegarde ancienne ou tronquée ne fait plus échouer le rendu. Huit cas limites vérifiés : absence d'historique, d'investissements, d'achats-ventes, de poches, collections nulles, mois vide, libellés piégés.
+
+### Divers
+- Trois bulles d'aide rédigées mais rattachées à aucun bouton (indice de référence, sauvegarde chiffrée, disponible à investir) sont désormais accessibles.
+- Audit statique final : aucune fonction dupliquée ni morte, aucun identifiant orphelin, aucun conteneur laissé vide, aucun sélecteur CSS en double, aucun JavaScript égaré dans la feuille de style.
+
+## v8.2.0 — 13/08/2026
+- **Projets et emprunts : un seul bloc.** Deux cartes séparées demandaient de savoir à l'avance dans laquelle aller. Elles n'en font plus qu'une : on choisit la **nature** (achat immobilier à préparer, objectif d'épargne, prêt immobilier, auto/conso, étudiant, renouvelable, autre dette) et **les champs s'adaptent**. Un projet affiche prix, frais, taux et durée envisagés puis calcule l'emprunt nécessaire ; un emprunt en cours affiche capital, mensualité et date de départ puis calcule le capital restant. Chaque ligne porte un badge de couleur (vert pour ce qu'on prépare, rouge pour ce qu'on rembourse) et une jauge de progression.
+- **Tendances du mois enrichies.** Le simple pourcentage laissait deviner l'ampleur réelle. Chaque poste affiche maintenant **deux barres comparatives** (consommé / attendu au même stade du mois), une **mini-courbe** des trois derniers mois pour voir si la hausse est ponctuelle ou installée, et la **projection de fin de mois** au rythme actuel. Le nombre de postes suivis passe de 4 à 12.
+- **Modules retirés** : « Allocation cible » et « Secteurs et zones ». Le remplissage automatique du secteur et de la zone ne pouvait pas tenir compte de la **composition réelle des ETF** — un « MSCI World » est réparti sur des milliers de lignes dans tous les secteurs et tous les pays, information que les sources publiques gratuites n'exposent pas. Classer un tel produit sous une seule étiquette donnait une image fausse de la diversification. Mieux vaut pas d'information qu'une information trompeuse.
+- **Alignement des formulaires** : les étiquettes ont désormais une hauteur uniforme (les libellés longs ne décalent plus les champs voisins), la grille passe à deux colonnes nettes sur mobile, et plusieurs intitulés ont été raccourcis.
+
 ## v8.1.0 — 13/08/2026
 Corrections issues d'un retour d'usage sur la v8.0.
 

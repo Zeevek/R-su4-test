@@ -171,11 +171,6 @@ td.px-manuel input{color:var(--vert)}
 .legende-prix .px-fige{background:#ECEEF4;color:#4A5570}
 td.px-fige{background:#F4F5F8}
 td.px-fige input{color:#4A5570;font-style:italic}
-.diagnostic{background:var(--tete);border-left:3px solid var(--laiton);border-radius:9px;padding:10px 12px;margin-bottom:10px}
-.diagnostic p{font-size:13px;line-height:1.55;color:var(--encre);margin-bottom:6px}
-.diagnostic p:last-child{margin-bottom:0}
-.barre-rep{display:flex;height:12px;border-radius:99px;overflow:hidden;margin:6px 0 8px;background:var(--trait)}
-.barre-rep span{display:block;height:100%}
 .barre-tri{display:flex;align-items:center;gap:7px;padding:2px 0 8px;font-size:11px;color:var(--encre2)}
 .barre-tri label{letter-spacing:.08em;text-transform:uppercase;font-weight:600}
 .barre-tri select{border:1px solid var(--trait);border-radius:8px;padding:6px 8px;background:var(--carte);font-size:12px;font-weight:600;flex:1;min-width:0}
@@ -468,9 +463,11 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
    Une étiquette permanente au-dessus de chaque champ : le placeholder disparaît
    dès la saisie, l'étiquette non. Indispensable dès qu'un formulaire aligne
    plusieurs nombres (un taux, une durée et un montant se ressemblent tous). */
-.champs{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:8px}
+.champs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px;align-items:end}
+@media (max-width:520px){ .champs{grid-template-columns:1fr 1fr} }
 .ch{display:flex;flex-direction:column;gap:3px;min-width:0}
-.ch>span{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--encre2)}
+.ch>span{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--encre2);
+  line-height:1.25;min-height:2.5em;display:flex;align-items:flex-end}
 .ch input, .ch select{border:1px solid var(--trait);border-radius:9px;padding:9px 10px;background:var(--carte);
   color:var(--encre);font-size:14px;font-weight:600;width:100%}
 .ch .unite{position:relative}
@@ -480,6 +477,21 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
 .bloc-edit{border:1px solid var(--trait);border-radius:12px;padding:11px;margin-bottom:9px;background:var(--carte)}
 .bloc-edit .bloc-tete{display:flex;align-items:center;gap:8px;margin-bottom:9px}
 .bloc-edit .bloc-tete .titre-bloc{font-weight:800;font-size:14px;color:var(--encre);flex:1;min-width:0}
+.tend{padding:9px 0;border-bottom:1px dashed var(--trait)}
+.tend:last-child{border-bottom:none}
+.tend-tete{display:flex;align-items:baseline;gap:8px;margin-bottom:5px}
+.tend-nom{font-weight:700;font-size:13.5px;color:var(--encre);flex:1;min-width:0}
+.tend-ecart{font-weight:800;font-size:13px;white-space:nowrap}
+.tend-barres{display:flex;flex-direction:column;gap:3px}
+.tend-b{display:flex;align-items:center;gap:7px;height:14px}
+.tend-jauge{height:9px;border-radius:99px;min-width:2px;transition:width .3s ease}
+.tend-jauge.attendu{background:var(--trait)}
+.tend-val{font-size:11.5px;font-weight:700;color:var(--encre);white-space:nowrap}
+.tend-val.faible{font-weight:500;color:var(--encre2)}
+.tend-pied{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:10.5px;color:var(--encre2)}
+.badge-eng{font-size:10px;font-weight:800;letter-spacing:.04em;padding:3px 9px;border-radius:99px;white-space:nowrap}
+.badge-eng.projet{background:var(--vert-fond);color:var(--vert)}
+.badge-eng.emprunt{background:var(--rouge-fond);color:var(--rouge)}
 .bloc-edit .bilan-bloc{font-size:11.5px;color:var(--encre2);margin-top:7px;line-height:1.5}
 
 /* ===== Poches de répartition ===== */
@@ -657,7 +669,8 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
         </div>
         <div class="ligne" style="margin-top:8px"><input class="lab" value="Si un plafond est atteint, verser sur" readonly>
           <select id="cfg-debordement" style="border:1px solid var(--trait);border-radius:8px;padding:8px;background:var(--carte);font-weight:600"></select></div>
-        <p class="note">Ajoute les comptes que tu possèdes (Livret A, LDDS, LEP, Livret Jeune, PEL, CEL, compte à terme…).
+        <p class="note">Laisse le plafond vide pour un compte sans limite.
+        Ajoute les comptes que tu possèdes (Livret A, LDDS, LEP, Livret Jeune, PEL, CEL, compte à terme…).
         Les plafonds réglementaires sont pré-remplis et modifiables. <b>Quand un compte est plein, la part qui lui était destinée
         part automatiquement vers le compte de repli choisi ici</b> — plus besoin de refaire la répartition à la main.</p>
       </div>
@@ -686,31 +699,20 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
       </div>
     </div>
     <div class="carte">
-      <div class="tete"><h3>🏦 Emprunts et dettes</h3><button class="info-btn" data-infocle="passifs" aria-label="Informations">i</button></div>
+      <div class="tete"><h3>🎯 Projets et emprunts</h3><button class="info-btn" data-infocle="engagements" aria-label="Informations">i</button></div>
       <div class="corps">
-        <div id="passifs-liste"></div>
-        <div class="saisie-rapide" style="margin-top:8px">
-          <input class="sl" id="passif-nom" placeholder="Nom (ex. Prêt appartement)" autocomplete="off">
-          <select id="passif-type" style="border:1px solid var(--trait);border-radius:9px;padding:9px;background:var(--carte);width:120px"></select>
-          <button class="btn or" id="passif-ajouter">＋</button>
+        <div id="engagements-liste"></div>
+        <div class="champs" style="margin-top:10px">
+          <label class="ch"><span>Nom</span>
+            <input id="eng-nom" placeholder="ex. Achat appartement" autocomplete="off"></label>
+          <label class="ch"><span>Nature</span>
+            <select id="eng-type"></select></label>
         </div>
-        <p class="note">Le capital restant dû est recalculé automatiquement chaque mois (capital emprunté, taux, mensualité, date de départ).
-        Il vient en déduction du patrimoine affiché sur l'Accueil, qui devient un <b>patrimoine net</b>.</p>
-      </div>
-    </div>
-    <div class="carte">
-      <div class="tete"><h3>🎯 Projets</h3><button class="info-btn" data-infocle="projets" aria-label="Informations">i</button></div>
-      <div class="corps">
-        <div class="saisie-rapide">
-          <input class="sl" id="proj-nom" placeholder="Nom (ex. Achat appartement)" autocomplete="off">
-          <select id="proj-type" style="border:1px solid var(--trait);border-radius:9px;padding:9px;background:var(--carte);width:104px">
-            <option value="immo">🏡 Immobilier</option><option value="autre">🎯 Autre</option>
-          </select>
-          <button class="btn or" id="proj-ajouter">＋</button>
-        </div>
-        <div id="projets-liste"></div>
-        <p class="note">Un projet crée automatiquement sa poche d'épargne dédiée dans la répartition.
-        Pour l'immobilier, renseigne le prix, les frais, le taux et la durée : l'app calcule l'emprunt nécessaire et la mensualité estimée.</p>
+        <button class="btn or ligne2" id="eng-ajouter">＋ Ajouter</button>
+        <p class="note">Un même endroit pour ce que tu prépares et ce que tu rembourses.
+        <b>Projet</b> : l'application suit l'épargne mise de côté via une poche dédiée, et pour un achat immobilier calcule
+        l'emprunt nécessaire et la mensualité estimée. <b>Emprunt en cours</b> : le capital restant dû est recalculé chaque mois
+        et vient en déduction du patrimoine, qui devient un patrimoine net. Les champs s'adaptent à la nature choisie.</p>
       </div>
     </div>
     <div class="carte">
@@ -730,7 +732,7 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
       </div>
     </div>
     <div class="carte">
-      <div class="tete"><h3>💾 Sauvegarde</h3></div>
+      <div class="tete"><h3>💾 Sauvegarde</h3><button class="info-btn" data-infocle="chiffrement" aria-label="Informations">i</button></div>
       <div class="corps">
         <button class="btn ligne2" id="btn-export-json">⬇️ Exporter la sauvegarde (JSON)</button>
         <button class="btn ligne2 discret" id="btn-import-json">⬆️ Importer une sauvegarde (JSON)</button>
@@ -863,8 +865,6 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
   </div>
   <div id="rech-resultats"></div>
 </div></div>
-<datalist id="liste-secteurs"></datalist>
-<datalist id="liste-zones"></datalist>
 <div id="toast"></div>
 <datalist id="dl-suggestions"></datalist>
 <div id="rapport"></div>
@@ -1053,8 +1053,6 @@ const INFOS = {
   projection: ['Projection', "Trois scénarios construits à partir de ton allocation réelle par catégorie, à laquelle sont appliqués des taux annuels conventionnels (actions 2/6/9 %, obligations 1/3/4 %, crypto −50/+10/+40 %…). Le faisceau montre la zone probable plutôt qu'un trait illusoire : 10 % des trajectoires finissent sous la borne basse, 10 % au-dessus de la haute. À mesure que ton historique s'allonge, ton rendement réellement observé remplace progressivement la théorie. Ce sont des conventions de place, pas des prévisions."],
   retraite: ['Indépendance financière', "Le capital nécessaire est calculé en divisant tes dépenses annuelles par le taux de retrait choisi : 24 000 € de dépenses à 4 % donnent 600 000 €. Les dépenses sont pré-remplies à partir de tes six derniers mois, tout est modifiable. L'application estime ensuite la durée pour l'atteindre à ton rythme d'épargne actuel, puis combien de temps le capital tiendrait avec des retraits indexés sur l'inflation. La règle des 4 % vient d'une étude américaine sur données historiques : c'est un repère de discussion, pas une garantie, et rien ici ne constitue un conseil en investissement."],
   benchmark: ['Indice de référence', "Ton rendement comparé à celui d'un indice large sur la même période. La valeur de l'indice est relevée automatiquement à chaque enregistrement mensuel (connexion requise à ce moment). L'écart se lit en points de pourcentage annualisés. Deux précautions : sur quelques mois l'écart n'a aucune valeur statistique, et un portefeuille plus risqué qu'un indice peut le battre en période favorable sans être meilleur pour autant."],
-  allocation: ['Allocation cible', "Fixe la part souhaitée de chaque catégorie (actions, ETF, métaux…). L'application compare avec ta répartition réelle, affiche la dérive et propose une façon de répartir ton prochain versement pour t'en rapprocher. Le rééquilibrage <b>par les versements</b> est privilégié : vendre pour rééquilibrer déclenche l'imposition des plus-values, alors qu'orienter les apports suivants coûte zéro. Ce sont des suggestions : rien n'est appliqué automatiquement, et tu restes libre de t'en écarter. Les parts sont ramenées à 100 % si ton total diffère."],
-  repartitions: ['Secteurs et zones', "Deux dimensions que la catégorie ne montre pas : deux lignes « Actions » peuvent être toutes deux américaines, ou l'une française et l'autre émergente. Renseigne le secteur et la zone de chaque position (colonnes dédiées dans les tableaux) pour voir ta vraie diversification. L'indicateur de concentration signale le poids de ta plus grosse ligne : au-delà d'un quart du portefeuille, une seule mauvaise nouvelle pèse lourd."],
   dividendes: ['Dividendes perçus', "Saisis la source, la date réelle de perception (le jour même par défaut) et le montant. Le dividende est ajouté aux entrées du <b>mois suivant</b> : perçu en juillet, il compte en août — la convention des relevés bancaires, et celle que tu utilisais déjà à la main. La case « brut » applique les prélèvements (30 % par défaut en France : 12,8 % d'impôt et 17,2 % de prélèvements sociaux, taux modifiable) et enregistre le net réellement encaissé, en gardant le brut en mémoire. Le cumul annuel affiché en haut sert de repère pour la déclaration ; les sources connues du portefeuille sont proposées à la saisie."],
   operation: ['Enregistrer une opération', "Choisis le sens (achat ou vente), le compte, puis une position de ton portefeuille. Le montant est prélevé sur le disponible du compte, et la position est mise à jour : le nombre de parts évolue et le prix de revient moyen est recalculé au prorata — un achat de 100 € à 25 € l'unité ajoute 4 parts et ajuste le PRU. Le prix unitaire est facultatif : sans lui, le dernier cours connu est utilisé. Un intitulé libre reste possible pour une opération sans position associée."],
   cashcomptes: ['Cash dédié PEA / PER', "Une poche « → Cash PEA » ou « → Cash PER » met de l'argent de côté pour ces comptes, en plus de tes versements mensuels programmés (qui restent prélevés sur le budget du mois). Le cash PEA est consommé par tes achats directs PEA ; le cash PER par les versements exceptionnels que tu saisis ici. Si un achat PEA dépasse le cash dédié, le complément est pris sur le disponible général."],
@@ -1065,9 +1063,11 @@ const INFOS = {
   bilanAnnuel: ['Bilan de l\u2019année', "Somme des mois écoulés de l'année civile : entrées, grandes catégories de dépenses, montant investi et épargne totale (ce qui est investi plus ce qui reste). Le taux d'épargne rapporte cette épargne aux entrées — c'est l'indicateur le plus prédictif du patrimoine à long terme, bien plus que le choix des placements. Les écarts avec l'année précédente s'affichent dès qu'elle est disponible."],
   budgets: ['Budgets par poste', "Un plafond mensuel facultatif par catégorie de dépense. La jauge se remplit au fil du mois : verte tant que tu es dans les clous, rouge en cas de dépassement. Une alerte intermédiaire apparaît quand le rythme actuel laisse prévoir un dépassement — au 10 du mois, avoir consommé la moitié d'un budget est un signal, même si le plafond n'est pas encore atteint. Laisse un champ vide pour ne pas fixer de plafond sur ce poste."],
   tendances: ['Tendances du mois', "Chaque poste de dépense est comparé à sa moyenne des trois mois précédents, en tenant compte de la portion du mois déjà écoulée : au 10 du mois, on ne compare pas un mois complet à un tiers de mois. Seuls les écarts de plus de 25 % sont signalés, et les postes trop petits sont ignorés. C'est un repère, pas un jugement : un écart peut être parfaitement justifié (vacances, achat prévu, mois à cinq week-ends)."],
+  engagements: ['Projets et emprunts', "Un même endroit pour ce que tu prépares et ce que tu rembourses. Un <b>projet</b> crée sa poche d'épargne dédiée dans la répartition : l'application suit la somme constituée, et pour un achat immobilier calcule l'emprunt qui resterait nécessaire ainsi que la mensualité correspondante. Un <b>emprunt en cours</b> fonctionne à l'envers : le capital restant dû est recalculé chaque mois par amortissement et vient en déduction de ton patrimoine, qui devient un patrimoine net. Les champs affichés s'adaptent à la nature choisie, et un capital relevé sur ton extrait bancaire prime sur le calcul automatique."],
   passifs: ['Emprunts et dettes', "Le capital restant dû est recalculé à chaque ouverture à partir du capital emprunté, du taux et de la mensualité, selon la formule d'amortissement classique — inutile de le mettre à jour à la main, mais tu peux saisir le montant exact de ton relevé bancaire, qui prendra alors le dessus. Le total est déduit du patrimoine brut pour donner le <b>patrimoine net</b>, la seule mesure qui a du sens quand on est endetté : 30 000 € d'épargne avec 200 000 € de prêt, ce n'est pas la même situation que 30 000 € sans dette."],
   transfert: ['Transférer de l\u2019argent', "Déplace une somme d'un compte vers un autre — Livret A vers LDDS quand le premier est plein, épargne vers le disponible à investir, cash vers le PEA ou le PER, ou sortie vers ton compte courant. L'opération est inscrite des deux côtés en une seule fois, avec un libellé miroir daté. Les contrôles sont automatiques : impossible de retirer plus que le solde, ni de dépasser le plafond du compte qui reçoit. Les raccourcis proposent les mouvements les plus utiles à ta situation du moment."],
   comptes: ['Comptes d\u2019épargne', "Ajoute ici tous les comptes que tu possèdes : Livret A, LDDS, LEP, Livret Jeune, PEL, CEL, compte à terme, livret bancaire, espèces… Les plafonds réglementaires sont pré-remplis et modifiables (ils changent au fil des années). Quand un compte atteint son plafond, la part de la répartition qui lui était destinée bascule automatiquement vers le compte de repli — pratique quand les livrets réglementés sont pleins."],
+  engagements: ['Projets et emprunts', "Un même endroit pour ce que tu prépares et ce que tu rembourses. Un <b>projet</b> crée sa poche d'épargne dédiée dans la répartition : l'application suit la somme constituée, et pour un achat immobilier calcule l'emprunt qui resterait nécessaire ainsi que la mensualité correspondante. Un <b>emprunt en cours</b> fonctionne à l'envers : le capital restant dû est recalculé chaque mois par amortissement et vient en déduction de ton patrimoine, qui devient un patrimoine net. Les champs affichés s'adaptent à la nature choisie, et un capital relevé sur ton extrait bancaire prime sur le calcul automatique."],
   passifs: ['Emprunts et dettes', "Le patrimoine affiché était brut : un prêt de 200 000 € n'y apparaissait pas. En enregistrant tes emprunts (capital, taux, mensualité, date de départ), l'application calcule le capital restant dû mois après mois par amortissement, et affiche un <b>patrimoine net</b> sur l'Accueil. Le nombre de mensualités restantes et la date de fin estimée en découlent. Si ton relevé indique un capital restant différent (remboursement anticipé, report d'échéance), saisis-le : il prend alors le pas sur le calcul."],
   projets: ['Projets', "Un projet (achat immobilier, voyage, véhicule…) crée sa propre poche d'épargne dans la répartition. Pour l'immobilier, renseigne le prix, les frais, le taux et la durée : l'app calcule l'emprunt nécessaire une fois l'apport déduit, et la mensualité correspondante. Ce sont des estimations hors assurance emprunteur — le taux réel dépend de ta banque et de ton dossier."],
   chiffrement: ['Sauvegarde chiffrée', "Le verrou de l'application protège l'écran, pas les fichiers : une sauvegarde posée sur un cloud ou une clé USB est lisible par quiconque l'ouvre. L'export chiffré protège le fichier lui-même (AES-GCM 256 bits, clé dérivée du mot de passe par PBKDF2 avec 210 000 itérations, via les fonctions cryptographiques du navigateur — aucune bibliothèque externe). À l'import, l'application détecte le format et demande le mot de passe. Celui-ci n'est stocké nulle part : s'il est perdu, le fichier est définitivement illisible, y compris pour moi."],
@@ -1091,8 +1091,19 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '8.1.0';
+const APP_VERSION = '8.2.1';
 const CHANGELOG = [
+  {v: '8.2.1', d: '13/08/2026', pts: [
+    "Faille corrigée : les noms de comptes, de positions et de projets sont désormais échappés avant affichage — une sauvegarde reçue d'un tiers ne peut plus injecter de code dans la page.",
+    "Bug corrigé : le relevé de l'indice de référence était dupliqué sept fois et rattaché à la suppression d'une période au lieu de l'enregistrement.",
+    "Rendu six fois plus rapide : seule la page visible est reconstruite, les autres le sont à leur affichage.",
+    "Robustesse : une sauvegarde incomplète (sans historique, sans investissements, collections nulles) ne fait plus échouer le rendu.",
+    "Trois bulles d'aide écrites mais inaccessibles sont rattachées à leur carte."]},
+  {v: '8.2.0', d: '13/08/2026', pts: [
+    "Projets et emprunts réunis en un seul bloc : les champs s'adaptent à la nature choisie (achat immobilier à préparer, objectif d'épargne, prêt en cours…).",
+    "Tendances du mois enrichies : barres comparatives réel / attendu, mini-courbe des trois derniers mois, projection de fin de mois, et davantage de postes suivis.",
+    "Modules « Allocation cible » et « Secteurs et zones » retirés : le remplissage automatique restait approximatif faute de connaître la composition réelle des ETF.",
+    "Alignement des formulaires revu : étiquettes de hauteur uniforme, deux colonnes nettes sur mobile."]},
   {v: '8.1.0', d: '13/08/2026', pts: [
     "Secteurs et zones remplis automatiquement : un bouton récupère le secteur et le pays de chaque valeur ; les ETF et métaux, qui ne publient pas ces données, sont classés d'après leur intitulé.",
     "Dividendes : la case à cocher ambiguë est remplacée par deux boutons — « J'ai reçu ce montant » ou « Montant avant prélèvements ».",
@@ -1325,7 +1336,20 @@ function migrer(){
   // dupliquer les mouvements dans la sauvegarde (source de divergence).
   delete etat.livrets;
   if (etat.config.debordement === undefined) etat.config.debordement = 'av';
+  // Garde-fous : une sauvegarde ancienne ou tronquée ne doit jamais casser le rendu
   if (!Array.isArray(etat.projets)) etat.projets = [];
+  if (!Array.isArray(etat.historique)) etat.historique = [];
+  if (!Array.isArray(etat.comptes)) etat.comptes = [];
+  if (!etat.investissements || typeof etat.investissements !== 'object')
+    etat.investissements = {initiaux: {tr: 0, pea: 0, per: 0}, positionsTR: [], positionsPEA: [], positionsPER: []};
+  for (const k of ['positionsTR', 'positionsPEA', 'positionsPER'])
+    if (!Array.isArray(etat.investissements[k])) etat.investissements[k] = [];
+  if (!etat.achatVente || typeof etat.achatVente !== 'object')
+    etat.achatVente = {initial: 0, sorties: [], txTR: [], txPEA: [], versPER: []};
+  for (const k of ['sorties', 'txTR', 'txPEA', 'versPER'])
+    if (!Array.isArray(etat.achatVente[k])) etat.achatVente[k] = [];
+  if (!Array.isArray(etat.config.poches) || !etat.config.poches.length)
+    etat.config.poches = JSON.parse(JSON.stringify(POCHES_DEFAUT));
   if (!Array.isArray(etat.passifs)) etat.passifs = [];
   etat.config.allocCible = etat.config.allocCible || {};
   etat.config.retraite = etat.config.retraite || {};
@@ -1699,73 +1723,7 @@ async function historiqueMensuel(symbole, annees = 3){
 /* Profil d'une valeur : secteur d'activité et pays, quand l'émetteur les publie.
    Les ETF n'exposent pas ces champs (ils sont diversifiés par nature) : ils sont
    alors classés d'après leur intitulé, et restent modifiables à la main. */
-async function profilSymbole(symbole){
-  try{
-    const d = await recupJSON('https://query1.finance.yahoo.com/v10/finance/quoteSummary/'
-      + encodeURIComponent(symbole) + '?modules=assetProfile');
-    const p = (((d.quoteSummary || {}).result || [])[0] || {}).assetProfile;
-    if (p && (p.sector || p.country)) return {secteur: p.sector || '', pays: p.country || ''};
-  }catch(e){ /* profil indisponible */ }
-  return null;
-}
-const SECTEURS_EN = {
-  'Technology': 'Technologie', 'Healthcare': 'Santé', 'Financial Services': 'Finance',
-  'Energy': 'Énergie', 'Industrials': 'Industrie', 'Consumer Cyclical': 'Consommation',
-  'Consumer Defensive': 'Consommation', 'Real Estate': 'Immobilier',
-  'Communication Services': 'Télécoms', 'Utilities': 'Services publics', 'Basic Materials': 'Matériaux',
-};
-const PAYS_ZONE = {
-  'France': 'France', 'Germany': 'Zone euro', 'Netherlands': 'Zone euro', 'Spain': 'Zone euro',
-  'Italy': 'Zone euro', 'Belgium': 'Zone euro', 'Ireland': 'Zone euro', 'Portugal': 'Zone euro',
-  'Austria': 'Zone euro', 'Finland': 'Zone euro', 'Luxembourg': 'Zone euro',
-  'United Kingdom': 'Europe hors euro', 'Switzerland': 'Europe hors euro', 'Sweden': 'Europe hors euro',
-  'Norway': 'Europe hors euro', 'Denmark': 'Europe hors euro',
-  'United States': 'Amérique du Nord', 'Canada': 'Amérique du Nord',
-  'Japan': 'Asie développée', 'South Korea': 'Asie développée', 'Australia': 'Asie développée',
-  'Singapore': 'Asie développée', 'Hong Kong': 'Asie développée', 'Taiwan': 'Asie développée',
-  'China': 'Marchés émergents', 'India': 'Marchés émergents', 'Brazil': 'Marchés émergents',
-  'South Africa': 'Marchés émergents', 'Mexico': 'Marchés émergents',
-};
 /* Classement d'après l'intitulé, pour les ETF et les produits diversifiés */
-function devinerProfil(label){
-  const s = normaliserTexte(label);
-  const zone = /world|monde|msci w|acwi/.test(s) ? 'Monde'
-    : /emerging|emergent|chine|china|inde|india|bresil/.test(s) ? 'Marchés émergents'
-    : /s&p|sp500|nasdaq|usa|us |amerique|america/.test(s) ? 'Amérique du Nord'
-    : /europe|stoxx|eurozone|dax|cac/.test(s) ? 'Zone euro'
-    : /japon|japan|nikkei|topix/.test(s) ? 'Asie développée' : '';
-  const secteur = /or\b|gold|argent|silver|platine|platinum|cuivre|copper|palladium/.test(s) ? 'Matériaux'
-    : /bitcoin|ethereum|solana|crypto|btc|eth/.test(s) ? 'Diversifié'
-    : /world|monde|msci|s&p|nasdaq|stoxx|acwi|etf/.test(s) ? 'Diversifié' : '';
-  return {secteur, zone};
-}
-async function completerProfils(btn){
-  const positions = ['positionsTR', 'positionsPEA', 'positionsPER']
-    .flatMap(k => etat.investissements[k] || []);
-  const aFaire = positions.filter(p => !p.secteur || !p.zone);
-  if (!aFaire.length) return {maj: 0, devines: 0, total: 0};
-  let maj = 0, devines = 0;
-  for (let i = 0; i < aFaire.length; i++){
-    const p = aFaire[i];
-    if (btn) btn.textContent = `⏳ ${i + 1}/${aFaire.length}…`;
-    const sym = (p.symbole || '').trim();
-    let profil = null;
-    if (sym && !estManuel(sym) && !estISIN(sym)) profil = await profilSymbole(sym);
-    if (profil){
-      if (!p.secteur && profil.secteur) p.secteur = SECTEURS_EN[profil.secteur] || profil.secteur;
-      if (!p.zone && profil.pays) p.zone = PAYS_ZONE[profil.pays] || 'Autre';
-      maj++;
-    } else {
-      const d = devinerProfil(p.label);
-      if ((!p.secteur && d.secteur) || (!p.zone && d.zone)){
-        if (!p.secteur && d.secteur) p.secteur = d.secteur;
-        if (!p.zone && d.zone) p.zone = d.zone;
-        devines++;
-      }
-    }
-  }
-  return {maj, devines, total: aFaire.length};
-}
 function performanceBenchmark(){
   const h = (etat.historique || []).filter(x => x.indice != null && x.indice > 0);
   if (h.length < 2) return null;
@@ -1829,132 +1787,15 @@ function simulationRetraite(opts = {}){
    fait de préférence PAR LES VERSEMENTS (on oriente les prochains apports vers
    ce qui est sous-pondéré) plutôt que par des ventes, qui déclencheraient de
    l'impôt sur les plus-values. Ce sont des suggestions, jamais des ordres. */
-function ecartsAllocation(){
-  const a = allocationActuelle();
-  const cible = etat.config.allocCible || {};
-  const cats = [...new Set([...Object.keys(a.parCat), ...Object.keys(cible)])]
-    .filter(c => (a.parCat[c] > 0.004) || (Number(cible[c]) > 0));
-  if (!a.total || !cats.length) return null;
-  const sommeCible = cats.reduce((s, c) => s + (Number(cible[c]) || 0), 0);
-  if (sommeCible <= 0) return null;
-  const lignes = cats.map(c => {
-    const valeur = a.parCat[c] || 0;
-    const reelPct = valeur / a.total * 100;
-    const ciblePct = (Number(cible[c]) || 0) / sommeCible * 100;   // normalisé à 100
-    return {cat: c, valeur, reelPct, ciblePct, ecartPct: reelPct - ciblePct,
-            ecartEur: +(valeur - a.total * ciblePct / 100).toFixed(2)};
-  }).sort((a2, b) => a2.ecartEur - b.ecartEur);
-  return {total: a.total, sommeCible, lignes,
-          derive: +Math.max(...lignes.map(l => Math.abs(l.ecartPct))).toFixed(1)};
-}
 /* Diagnostic en français : ce que la dérive signifie concrètement, et en combien
    de temps les versements habituels la corrigent. Plus utile qu'un tableau de
    pourcentages, qui laisse le lecteur faire lui-même l'interprétation. */
-function diagnosticAllocation(){
-  const e = ecartsAllocation();
-  if (!e) return null;
-  const apports = apportsMensuelsMoyens(3);
-  const sous = e.lignes.filter(l => l.ecartEur < -1).sort((a, b) => a.ecartEur - b.ecartEur);
-  const sur = e.lignes.filter(l => l.ecartEur > 1).sort((a, b) => b.ecartEur - a.ecartEur);
-  const aCombler = sous.reduce((s, l) => s - l.ecartEur, 0);
-  const moisRetour = apports > 0 ? Math.ceil(aCombler / apports) : null;
-  const phrases = [];
-  if (e.derive < 2)
-    phrases.push(`Ton portefeuille est <b>conforme à ta cible</b> (écart maximal ${e.derive} point). Rien à corriger : continue tes versements comme prévu.`);
-  else {
-    if (sur.length)
-      phrases.push(`Tu es <b>surexposé à ${echap(sur[0].cat)}</b> de ${fmt(sur[0].ecartEur)} (${sur[0].reelPct.toFixed(1)} % au lieu de ${sur[0].ciblePct.toFixed(0)} %)`
-        + (sur.length > 1 ? `, et dans une moindre mesure à ${echap(sur[1].cat)}.` : '.'));
-    if (sous.length)
-      phrases.push(`Il te manque ${fmt(aCombler)} sur ${sous.slice(0, 2).map(l => echap(l.cat)).join(' et ')}`
-        + (sous.length > 2 ? ` (et ${sous.length - 2} autre${sous.length > 3 ? 's' : ''})` : '') + ' pour revenir à ta cible.');
-    if (moisRetour != null && moisRetour <= 36)
-      phrases.push(`À ton rythme d'épargne (${fmt(apports)}/mois), <b>${moisRetour} mois</b> de versements dirigés vers ces lignes suffisent — sans rien vendre.`);
-    else if (moisRetour != null)
-      phrases.push(`Combler cet écart uniquement par les versements demanderait ${moisRetour} mois : l'écart est important, un arbitrage partiel peut se discuter (mais il déclenche l'imposition des plus-values).`);
-  }
-  // remarques de bon sens, indépendantes de la cible
-  const conc = concentration();
-  if (conc.premiere && conc.premiere.pct > 25)
-    phrases.push(`⚠️ <b>${echap(conc.premiere.label)}</b> pèse ${conc.premiere.pct.toFixed(0)} % de ton portefeuille : une seule mauvaise nouvelle sur cette ligne se verrait beaucoup.`);
-  const crypto = e.lignes.find(l => l.cat === 'Cryptos');
-  if (crypto && crypto.reelPct > 15)
-    phrases.push(`Les cryptos représentent ${crypto.reelPct.toFixed(0)} % du total — une classe très volatile, dont la valeur peut être divisée par deux en quelques semaines.`);
-  return {derive: e.derive, phrases, moisRetour, apports, aCombler};
-}
 
 /* Répartition d'un versement pour réduire l'écart, sans jamais vendre */
-function planVersement(montant){
-  const e = ecartsAllocation();
-  const m = Number(montant) || 0;
-  if (!e || !(m > 0)) return null;
-  const manquants = e.lignes.filter(l => l.ecartEur < -0.01);
-  const besoin = manquants.reduce((s, l) => s - l.ecartEur, 0);
-  if (besoin <= 0){
-    // déjà à l'équilibre : on répartit selon la cible
-    return e.lignes.filter(l => l.ciblePct > 0)
-      .map(l => ({cat: l.cat, montant: +(m * l.ciblePct / 100).toFixed(2), motif: 'à la cible'}));
-  }
-  const aRepartir = Math.min(m, besoin);
-  const plan = manquants.map(l => ({cat: l.cat,
-    montant: +(aRepartir * (-l.ecartEur) / besoin).toFixed(2), motif: 'sous-pondéré'}));
-  const reste = +(m - aRepartir).toFixed(2);
-  if (reste > 0.01)
-    for (const l of e.lignes.filter(x => x.ciblePct > 0)){
-      const p = plan.find(x => x.cat === l.cat);
-      const part = +(reste * l.ciblePct / 100).toFixed(2);
-      if (p) p.montant = +(p.montant + part).toFixed(2);
-      else plan.push({cat: l.cat, montant: part, motif: 'à la cible'});
-    }
-  return plan.filter(p => p.montant > 0.004).sort((a2, b) => b.montant - a2.montant);
-}
 
 /* ===== Répartition sectorielle et géographique =====
    Deux dimensions que la catégorie ne capte pas : deux ETF « Actions » peuvent
    être 100 % États-Unis ou 100 % Europe. Champs libres sur chaque position. */
-const SECTEURS = ['Technologie', 'Santé', 'Finance', 'Énergie', 'Industrie', 'Consommation',
-                  'Immobilier', 'Télécoms', 'Services publics', 'Matériaux', 'Diversifié'];
-const ZONES = ['France', 'Zone euro', 'Europe hors euro', 'Amérique du Nord', 'Asie développée',
-               'Marchés émergents', 'Monde', 'Autre'];
-function repartitionPar(champ){
-  const par = {};
-  let total = 0;
-  for (const compte of ['positionsTR', 'positionsPEA', 'positionsPER'])
-    for (const p of (etat.investissements[compte] || [])){
-      const v = (Number(p.nb) || 0) * (Number(p.prix) || 0);
-      if (v <= 0.004) continue;
-      const k = (p[champ] || '').trim() || 'Non renseigné';
-      par[k] = (par[k] || 0) + v;
-      total += v;
-    }
-  return {par, total,
-          lignes: Object.entries(par).map(([k, v]) => ({nom: k, valeur: v, pct: total ? v / total * 100 : 0}))
-                    .sort((a, b) => b.valeur - a.valeur)};
-}
-/* Concentration : part de la plus grosse ligne et des cinq premières */
-function concentration(){
-  const li = [];
-  for (const compte of ['positionsTR', 'positionsPEA', 'positionsPER'])
-    for (const p of (etat.investissements[compte] || [])){
-      const v = (Number(p.nb) || 0) * (Number(p.prix) || 0);
-      if (v > 0.004) li.push({label: p.label, valeur: v});
-    }
-  li.sort((a, b) => b.valeur - a.valeur);
-  const total = li.reduce((s, x) => s + x.valeur, 0);
-  return {total, lignes: li,
-          premiere: li.length ? {...li[0], pct: li[0].valeur / total * 100} : null,
-          top5pct: total ? li.slice(0, 5).reduce((s, x) => s + x.valeur, 0) / total * 100 : 0};
-}
-
-/* ===== Passifs (emprunts, crédits) =====
-   Le patrimoine affiché était brut : un prêt immobilier de 200 000 € n'y
-   figurait pas. On suit le capital restant dû, mois après mois, pour obtenir
-   un patrimoine net — la seule mesure qui compte quand on est endetté. */
-const TYPES_PASSIF = [
-  {id: 'immo', nom: '🏡 Prêt immobilier'}, {id: 'conso', nom: '🚗 Prêt auto / conso'},
-  {id: 'etudiant', nom: '🎓 Prêt étudiant'}, {id: 'revolving', nom: '💳 Crédit renouvelable'},
-  {id: 'autre', nom: '📄 Autre dette'},
-];
 /* Capital restant dû après n mensualités, formule d'amortissement classique */
 function capitalRestant(capital, tauxAnnuel, mensualite, moisEcoules){
   const i = (Number(tauxAnnuel) || 0) / 100 / 12;
@@ -1974,6 +1815,27 @@ function moisEcoulesDepuis(dateISO){
   const auj = new Date();
   return Math.max(0, (auj.getFullYear() - a) * 12 + (auj.getMonth() + 1 - m));
 }
+/* ===== Projets et emprunts : une même liste, deux natures =====
+   Ce qu'on prépare (projet, on épargne) et ce qu'on rembourse (emprunt, on doit)
+   se gèrent au même endroit. Les données restent dans deux collections
+   distinctes mais l'interface est unique, et les champs s'adaptent au type. */
+const TYPES_ENGAGEMENT = [
+  {id: 'proj-immo', nature: 'projet', kind: 'immo', nom: '🏡 Projet — achat immobilier'},
+  {id: 'proj-autre', nature: 'projet', kind: 'autre', nom: '🎯 Projet — objectif d\u2019épargne'},
+  {id: 'pass-immo', nature: 'emprunt', kind: 'immo', nom: '🏦 Emprunt — prêt immobilier'},
+  {id: 'pass-conso', nature: 'emprunt', kind: 'conso', nom: '🚗 Emprunt — auto / consommation'},
+  {id: 'pass-etudiant', nature: 'emprunt', kind: 'etudiant', nom: '🎓 Emprunt — prêt étudiant'},
+  {id: 'pass-revolving', nature: 'emprunt', kind: 'revolving', nom: '💳 Emprunt — crédit renouvelable'},
+  {id: 'pass-autre', nature: 'emprunt', kind: 'autre', nom: '📄 Emprunt — autre dette'},
+];
+function engagements(){
+  return [
+    ...(etat.projets || []).map(p => ({...p, nature: 'projet'})),
+    ...(etat.passifs || []).map(p => ({...p, nature: 'emprunt'})),
+  ];
+}
+const ICONE_ENG = {immo: '🏡', autre: '🎯', conso: '🚗', etudiant: '🎓', revolving: '💳'};
+
 function situationPassif(p){
   const ecoules = moisEcoulesDepuis(p.debut);
   const reste = p.resteManuel != null ? Number(p.resteManuel)
@@ -2839,89 +2701,7 @@ function performanceReelle(){
 /* ================= RENDU : PERFORMANCE RÉELLE & PROJECTION ================= */
 const pct = (x, d = 1) => (x == null || !isFinite(x)) ? '—'
   : (x >= 0 ? '+' : '') + (x * 100).toLocaleString('fr-FR', {minimumFractionDigits: d, maximumFractionDigits: d}) + ' %';
-function barreRepartition(lignes, couleurs){
-  if (!lignes.length) return '';
-  return `<div class="barre-rep">${lignes.map((l, i) =>
-    `<span style="width:${l.pct.toFixed(2)}%;background:${couleurs[i % couleurs.length]}" title="${echap(l.nom)} ${l.pct.toFixed(1)} %"></span>`).join('')}</div>`;
-}
-const PALETTE = ['#2E7D5B', '#4E79A7', '#B08D3E', '#7B5EA7', '#C0392B', '#5A6072', '#E0A93F', '#7FA98C', '#A66B8C', '#3E8E8E'];
 
-function carteAllocation(){
-  const e = ecartsAllocation();
-  const cats = CATEGORIES.map(c => c[0]);
-  const cible = etat.config.allocCible || {};
-  const somme = cats.reduce((s, c) => s + (Number(cible[c]) || 0), 0);
-  return `<div class="carte"><div class="tete"><h3>🎯 Allocation cible</h3>${infoBtn('allocation')}
-    <div class="tot" style="font-size:12px;color:var(--encre2)">${e ? `dérive ${e.derive} pt` : 'non définie'}</div></div>
-    <div class="corps">
-      <div class="champs">
-        ${cats.map(c => `<label class="ch"><span>${echap(c)}</span>
-          <span class="unite"><input value="${cible[c] ?? ''}" data-alloc="${echap(c)}" inputmode="decimal" placeholder="—"><span class="u">%</span></span></label>`).join('')}
-      </div>
-      <p class="note">Total saisi : <b>${somme.toFixed(0)} %</b>${somme > 0 && Math.abs(somme - 100) > 0.5
-        ? ` — les parts seront ramenées à 100 % proportionnellement.` : ''}
-        Laisse tout vide pour désactiver le suivi de cible.</p>
-      ${e ? `
-        <div class="separateur"></div>
-        ${(() => { const d = diagnosticAllocation();
-          return d ? `<div class="diagnostic">${d.phrases.map(p => `<p>${p}</p>`).join('')}</div>` : ''; })()}
-        ${e.lignes.slice().sort((a, b) => b.valeur - a.valeur).map(l => `
-          <div class="ligne" style="border:none;padding-bottom:2px">
-            <input class="lab" value="${echap(l.cat)}" readonly>
-            <span class="mnt ${Math.abs(l.ecartPct) < 2 ? 'pos' : (l.ecartPct > 0 ? 'neg' : '')}">
-              ${l.reelPct.toFixed(1)} % / ${l.ciblePct.toFixed(0)} %</span>
-          </div>
-          <p class="note" style="margin:0 0 8px">${Math.abs(l.ecartEur) < 1 ? 'à la cible'
-            : l.ecartEur > 0 ? `surpondéré de ${fmt(l.ecartEur)}` : `sous-pondéré de ${fmt(-l.ecartEur)}`}</p>`).join('')}
-        <div class="separateur"></div>
-        <div class="op-grille">
-          <label class="ch"><span>Répartir un prochain versement de</span>
-            <span class="unite"><input id="alloc-versement" inputmode="text" value="${Math.round(apportsMensuelsMoyens(3)) || 500}"><span class="u">${devise().sym}</span></span></label>
-        </div>
-        <div id="alloc-plan"></div>
-        <p class="note">💡 Suggestion, pas une consigne : rééquilibrer <b>par les versements</b> évite de vendre,
-        donc d'déclencher l'imposition des plus-values. À toi de décider — l'application n'applique rien toute seule.</p>`
-      : '<p class="note">Renseigne au moins une cible pour voir ta dérive et obtenir une suggestion de répartition.</p>'}
-    </div></div>`;
-}
-function majPlanVersement(){
-  const zone = document.getElementById('alloc-plan');
-  if (!zone) return;
-  const m = evalMontant(document.getElementById('alloc-versement').value);
-  const plan = planVersement(m);
-  if (!plan || !plan.length){ zone.innerHTML = ''; return; }
-  zone.innerHTML = plan.map(p => `
-    <div class="tr-ligne entrant">
-      <span class="tr-nom">${echap(p.cat)}</span>
-      <span class="tr-val">${fmt(p.montant)} <span class="note" style="font-size:11px">${p.motif}</span></span>
-    </div>`).join('');
-}
-function carteRepartitions(){
-  const sect = repartitionPar('secteur'), zone = repartitionPar('zone');
-  const conc = concentration();
-  if (!conc.total) return '';
-  const bloc = (titre, r, aide) => `
-    <div class="separateur"></div>
-    <div class="ligne" style="border:none"><input class="lab" value="${titre}" readonly></div>
-    ${r.lignes.length ? barreRepartition(r.lignes, PALETTE) + r.lignes.map((l, i) => `
-      <div class="ligne" style="border:none;padding:3px 0">
-        <input class="lab" value="${echap(l.nom)}" readonly style="font-size:13px">
-        <span class="mnt" style="font-weight:600">${l.pct.toFixed(1)} %  ·  ${fmt(l.valeur)}</span>
-      </div>`).join('') : `<p class="note">${aide}</p>`}`;
-  return `<div class="carte"><div class="tete"><h3>🌍 Secteurs et zones</h3>${infoBtn('repartitions')}
-    <div class="tot" style="font-size:12px;color:var(--encre2)">${fmt(conc.total)}</div></div>
-    <div class="corps">
-      ${conc.premiere ? `<p class="note">Ligne la plus lourde : <b>${echap(conc.premiere.label)}</b> ${conc.premiere.pct.toFixed(1)} % du portefeuille
-        · les 5 premières en représentent ${conc.top5pct.toFixed(0)} %.
-        ${conc.premiere.pct > 25 ? ' ⚠️ Concentration élevée sur une seule ligne.' : ''}</p>` : ''}
-      <button class="btn or ligne2" id="btn-profils" style="margin-top:0">🔎 Compléter automatiquement secteurs et zones</button>
-      <p class="note">Récupère le secteur et le pays de chaque valeur auprès des données publiques (connexion requise).
-      Les ETF ne publient pas ces informations : ils sont classés d'après leur intitulé (« MSCI World » → Monde, « Or » → Matériaux).
-      Tout reste modifiable à la main dans les colonnes 🏭 et 🌍 des tableaux de positions.</p>
-      ${bloc('🏭 Par secteur', sect, 'Aucun secteur renseigné pour l\u2019instant — utilise le bouton ci-dessus, ou saisis-les dans les tableaux.')}
-      ${bloc('🌍 Par zone géographique', zone, 'Renseigne la zone de tes positions pour voir cette répartition.')}
-    </div></div>`;
-}
 function carteRetraite(){
   const s = simulationRetraite();
   if (!s) return '';
@@ -2930,11 +2710,11 @@ function carteRetraite(){
     <div class="tot">${s.couverture.toFixed(0)} %</div></div>
     <div class="corps">
       <div class="champs">
-        <label class="ch"><span>Dépenses annuelles visées</span>
+        <label class="ch"><span>Dépenses annuelles</span>
           <span class="unite"><input value="${r.depenses ?? Math.round(s.depenses)}" data-retraite="depenses" inputmode="text"><span class="u">${devise().sym}</span></span></label>
-        <label class="ch"><span>Taux de retrait annuel</span>
+        <label class="ch"><span>Taux de retrait</span>
           <span class="unite"><input value="${r.retrait ?? 4}" data-retraite="retrait" inputmode="decimal"><span class="u">%</span></span></label>
-        <label class="ch"><span>Inflation supposée</span>
+        <label class="ch"><span>Inflation</span>
           <span class="unite"><input value="${r.inflation ?? 2}" data-retraite="inflation" inputmode="decimal"><span class="u">%</span></span></label>
       </div>
       <div class="jauge" style="margin:10px 0 4px"><div class="jauge-barre ${s.couverture >= 100 ? 'pleine' : ''}" style="width:${s.couverture.toFixed(1)}%"></div></div>
@@ -2965,14 +2745,14 @@ function carteDividendes(){
     <div class="tot pos">${fmt(c.net)}</div></div>
     <div class="corps">
       <div class="champs">
-        <label class="ch"><span>Source (société, ETF…)</span>
+        <label class="ch"><span>Source</span>
           <input id="div-source" list="div-sources" placeholder="ex. TotalEnergies" autocomplete="off">
           <datalist id="div-sources">${sources.map(s => `<option value="${echap(s)}">`).join('')}</datalist></label>
         <label class="ch"><span>Date de perception</span>
           <input id="div-date" type="date" value="${jourISO()}"></label>
         <label class="ch"><span>Montant perçu</span>
           <span class="unite"><input id="div-montant" inputmode="text" placeholder="0"><span class="u">${devise().sym}</span></span></label>
-        <label class="ch" id="div-champ-taux" style="${etat.config.divBrutDefaut ? '' : 'display:none'}"><span>Prélèvements retenus</span>
+        <label class="ch" id="div-champ-taux" style="${etat.config.divBrutDefaut ? '' : 'display:none'}"><span>Prélèvements</span>
           <span class="unite"><input id="div-taux" inputmode="decimal" value="${etat.config.divTaux ?? PFU_DEFAUT}"><span class="u">%</span></span></label>
       </div>
       <div class="op-sens" style="margin-top:10px">
@@ -3024,7 +2804,7 @@ function majApercuDividende(){
 function blocBenchmark(){
   const b = performanceBenchmark();
   const choix = etat.config.indiceRef || '';
-  const sel = `<label class="ch"><span>Indice de référence</span>
+  const sel = `<label class="ch"><span>Indice de référence ${infoBtn('benchmark')}</span>
     <select id="cfg-indice"><option value="">— aucun —</option>
       ${INDICES.map(i => `<option value="${i.sym}" ${choix === i.sym ? 'selected' : ''}>${i.nom}</option>`).join('')}
     </select></label>`;
@@ -3235,10 +3015,25 @@ function suiviBudgets(cle){
   });
 }
 
+/* Mini-courbe des derniers mois : donne le mouvement d'un coup d'œil, là où
+   un pourcentage isolé ne dit pas si la hausse est ponctuelle ou installée. */
+function sparkline(serie, l = 62, h = 18){
+  if (!serie || serie.length < 2) return '';
+  const max = Math.max(...serie), min = Math.min(...serie);
+  const amp = (max - min) || 1;
+  const pts = serie.map((v, i) => `${(i / (serie.length - 1) * l).toFixed(1)},${(h - (v - min) / amp * (h - 3) - 1.5).toFixed(1)}`);
+  const monte = serie[serie.length - 1] >= serie[0];
+  return `<svg width="${l}" height="${h}" viewBox="0 0 ${l} ${h}" aria-hidden="true" style="flex:none">
+    <polyline points="${pts.join(' ')}" fill="none" stroke="${monte ? 'var(--rouge)' : 'var(--vert)'}" stroke-width="1.6"
+      stroke-linecap="round" stroke-linejoin="round" opacity=".85"/>
+    <circle cx="${pts[pts.length-1].split(',')[0]}" cy="${pts[pts.length-1].split(',')[1]}" r="2"
+      fill="${monte ? 'var(--rouge)' : 'var(--vert)'}"/></svg>`;
+}
+
 /* ===== Tendances par catégorie =====
    Compare le mois en cours à la moyenne des mois précédents et signale les
    écarts marquants. Aide à repérer une dérive avant la fin du mois. */
-function tendances(cleMois, nbRef = 3){
+function tendances(cleMois, nbRef = 3, tousLesPostes = false){
   const cles = clesMois().filter(k => k < cleMois && k <= cleAujourdhui()).slice(-nbRef);
   if (!cles.length) return [];
   const postes = [
@@ -3257,13 +3052,18 @@ function tendances(cleMois, nbRef = 3){
     const moy = cles.reduce((s, k) => s + Math.abs(calculerMois(k)[champ] || 0), 0) / cles.length;
     const reel = Math.abs(c[champ] || 0);
     const attendu = moy * partMois;
-    if (moy < 20 && reel < 20) continue;            // trop petit pour être parlant
+    if (!tousLesPostes && moy < 20 && reel < 20) continue;
+    if (moy < 1 && reel < 1) continue;              // poste vide : rien à dire
     const ecart = attendu > 0 ? (reel - attendu) / attendu : (reel > 0 ? 1 : 0);
-    if (Math.abs(ecart) < 0.25) continue;           // moins de 25 % : bruit normal
-    out.push({nom, reel, moy, attendu, ecart, mois: cles.length,
+    if (!tousLesPostes && Math.abs(ecart) < 0.25) continue;   // sous 25 % : bruit normal
+    // historique des mois de référence, pour la mini-courbe
+    const serie = cles.map(k => Math.abs(calculerMois(k)[champ] || 0));
+    out.push({nom, reel, moy, attendu, ecart, serie, mois: cles.length,
+              projection: partMois > 0 ? reel / partMois : reel,
               partiel: partMois < 0.98});
   }
-  return out.sort((a, b) => Math.abs(b.ecart) - Math.abs(a.ecart)).slice(0, 4);
+  return out.sort((a, b) => Math.abs(b.ecart) - Math.abs(a.ecart))
+            .slice(0, tousLesPostes ? 12 : 4);
 }
 
 /* ===== Recherche globale =====
@@ -3499,18 +3299,33 @@ function rendreAccueil(){
       <div class="jauge" style="margin:6px 0 3px"><div class="jauge-barre" style="width:${Math.min(100, Math.max(0, ba.tauxEpargne * 100)).toFixed(1)}%"></div></div>
       <p class="note">Taux d'épargne : <b>${(ba.tauxEpargne * 100).toFixed(1)} %</b> des entrées.
       Moyenne mensuelle : ${fmt(ba.moyEntrees)} d'entrées, ${fmt(ba.moyDepenses)} de dépenses.</p>`;
-  const tds = tendances(cleAujourdhui());
+  const tds = tendances(cleAujourdhui(), 3, true);
+  const maxT = Math.max(1, ...tds.map(t => Math.max(t.reel, t.attendu, ...t.serie)));
   document.getElementById('tendances-corps').innerHTML = tds.length ? `
-    ${tds.map(t => `<div class="ligne">
-      <input class="lab" value="${echap(t.nom)}" readonly>
-      <span class="mnt ${t.ecart > 0 ? 'neg' : 'pos'}">${t.ecart > 0 ? '▲' : '▼'} ${Math.abs(t.ecart * 100).toFixed(0)} %</span>
-    </div>
-    <p class="note" style="margin:-2px 0 8px">${fmt(t.reel)} ${t.partiel ? 'à ce stade du mois' : 'ce mois-ci'}
-      · attendu ${fmt(t.attendu)} d'après la moyenne des ${t.mois} derniers mois (${fmt(t.moy)}/mois)</p>`).join('')}
-    ` : `<p class="note">Rien à signaler : tes postes de dépenses suivent leurs moyennes habituelles.
-      ${clesMois().filter(k => k < cleAujourdhui()).length < 2 ? ' (Il faut au moins deux mois d\u2019historique pour comparer.)' : ''}</p>`;
-  const bandeau = document.getElementById('statut-sync');
-  if (bandeau && etat.config.demo) bandeau.textContent = '🎬 Mode démonstration';
+    <p class="note" style="margin-bottom:10px">Consommé à ce stade du mois, comparé à la moyenne des ${tds[0].mois} derniers mois
+    ramenée à la même portion de mois.</p>
+    ${tds.map(t => {
+      const fort = Math.abs(t.ecart) >= 0.25;
+      const couleur = t.ecart > 0 ? 'var(--rouge)' : 'var(--vert)';
+      return `<div class="tend">
+        <div class="tend-tete">
+          <span class="tend-nom">${echap(t.nom)}</span>
+          <span class="tend-ecart" style="color:${fort ? couleur : 'var(--encre2)'}">
+            ${t.ecart > 0 ? '▲' : t.ecart < 0 ? '▼' : '='} ${Math.abs(t.ecart * 100).toFixed(0)} %</span>
+        </div>
+        <div class="tend-barres">
+          <div class="tend-b"><span class="tend-jauge reel" style="width:${(t.reel / maxT * 100).toFixed(1)}%;background:${fort ? couleur : 'var(--laiton)'}"></span>
+            <span class="tend-val">${fmt(t.reel)}</span></div>
+          <div class="tend-b"><span class="tend-jauge attendu" style="width:${(t.attendu / maxT * 100).toFixed(1)}%"></span>
+            <span class="tend-val faible">${fmt(t.attendu)} attendu</span></div>
+        </div>
+        <div class="tend-pied">
+          ${sparkline(t.serie)}
+          <span>${t.serie.map(v => fmt(v)).join(' · ')}${t.partiel ? ` → ${fmt(t.projection)} prévu en fin de mois` : ''}</span>
+        </div>
+      </div>`;
+    }).join('')}` : `<p class="note">Rien à comparer pour l\u2019instant : il faut au moins un mois complet d\u2019historique.</p>`;
+
   const brut = liv.total + inv.total + avc.totalDispo;
   const dettes = totalPassifs();
   document.getElementById('patri-total').textContent = fmt(brut - dettes);
@@ -3671,7 +3486,7 @@ function rendreLivrets(){
             ? `🔒 <b>Plafond atteint</b> (${fmt(c.plafond)}) — les versements suivants sont redirigés automatiquement.`
             : `${c.pct.toFixed(0)} % du plafond · il reste <b>${fmt(c.reste)}</b> de place${c.taux ? ` · ${c.taux} %/an` : ''}`}</p>` : ''}
         <div class="ligne"><input class="lab" value="Montant avant ${libelleMois(clesMois()[0]) || 'départ'}" readonly>
-          <input class="mnt" value="${c.initial}" data-cinit="${c.id}" inputmode="text"></div>
+          <input class="mnt" value="${c.initial}" data-cinit="${echap(c.id)}" inputmode="text"></div>
         <div class="ligne"><input class="lab" value="Total cumulé au fil des mois (auto)" readonly><span class="mnt pos">${fmt(c.cumul)}</span></div>
         ${composeur('comptes.' + c.id + '.mouvements', '+', 'Mouvement (ex. Versement)')}
         ${(c.mouvements || []).map((it, i) => ligneEditable('comptes.' + c.id + '.mouvements', it, i)).join('')}
@@ -3697,7 +3512,7 @@ function rendreLivrets(){
   const dests = destinationsTransfert();
   const opts = (choisi) => dests.map(d => {
     const s = soldeDisponible(d.id);
-    return `<option value="${d.id}" ${d.id === choisi ? 'selected' : ''}>${d.nom}${s != null ? ` — ${fmt(s)}` : ''}</option>`;
+    return `<option value="${echap(d.id)}" ${d.id === choisi ? 'selected' : ''}>${echap(d.nom)}${s != null ? ` — ${fmt(s)}` : ''}</option>`;
   }).join('');
   const secondId = dests[1] ? dests[1].id : dests[0].id;
   const carteTransfert = `
@@ -3745,6 +3560,65 @@ function rendreLivrets(){
   }
 }
 
+function champEng(lab, val, id, nature, f, unite, ph, type){
+  const attr = nature === 'projet' ? `data-proj="${echap(id)}" data-pjf="${f}"` : `data-passif="${echap(id)}" data-paf="${f}"`;
+  return `<label class="ch"><span>${lab}</span>
+    ${unite ? `<span class="unite"><input value="${val ?? ''}" ${attr} inputmode="decimal" placeholder="${ph || ''}"><span class="u">${unite}</span></span>`
+      : `<input value="${echap(String(val ?? ''))}" ${attr}${type ? ' type="' + type + '"' : ''} placeholder="${ph || ''}">`}
+  </label>`;
+}
+function blocEngagement(e){
+  const dev = devise().sym;
+  const icone = ICONE_ENG[e.type] || (e.nature === 'projet' ? '🎯' : '🏦');
+  const supprimer = e.nature === 'projet' ? `data-projsup="${e.id}"` : `data-passifsup="${echap(e.id)}"`;
+  let champs, bilan, badge;
+  if (e.nature === 'projet'){
+    const s = situationProjet(e);
+    badge = e.type === 'immo' ? 'Projet immobilier' : 'Objectif d\u2019épargne';
+    if (e.type === 'immo'){
+      const emprunt = Math.max(0, (Number(e.prix) || 0) + (Number(e.frais) || 0) - s.apport);
+      const mens = mensualitePret(emprunt, e.taux, e.duree);
+      champs = champEng('Nom du projet', e.nom, e.id, 'projet', 'nom', '', 'ex. Achat appartement')
+        + champEng('Prix du bien', e.prix, e.id, 'projet', 'prix', dev, '0')
+        + champEng('Frais (notaire, agence)', e.frais, e.id, 'projet', 'frais', dev, '0')
+        + champEng("Taux d'emprunt envisagé", e.taux, e.id, 'projet', 'taux', '%', '3.5')
+        + champEng('Durée envisagée', e.duree, e.id, 'projet', 'duree', 'ans', '20')
+        + champEng('Apport déjà constitué', e.apportInitial, e.id, 'projet', 'apportInitial', dev, '0');
+      bilan = `Apport <b>${fmt(s.apport)}</b> · emprunt nécessaire <b>${fmt(emprunt)}</b>
+        · mensualité estimée <b>${fmt(mens)}</b> sur ${e.duree || 0} ans (hors assurance emprunteur).`;
+    } else {
+      champs = champEng('Nom du projet', e.nom, e.id, 'projet', 'nom', '', 'ex. Voyage au Japon')
+        + champEng('Objectif à atteindre', e.objectif, e.id, 'projet', 'objectif', dev, '0')
+        + champEng('Somme déjà de côté', e.apportInitial, e.id, 'projet', 'apportInitial', dev, '0');
+      bilan = `Constitué <b>${fmt(s.apport)}</b>${s.objectif ? ` sur ${fmt(s.objectif)} — ${s.pct.toFixed(0)} %` : ''}${
+        s.moisRestants ? ` · atteint dans ~${s.moisRestants} mois au rythme actuel` : ''}.`;
+    }
+  } else {
+    const s = situationPassif(e);
+    const t = TYPES_ENGAGEMENT.find(x => x.kind === e.type && x.nature === 'emprunt');
+    badge = (t ? t.nom.split('— ')[1] : 'Emprunt');
+    champs = champEng('Nom de l\u2019emprunt', e.nom, e.id, 'emprunt', 'nom', '', 'ex. Prêt appartement')
+      + champEng('Capital emprunté', e.capital, e.id, 'emprunt', 'capital', dev, '0')
+      + champEng("Taux d'intérêt annuel", e.taux, e.id, 'emprunt', 'taux', '%', '3.5')
+      + champEng('Mensualité', e.mensualite, e.id, 'emprunt', 'mensualite', dev, '0')
+      + champEng('Date de la 1re mensualité', e.debut, e.id, 'emprunt', 'debut', '', '', 'date')
+      + champEng('Capital restant (si connu)', e.resteManuel, e.id, 'emprunt', 'resteManuel', dev, 'calcul auto');
+    bilan = `Capital restant <b>${fmt(s.reste)}</b> après ${s.ecoules} mensualité(s) · ${fmt(s.rembourse)} remboursé
+      (${s.pct.toFixed(0)} %)${s.restantes != null ? ` · ${s.restantes} restantes, fin ${s.finEstimee}` : ''}.`;
+  }
+  const s2 = e.nature === 'projet' ? situationProjet(e) : situationPassif(e);
+  const pct = e.nature === 'projet' ? (s2.pct || 0) : s2.pct;
+  return `<div class="bloc-edit">
+    <div class="bloc-tete">
+      <span class="titre-bloc">${icone} ${echap(e.nom)}</span>
+      <span class="badge-eng ${e.nature}">${badge}</span>
+      <button class="sup" ${supprimer} aria-label="Supprimer">✕</button>
+    </div>
+    ${pct != null ? `<div class="jauge" style="margin-bottom:8px"><div class="jauge-barre ${pct >= 99.5 ? 'pleine' : ''}" style="width:${Math.min(100, pct).toFixed(1)}%"></div></div>` : ''}
+    <div class="champs">${champs}</div>
+    <div class="bilan-bloc">${bilan}</div>
+  </div>`;
+}
 function cartePassifs(){
   const li = etat.passifs || [];
   if (!li.length) return '';
@@ -3806,7 +3680,7 @@ function carteProjets(){
         <div class="ligne"><input class="lab" value="Mensualité estimée (${p.duree || 0} ans à ${p.taux || 0} %)" readonly><span class="mnt"><b>${fmt(mens)}</b></span></div>
         <p class="note">Hors assurance emprunteur (compter environ 0,10 à 0,40 %/an du capital selon l'âge et le profil).
         Estimation indicative : le taux réel dépend de ta banque et de ton dossier.</p>` : ''}
-        <button class="ajout" data-projsup="${p.id}">✕ Retirer ce projet</button>
+        <button class="ajout" data-projsup="${echap(p.id)}">✕ Retirer ce projet</button>
       </div></div>`;
   }).join('');
 }
@@ -3877,8 +3751,6 @@ function tablePositions(titre, chemin, calc, totalCompte){
         <input value="${p.prix ?? ''}" data-pch="${chemin}" data-i="${p.idx}" data-f="prix" inputmode="text"
                title="${LEGENDE_PRIX[statutPrix(p, etat.config.derniereMajCours)]}"></td>
       <td><input value="${echap(p.symbole || '')}" data-pch="${chemin}" data-i="${p.idx}" data-f="symbole" placeholder="ISIN / ticker" style="min-width:96px;text-align:left;color:var(--encre2)"></td>
-      <td><input value="${echap(p.secteur || '')}" data-pch="${chemin}" data-i="${p.idx}" data-f="secteur" list="liste-secteurs" placeholder="secteur" style="min-width:92px;text-align:left;color:var(--encre2)"></td>
-      <td><input value="${echap(p.zone || '')}" data-pch="${chemin}" data-i="${p.idx}" data-f="zone" list="liste-zones" placeholder="zone" style="min-width:92px;text-align:left;color:var(--encre2)"></td>
       <td class="${cls(p.perfP)}">${p.perfP.toFixed(1)} %</td>
       <td class="${cls(p.perfE)}">${fmtS(p.perfE)}</td>
       <td><button class="sup" data-psupch="${chemin}" data-i="${p.idx}">✕</button></td>
@@ -3895,9 +3767,9 @@ function tablePositions(titre, chemin, calc, totalCompte){
         <span class="cpt">${calc.lignes.length} position${calc.lignes.length > 1 ? 's' : ''}</span>
       </div>
       <div style="overflow-x:auto">
-      <table><thead><tr><th>Position</th><th>Nb</th><th>PRU</th><th>Prix</th><th>🔗 ISIN / Ticker</th><th>🏭 Secteur</th><th>🌍 Zone</th><th>Perf %</th><th>Perf</th><th></th></tr></thead>
+      <table><thead><tr><th>Position</th><th>Nb</th><th>PRU</th><th>Prix</th><th>🔗 ISIN / Ticker</th><th>Perf %</th><th>Perf</th><th></th></tr></thead>
       <tbody>${lig}
-        <tr class="total"><td>TOTAL · perf. latente</td><td colspan="6">valeur ${fmt(calc.valeur)}</td>
+        <tr class="total"><td>TOTAL · perf. latente</td><td colspan="4">valeur ${fmt(calc.valeur)}</td>
           <td class="${cls(calc.perfP)}">${calc.perfP.toFixed(1)} %</td><td class="${cls(calc.perfE)}">${fmtS(calc.perfE)}</td><td></td></tr>
       </tbody></table>
       </div>
@@ -3943,9 +3815,8 @@ function rendreInvest(){
         </div>
       </div></div>`;
   document.getElementById('inv-blocs').insertAdjacentHTML('beforeend',
-    carteAllocation() + carteRepartitions() + carteDividendes()
+    carteDividendes()
     + cartePerformanceReelle() + carteProjection() + carteRetraite());
-  majPlanVersement();
   rendreGraph(); rendreHistTable();
   document.getElementById('btn-enregistrer-hist').onclick = () => {
     const p = document.getElementById('hist-periode').value.trim();
@@ -3966,15 +3837,14 @@ function rendreInvest(){
     if (ix >= 0) etat.historique[ix] = rec; else etat.historique.push(rec);
     etat.historique.sort((a, b) => a.periode.split('.').reverse().join('') < b.periode.split('.').reverse().join('') ? -1 : 1);
     // relevé de l'indice de référence, si configuré et si le réseau répond
-  if (etat.config.indiceRef){
-    coursSymbole(etat.config.indiceRef).then(c => {
-      if (c && c.prix > 0){
-        const e = etat.historique.find(x => x.periode === periode);
+    if (etat.config.indiceRef){
+      coursSymbole(etat.config.indiceRef).then(c => {
+        if (!c || !(c.prix > 0)) return;
+        const e = etat.historique.find(x => x.periode === p);
         if (e){ e.indice = +c.prix.toFixed(4); e.indiceSym = etat.config.indiceRef; sauver(); rendreInvest(); appliquerReplis(); }
-      }
-    }).catch(() => {});
-  }
-  sauver(); rendreInvest(); toast('Période ' + p + ' enregistrée 📈');
+      }).catch(() => {});
+    }
+    sauver(); rendreInvest(); toast('Période ' + p + ' enregistrée 📈');
   };
 }
 function rendreGraph(){
@@ -4029,7 +3899,7 @@ function rendreAV(){
             <button class="op-choix" data-opsens="Vente">💰 Vente</button>
           </div>
           <select id="op-compte">${COMPTES_OPS.map(c =>
-            `<option value="${c.id}" ${c.id === compteChoisi ? 'selected' : ''}>${c.nom}</option>`).join('')}</select>
+            `<option value="${echap(c.id)}" ${c.id === compteChoisi ? 'selected' : ''}>${echap(c.nom)}</option>`).join('')}</select>
           <select id="op-position">
             <option value="">— Position (facultatif) —</option>
             ${optsPos(compteChoisi)}
@@ -4069,7 +3939,7 @@ function rendreAV(){
 
   // --- Une seule carte pour les disponibles, avec le détail de leur composition ---
   const carteDispo = `
-    <div class="carte"><div class="tete"><h3>💰 D'où vient l'argent disponible</h3>${infoBtn('cashcomptes')}
+    <div class="carte"><div class="tete"><h3>💰 D'où vient l'argent disponible</h3>${infoBtn('av')}${infoBtn('cashcomptes')}
       <div class="tot">${fmt(a.totalDispo)}</div></div>
       <div class="corps">
         <div class="ligne"><input class="lab" value="Montant avant ${libelleMois(clesMois()[0]) || 'départ'}" readonly>
@@ -4133,11 +4003,12 @@ function rendreReglages(){
   document.getElementById('cfg-jour').value = etat.config.eurParJour;
   document.getElementById('cfg-fixe').value = etat.config.enveloppeFixe != null ? etat.config.enveloppeFixe : '';
   document.getElementById('cfg-reste').value = etat.config.resteInitial;
+  const MODES = [['part', libellePart(etat.config.poches)], ['pct', '% du NA'], ['fixe', '€ fixe'], ['reste', 'Reste']];
   // destinations : tous les comptes + cash des enveloppes + projets + suivi
   const CIBLES = [
-    ...comptesActifs().map(c => [c.id, '→ ' + c.nom]),
+    ...comptesActifs().map(c => [echap(c.id), '→ ' + echap(c.nom)]),
     ['av', '→ Dispo invest. (TR)'], ['pea', '→ Cash PEA'], ['per', '→ Cash PER'],
-    ...(etat.projets || []).map(p => ['projet:' + p.id, '→ 🎯 ' + p.nom]),
+    ...(etat.projets || []).map(p => ['projet:' + echap(p.id), '→ 🎯 ' + echap(p.nom)]),
     ['suivi', '→ Suivi'],
   ];
   // comptes
@@ -4148,19 +4019,19 @@ function rendreReglages(){
       <div class="bloc-tete">
         <span class="titre-bloc">${echap(c.nom)}</span>
         <span class="note" style="font-size:12px;font-weight:700;color:${l.plein ? 'var(--vert)' : 'var(--encre2)'}">${fmt(l.solde)}${l.plein ? ' 🔒' : ''}</span>
-        <button class="sup" data-cptsup="${c.id}" aria-label="Supprimer ce compte">✕</button>
+        <button class="sup" data-cptsup="${echap(c.id)}" aria-label="Supprimer ce compte">✕</button>
       </div>
       <div class="champs">
         <label class="ch"><span>Nom du compte</span>
-          <input value="${echap(c.nom)}" data-cpt="${c.id}" data-cf="nom" placeholder="ex. Livret A"></label>
-        <label class="ch"><span>Plafond légal (vide = aucun)</span>
-          <span class="unite"><input value="${c.plafond ?? ''}" data-cpt="${c.id}" data-cf="plafond"
+          <input value="${echap(c.nom)}" data-cpt="${echap(c.id)}" data-cf="nom" placeholder="ex. Livret A"></label>
+        <label class="ch"><span>Plafond légal</span>
+          <span class="unite"><input value="${c.plafond ?? ''}" data-cpt="${echap(c.id)}" data-cf="plafond"
             inputmode="decimal" placeholder="aucun"><span class="u">${devise().sym}</span></span></label>
-        <label class="ch"><span>Taux d'intérêt annuel</span>
-          <span class="unite"><input value="${c.taux ?? ''}" data-cpt="${c.id}" data-cf="taux"
+        <label class="ch"><span>Taux annuel</span>
+          <span class="unite"><input value="${c.taux ?? ''}" data-cpt="${echap(c.id)}" data-cf="taux"
             inputmode="decimal" placeholder="0"><span class="u">%/an</span></span></label>
-        <label class="ch"><span>Solde avant le 1er mois suivi</span>
-          <span class="unite"><input value="${c.initial ?? 0}" data-cpt="${c.id}" data-cf="initial"
+        <label class="ch"><span>Solde de départ</span>
+          <span class="unite"><input value="${c.initial ?? 0}" data-cpt="${echap(c.id)}" data-cf="initial"
             inputmode="decimal" placeholder="0"><span class="u">${devise().sym}</span></span></label>
       </div>
       <div class="bilan-bloc">
@@ -4171,37 +4042,15 @@ function rendreReglages(){
       </div>
     </div>`;
   }).join('') || '<p class="note">Aucun compte — ajoute-en un ci-dessous.</p>';
-  // ----- Emprunts et dettes -----
-  const selTP = document.getElementById('passif-type');
-  if (selTP && !selTP.options.length)
-    selTP.innerHTML = TYPES_PASSIF.map(t => `<option value="${t.id}">${t.nom}</option>`).join('');
-  const chP = (lab, val, id, f, unite, ph, type) => `
-    <label class="ch"><span>${lab}</span>
-      ${unite ? `<span class="unite"><input value="${val ?? ''}" data-passif="${id}" data-paf="${f}"
-        inputmode="decimal" placeholder="${ph || ''}"><span class="u">${unite}</span></span>`
-      : `<input value="${echap(String(val ?? ''))}" data-passif="${id}" data-paf="${f}"${type ? ' type="' + type + '"' : ''} placeholder="${ph || ''}">`}
-    </label>`;
-  const pal = document.getElementById('passifs-liste');
-  if (pal) pal.innerHTML = (etat.passifs || []).map(p => {
-    const s = situationPassif(p);
-    return `<div class="bloc-edit">
-      <div class="bloc-tete"><span class="titre-bloc">${echap(p.nom)}</span>
-        <button class="sup" data-passifsup="${p.id}" aria-label="Supprimer">✕</button></div>
-      <div class="champs">
-        ${chP('Nom de l\u2019emprunt', p.nom, p.id, 'nom', '', 'ex. Prêt appartement')}
-        ${chP('Capital emprunté', p.capital, p.id, 'capital', devise().sym, '0')}
-        ${chP("Taux d'intérêt annuel", p.taux, p.id, 'taux', '%', '3.5')}
-        ${chP('Mensualité', p.mensualite, p.id, 'mensualite', devise().sym, '0')}
-        ${chP('Date de la 1re mensualité', p.debut, p.id, 'debut', '', '', 'date')}
-        ${chP('Capital restant (si connu)', p.resteManuel, p.id, 'resteManuel', devise().sym, 'auto')}
-      </div>
-      <div class="bilan-bloc">Capital restant estimé <b>${fmt(s.reste)}</b> après ${s.ecoules} mensualité(s)
-        · ${fmt(s.rembourse)} déjà remboursé${s.finEstimee ? ` · fin estimée ${s.finEstimee}` : ''}.
-        Laisse « capital restant » vide pour le calcul automatique.</div>
-    </div>`;
-  }).join('') || '<p class="note">Aucun emprunt enregistré.</p>';
-
   // ----- Budgets par poste -----
+  // ----- Projets et emprunts (bloc unique) -----
+  const selEng = document.getElementById('eng-type');
+  if (selEng && !selEng.options.length)
+    selEng.innerHTML = TYPES_ENGAGEMENT.map(t => `<option value="${t.id}">${t.nom}</option>`).join('');
+  const zoneEng = document.getElementById('engagements-liste');
+  if (zoneEng) zoneEng.innerHTML = engagements().map(blocEngagement).join('')
+    || '<p class="note">Rien pour l\u2019instant. Ajoute un projet que tu prépares, ou un emprunt que tu rembourses.</p>';
+
   const bl = document.getElementById('budgets-liste');
   if (bl) bl.innerHTML = POSTES_BUDGET.map(([k, nom]) => `
     <label class="ch" style="margin-bottom:7px"><span>${nom}</span>
@@ -4216,8 +4065,8 @@ function rendreReglages(){
       <div class="ligne">
         <input class="lab" value="${echap(p.nom)}${p.id === actif ? '  ·  actif' : ''}" readonly
           style="${p.id === actif ? 'font-weight:700;color:var(--laiton)' : ''}">
-        ${p.id === actif ? '' : `<button class="btn discret" data-profil="${p.id}" style="padding:5px 11px;font-size:12px">Ouvrir</button>`}
-        ${p.id === 'principal' ? '' : `<button class="sup" data-profilsup="${p.id}" aria-label="Supprimer">✕</button>`}
+        ${p.id === actif ? '' : `<button class="btn discret" data-profil="${echap(p.id)}" style="padding:5px 11px;font-size:12px">Ouvrir</button>`}
+        ${p.id === 'principal' ? '' : `<button class="sup" data-profilsup="${echap(p.id)}" aria-label="Supprimer">✕</button>`}
       </div>`).join('');
   }
 
@@ -4239,48 +4088,10 @@ function rendreReglages(){
     selMod.innerHTML = CATALOGUE_COMPTES.map(m =>
       `<option value="${m.modele}">${m.nom}${m.plafond ? ` (plafond ${m.plafond.toLocaleString('fr-FR')} €)` : ''}</option>`).join('');
   const selDeb = document.getElementById('cfg-debordement');
-  if (selDeb) selDeb.innerHTML = [...comptesActifs().map(c => [c.id, c.nom]),
+  if (selDeb) selDeb.innerHTML = [...comptesActifs().map(c => [echap(c.id), echap(c.nom)]),
     ['av', '💵 Disponible à investir (TR)'], ['pea', '📈 Cash PEA'], ['per', '🛡️ Cash PER'], ['suivi', '🧺 Suivi simple']]
     .map(([v, l]) => `<option value="${v}" ${etat.config.debordement === v ? 'selected' : ''}>${l}</option>`).join('');
   // projets
-  const champ = (lab, val, proj, f, unite, ph) => `
-    <label class="ch"><span>${lab}</span>
-      ${unite ? `<span class="unite"><input value="${val ?? ''}" data-proj="${proj}" data-pjf="${f}"
-        inputmode="decimal" placeholder="${ph || ''}"><span class="u">${unite}</span></span>`
-      : `<input value="${echap(String(val ?? ''))}" data-proj="${proj}" data-pjf="${f}" placeholder="${ph || ''}">`}
-    </label>`;
-  document.getElementById('projets-liste').innerHTML = (etat.projets || []).map(p => {
-    const s = situationProjet(p);
-    const emprunt = Math.max(0, (Number(p.prix) || 0) + (Number(p.frais) || 0) - s.apport);
-    const mens = p.type === 'immo' ? mensualitePret(emprunt, p.taux, p.duree) : 0;
-    return `<div class="bloc-edit">
-      <div class="bloc-tete">
-        <span class="titre-bloc">${p.type === 'immo' ? '🏡' : '🎯'} ${echap(p.nom)}</span>
-        <button class="sup" data-projsup="${p.id}" aria-label="Supprimer ce projet">✕</button>
-      </div>
-      <div class="champs">
-        ${champ('Nom du projet', p.nom, p.id, 'nom', '', 'ex. Achat appartement')}
-        ${p.type === 'immo' ? `
-          ${champ('Prix du bien', p.prix, p.id, 'prix', devise().sym, '0')}
-          ${champ('Frais (notaire, agence)', p.frais, p.id, 'frais', devise().sym, '0')}
-          ${champ("Taux d'emprunt", p.taux, p.id, 'taux', '%', '3.5')}
-          ${champ('Durée du prêt', p.duree, p.id, 'duree', 'ans', '20')}
-          ${champ('Apport déjà constitué', p.apportInitial, p.id, 'apportInitial', devise().sym, '0')}
-        ` : `
-          ${champ('Objectif à atteindre', p.objectif, p.id, 'objectif', devise().sym, '0')}
-          ${champ('Somme déjà de côté', p.apportInitial, p.id, 'apportInitial', devise().sym, '0')}
-        `}
-      </div>
-      <div class="bilan-bloc">
-        ${p.type === 'immo'
-          ? `Apport constitué <b>${fmt(s.apport)}</b> · emprunt nécessaire <b>${fmt(emprunt)}</b>
-             · mensualité estimée <b>${fmt(mens)}</b> sur ${p.duree || 0} ans (hors assurance emprunteur).`
-          : `Constitué <b>${fmt(s.apport)}</b>${s.objectif ? ` sur ${fmt(s.objectif)} — ${s.pct.toFixed(0)} %` : ''}${
-             s.moisRestants ? ` · objectif atteint dans ~${s.moisRestants} mois au rythme actuel` : ''}.`}
-      </div>
-    </div>`;
-  }).join('') || '<p class="note">Aucun projet pour l\u2019instant.</p>';
-  const MODES = [['part', libellePart(etat.config.poches)], ['pct', '% du NA'], ['fixe', '€ fixe'], ['reste', 'Reste']];
   document.getElementById('poches-liste').innerHTML = etat.config.poches.map((p, i) => {
     const unite = p.mode === 'pct' ? '%' : p.mode === 'fixe' ? devise().sym : '';
     const fige = p.mode === 'part' || p.mode === 'reste';
@@ -4306,8 +4117,22 @@ function rendreReglages(){
     </div>`;
   }).join('');
 }
+/* Rendu paresseux : seule la page visible est reconstruite ; les autres sont
+   marquées obsolètes et régénérées au moment où l'on s'y rend. Reconstruire les
+   six pages à chaque saisie produisait un demi-Mo de HTML pour rien. */
+const RENDUS = {accueil: () => rendreAccueil(), mois: () => rendreMois(), livrets: () => rendreLivrets(),
+                invest: () => rendreInvest(), av: () => rendreAV(), reglages: () => rendreReglages()};
+let _pagesObsoletes = new Set();
 function rendreTout(){
-  rendreAccueil(); rendreMois(); rendreLivrets(); rendreInvest(); rendreAV(); rendreReglages();
+  const active = pageActive();
+  _pagesObsoletes = new Set(Object.keys(RENDUS).filter(p => p !== active));
+  RENDUS[active]();
+  appliquerReplis();
+}
+function rendreSiBesoin(page){
+  if (!_pagesObsoletes.has(page)) return;
+  _pagesObsoletes.delete(page);
+  RENDUS[page]();
   appliquerReplis();
 }
 
@@ -4335,13 +4160,15 @@ function toast(msg, annulable){
 }
 function pageActive(){ return document.querySelector('.page.actif').id.replace('page-', ''); }
 function rafraichirPage(){
-  ({accueil: rendreAccueil, mois: rendreMois, livrets: rendreLivrets,
-    invest: rendreInvest, av: rendreAV, reglages: rendreReglages})[pageActive()]();
+  const active = pageActive();
+  for (const p of Object.keys(RENDUS)) if (p !== active) _pagesObsoletes.add(p);
+  RENDUS[active]();
   appliquerReplis();
 }
 
 document.querySelector('nav').addEventListener('click', e => {
   const b = e.target.closest('button[data-page]'); if (!b) return;
+  rendreSiBesoin(b.dataset.page);
   document.querySelectorAll('nav button').forEach(x => x.classList.toggle('actif', x === b));
   document.querySelectorAll('.page').forEach(p => p.classList.toggle('actif', p.id === 'page-' + b.dataset.page));
   rafraichirPage();
@@ -4373,16 +4200,6 @@ document.querySelector('main').addEventListener('change', e => {
     const n = propagerDirect(moisActif, el.dataset.direct, +v.toFixed(2));
     if (n > 0) toast(`↪ Répercuté sur ${n} mois suivant${n > 1 ? 's' : ''}`);
     sauver(); rendreMois();
-  } else if (el.dataset.alloc){
-    etat.config.allocCible = etat.config.allocCible || {};
-    const txt = el.value.trim();
-    if (txt === '') delete etat.config.allocCible[el.dataset.alloc];
-    else {
-      const v = evalMontant(txt);
-      if (isNaN(v) || v < 0) return toast('Valeur invalide');
-      etat.config.allocCible[el.dataset.alloc] = +v.toFixed(1);
-    }
-    sauver(); rendreInvest(); appliquerReplis();
   } else if (el.dataset.retraite){
     etat.config.retraite = etat.config.retraite || {};
     const v = evalMontant(el.value);
@@ -4429,38 +4246,17 @@ document.querySelector('main').addEventListener('change', e => {
   } else if (el.dataset.tri){               // tri d'un portefeuille
     etat.config.triPositions = etat.config.triPositions || {};
     etat.config.triPositions[el.dataset.tri] = el.value;
-    // relevé de l'indice de référence, si configuré et si le réseau répond
-  if (etat.config.indiceRef){
-    coursSymbole(etat.config.indiceRef).then(c => {
-      if (c && c.prix > 0){
-        const e = etat.historique.find(x => x.periode === periode);
-        if (e){ e.indice = +c.prix.toFixed(4); e.indiceSym = etat.config.indiceRef; sauver(); rendreInvest(); appliquerReplis(); }
-      }
-    }).catch(() => {});
-  }
   sauver(); rendreInvest();
   } else if (el.dataset.pch){               // positions invest
     const p = etat.investissements[el.dataset.pch][+el.dataset.i];
     if (el.dataset.f === 'symbole'){ p.symbole = el.value.trim(); sauver(); return; }
     if (el.dataset.f === 'label'){ p.label = el.value.trim(); sauver(); rendreInvest(); return; }
-    if (el.dataset.f === 'secteur' || el.dataset.f === 'zone'){
-      p[el.dataset.f] = el.value.trim(); sauver(); rendreInvest(); appliquerReplis(); return;
-    }
     if (el.dataset.f === 'type'){ p.type = el.value; sauver(); rendreInvest(); return; }
     const v = evalMontant(el.value);
     if (isNaN(v)) { toast('Valeur invalide'); return; }
     // quantités au millionième (fractions d'actions), prix au dix-millième
     p[el.dataset.f] = +v.toFixed(el.dataset.f === 'nb' ? 6 : 4);
     if (el.dataset.f === 'prix') p.majManuel = Date.now();   // saisie manuelle : prix considéré à jour
-    // relevé de l'indice de référence, si configuré et si le réseau répond
-  if (etat.config.indiceRef){
-    coursSymbole(etat.config.indiceRef).then(c => {
-      if (c && c.prix > 0){
-        const e = etat.historique.find(x => x.periode === periode);
-        if (e){ e.indice = +c.prix.toFixed(4); e.indiceSym = etat.config.indiceRef; sauver(); rendreInvest(); appliquerReplis(); }
-      }
-    }).catch(() => {});
-  }
   sauver(); rendreInvest();
   } else if (el.dataset.tch){               // transactions achat-vente
     const t = etat.achatVente[el.dataset.tch][+el.dataset.i];
@@ -4495,15 +4291,6 @@ document.querySelector('main').addEventListener('click', e => {
     document.querySelectorAll('[data-divtype]').forEach(b => b.classList.toggle('actif', b === el));
     etat.config.divBrutDefaut = el.dataset.divtype === 'brut';
     sauver(); majApercuDividende();
-  } else if (el.id === 'btn-profils'){      // secteurs et zones automatiques
-    el.disabled = true;
-    const libelle = el.textContent;
-    completerProfils(el).then(r => {
-      el.disabled = false; el.textContent = libelle;
-      sauver(); rendreInvest(); appliquerReplis();
-      toast(r.total === 0 ? '✅ Toutes les positions sont déjà renseignées'
-        : `🔎 ${r.maj} récupéré(s) en ligne, ${r.devines} déduit(s) de l'intitulé, sur ${r.total}`);
-    }).catch(e => { el.disabled = false; el.textContent = libelle; toast('⚠️ ' + e.message); });
   } else if (el.id === 'btn-indice-hist'){   // historique de l'indice de référence
     const sym = etat.config.indiceRef;
     if (!sym) return toast('Choisis d\u2019abord un indice');
@@ -4622,42 +4409,15 @@ document.querySelector('main').addEventListener('click', e => {
     toast(`${label} étalé sur ${n} mois${crees ? ` — ${crees} mois créé${crees > 1 ? 's' : ''}` : ''} ✅`);
   } else if (el.dataset.horizon){
     etat.config.horizonProjection = +el.dataset.horizon;
-    // relevé de l'indice de référence, si configuré et si le réseau répond
-  if (etat.config.indiceRef){
-    coursSymbole(etat.config.indiceRef).then(c => {
-      if (c && c.prix > 0){
-        const e = etat.historique.find(x => x.periode === periode);
-        if (e){ e.indice = +c.prix.toFixed(4); e.indiceSym = etat.config.indiceRef; sauver(); rendreInvest(); appliquerReplis(); }
-      }
-    }).catch(() => {});
-  }
   sauver(); rendreInvest();
   } else if (el.id === 'btn-cours'){
     mettreAJourCours();
   } else if (el.dataset.paddch){
     etat.investissements[el.dataset.paddch].push({type: 'Actions', label: 'Nouvelle position', nb: 0, pru: 0, prix: 0, symbole: ''});
-    // relevé de l'indice de référence, si configuré et si le réseau répond
-  if (etat.config.indiceRef){
-    coursSymbole(etat.config.indiceRef).then(c => {
-      if (c && c.prix > 0){
-        const e = etat.historique.find(x => x.periode === periode);
-        if (e){ e.indice = +c.prix.toFixed(4); e.indiceSym = etat.config.indiceRef; sauver(); rendreInvest(); appliquerReplis(); }
-      }
-    }).catch(() => {});
-  }
   sauver(); rendreInvest();
   } else if (el.dataset.psupch){
     if (!confirm('Supprimer cette position ?')) return;
     etat.investissements[el.dataset.psupch].splice(+el.dataset.i, 1);
-    // relevé de l'indice de référence, si configuré et si le réseau répond
-  if (etat.config.indiceRef){
-    coursSymbole(etat.config.indiceRef).then(c => {
-      if (c && c.prix > 0){
-        const e = etat.historique.find(x => x.periode === periode);
-        if (e){ e.indice = +c.prix.toFixed(4); e.indiceSym = etat.config.indiceRef; sauver(); rendreInvest(); appliquerReplis(); }
-      }
-    }).catch(() => {});
-  }
   sauver(); rendreInvest();
   } else if (el.dataset.taddch){
     etat.achatVente[el.dataset.taddch].push({date: new Date().toISOString().slice(0,10), sens: 'Achat', type: 'Actions', label: '', montant: 0});
@@ -4669,15 +4429,6 @@ document.querySelector('main').addEventListener('click', e => {
   } else if (el.dataset.histsup != null){
     if (!confirm('Supprimer cette période de l\u2019historique ?')) return;
     etat.historique.splice(+el.dataset.histsup, 1);
-    // relevé de l'indice de référence, si configuré et si le réseau répond
-  if (etat.config.indiceRef){
-    coursSymbole(etat.config.indiceRef).then(c => {
-      if (c && c.prix > 0){
-        const e = etat.historique.find(x => x.periode === periode);
-        if (e){ e.indice = +c.prix.toFixed(4); e.indiceSym = etat.config.indiceRef; sauver(); rendreInvest(); appliquerReplis(); }
-      }
-    }).catch(() => {});
-  }
   sauver(); rendreInvest();
   }
 });
@@ -4980,15 +4731,6 @@ document.getElementById('cfg-debordement').addEventListener('change', e => {
   toast('Repli des plafonds mis à jour — effet dès le mois prochain');
 });
 /* ===== Projets ===== */
-document.getElementById('passif-ajouter').onclick = () => {
-  const nom = document.getElementById('passif-nom').value.trim();
-  if (!nom) return toast('Donne un nom à l\u2019emprunt');
-  memoriserPourAnnuler('ajout de l\u2019emprunt');
-  etat.passifs.push({id: 'ps' + Date.now().toString(36), nom, type: document.getElementById('passif-type').value,
-    capital: 0, taux: 3.5, mensualite: 0, debut: jourISO(), resteManuel: null});
-  document.getElementById('passif-nom').value = '';
-  sauver(); rendreTout(); toast(`Emprunt « ${nom} » ajouté`, true);
-};
 document.addEventListener('change', e => {
   const el = e.target;
   if (!el.dataset || !el.dataset.paf) return;
@@ -5016,71 +4758,81 @@ document.addEventListener('click', e => {
   etat.passifs = etat.passifs.filter(x => x.id !== p.id);
   sauver(); rendreTout(); toast('Emprunt supprimé', true);
 });
-document.getElementById('passif-ajouter').onclick = () => {
-  const nom = document.getElementById('passif-nom').value.trim();
-  if (!nom) return toast('Donne un nom à cet emprunt');
-  const type = document.getElementById('passif-type').value;
-  etat.passifs.push({id: 'pa' + Date.now().toString(36), nom, type,
-    capital: 0, taux: 3.5, mensualite: 0, debut: jourISO(), resteManuel: null});
-  document.getElementById('passif-nom').value = '';
-  sauver(); rendreTout();
-  toast(`« ${nom} » ajouté — renseigne le capital, le taux et la mensualité`);
-};
-document.getElementById('passifs-liste').addEventListener('change', e => {
-  const el = e.target;
-  if (!el.dataset.paf) return;
-  const p = (etat.passifs || []).find(x => x.id === el.dataset.passif);
-  if (!p) return;
-  if (el.dataset.paf === 'nom') p.nom = el.value.trim() || p.nom;
-  else if (el.dataset.paf === 'debut') p.debut = el.value || p.debut;
-  else if (el.dataset.paf === 'resteManuel'){
-    const txt = el.value.trim();
-    if (txt === '') p.resteManuel = null;
-    else { const v = evalMontant(txt); if (isNaN(v) || v < 0) return toast('Valeur invalide'); p.resteManuel = +v.toFixed(2); }
+document.getElementById('eng-ajouter').onclick = () => {
+  const nom = document.getElementById('eng-nom').value.trim();
+  if (!nom) return toast('Donne un nom');
+  const t = TYPES_ENGAGEMENT.find(x => x.id === document.getElementById('eng-type').value);
+  if (!t) return;
+  if (t.nature === 'projet'){
+    const id = 'pj' + Date.now().toString(36);
+    etat.projets.push(t.kind === 'immo'
+      ? {id, nom, type: 'immo', prix: 0, frais: 0, taux: 3.5, duree: 20, apportInitial: 0, objectif: 0}
+      : {id, nom, type: 'autre', objectif: 0, apportInitial: 0});
+    figerRepartitionHistorique();
+    etat.config.poches.splice(Math.max(0, etat.config.poches.length - 1), 0,
+      {id: 'p' + id, nom: (t.kind === 'immo' ? '🏡 ' : '🎯 ') + nom, mode: 'pct', valeur: 5, cible: 'projet:' + id});
+    toast(`Projet « ${nom} » créé, avec sa poche d'épargne (5 % du non attribué, modifiable)`);
   } else {
-    const v = evalMontant(el.value);
-    if (isNaN(v) || v < 0) return toast('Valeur invalide');
-    p[el.dataset.paf] = +v.toFixed(2);
+    etat.passifs.push({id: 'pa' + Date.now().toString(36), nom, type: t.kind,
+      capital: 0, taux: 3.5, mensualite: 0, debut: jourISO(), resteManuel: null});
+    toast(`« ${nom} » ajouté — renseigne le capital, le taux et la mensualité`);
   }
+  document.getElementById('eng-nom').value = '';
   sauver(); rendreTout();
-});
-document.getElementById('passifs-liste').addEventListener('click', e => {
-  const b = e.target.closest('[data-passifsup]');
-  if (!b) return;
-  const p = (etat.passifs || []).find(x => x.id === b.dataset.passifsup);
-  if (!p || !confirm(`Supprimer « ${p.nom} » ?`)) return;
-  memoriserPourAnnuler('suppression de l\u2019emprunt');
-  etat.passifs = etat.passifs.filter(x => x.id !== p.id);
-  sauver(); rendreTout(); toast('Emprunt supprimé', true);
-});
-document.getElementById('proj-ajouter').onclick = () => {
-  const nom = document.getElementById('proj-nom').value.trim();
-  if (!nom) return toast('Donne un nom au projet');
-  const type = document.getElementById('proj-type').value;
-  const id = 'pj' + Date.now().toString(36);
-  etat.projets.push(type === 'immo'
-    ? {id, nom, type, prix: 0, frais: 0, taux: 3.5, duree: 20, apportInitial: 0, objectif: 0}
-    : {id, nom, type, objectif: 0, apportInitial: 0});
-  figerRepartitionHistorique();
-  etat.config.poches.splice(Math.max(0, etat.config.poches.length - 1), 0,
-    {id: 'p' + id, nom: (type === 'immo' ? '🏡 ' : '🎯 ') + nom, mode: 'pct', valeur: 5, cible: 'projet:' + id});
-  document.getElementById('proj-nom').value = '';
-  sauver(); rendreTout();
-  toast(`Projet « ${nom} » créé avec sa poche (5 % du non attribué, modifiable)`);
 };
-document.getElementById('projets-liste').addEventListener('change', e => {
+document.getElementById('engagements-liste').addEventListener('change', e => {
   const el = e.target;
-  if (!el.dataset.pjf) return;
-  const p = (etat.projets || []).find(x => x.id === el.dataset.proj);
-  if (!p) return;
-  if (el.dataset.pjf === 'nom') p.nom = el.value.trim() || p.nom;
-  else {
-    const v = evalMontant(el.value);
-    if (isNaN(v) || v < 0) return toast('Valeur invalide');
-    p[el.dataset.pjf] = +v.toFixed(2);
+  if (el.dataset.paf){                     // emprunt
+    const p = (etat.passifs || []).find(x => x.id === el.dataset.passif);
+    if (!p) return;
+    if (el.dataset.paf === 'nom') p.nom = el.value.trim() || p.nom;
+    else if (el.dataset.paf === 'debut') p.debut = el.value || p.debut;
+    else if (el.dataset.paf === 'resteManuel'){
+      const txt = el.value.trim();
+      if (txt === '') p.resteManuel = null;
+      else { const v = evalMontant(txt); if (isNaN(v) || v < 0) return toast('Valeur invalide'); p.resteManuel = +v.toFixed(2); }
+    } else {
+      const v = evalMontant(el.value);
+      if (isNaN(v) || v < 0) return toast('Valeur invalide');
+      p[el.dataset.paf] = +v.toFixed(2);
+    }
+    sauver(); rendreTout();
+  } else if (el.dataset.pjf){              // projet
+    const p = (etat.projets || []).find(x => x.id === el.dataset.proj);
+    if (!p) return;
+    if (el.dataset.pjf === 'nom') p.nom = el.value.trim() || p.nom;
+    else {
+      const v = evalMontant(el.value);
+      if (isNaN(v) || v < 0) return toast('Valeur invalide');
+      p[el.dataset.pjf] = +v.toFixed(2);
+    }
+    sauver(); rendreTout();
   }
-  sauver(); rendreTout();
 });
+
+document.getElementById('engagements-liste').addEventListener('click', e => {
+  const bp = e.target.closest('[data-passifsup]');
+  if (bp){
+    const p = (etat.passifs || []).find(x => x.id === bp.dataset.passifsup);
+    if (!p || !confirm(`Supprimer « ${p.nom} » ?`)) return;
+    memoriserPourAnnuler('suppression de l\u2019emprunt');
+    etat.passifs = etat.passifs.filter(x => x.id !== p.id);
+    sauver(); rendreTout(); toast('Emprunt supprimé', true);
+    return;
+  }
+  const bj = e.target.closest('[data-projsup]');
+  if (bj){
+    const p = (etat.projets || []).find(x => x.id === bj.dataset.projsup);
+    if (!p || !confirm(`Retirer le projet « ${p.nom} » ? Sa poche d\u2019épargne sera supprimée (l\u2019historique reste figé).`)) return;
+    memoriserPourAnnuler('suppression du projet');
+    figerRepartitionHistorique();
+    etat.projets = etat.projets.filter(x => x.id !== p.id);
+    etat.config.poches = etat.config.poches.filter(x => x.cible !== 'projet:' + p.id);
+    sauver(); rendreTout(); toast('Projet retiré', true);
+  }
+});
+
+
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-projsup]');
   if (!b) return;
@@ -5946,7 +5698,6 @@ document.addEventListener('input', e => {
   if (['tr-montant', 'tr-de', 'tr-vers'].includes(e.target.id)) majApercuTransfert();
   if (['op-montant', 'op-prix', 'op-label'].includes(e.target.id)) majApercuOperation();
   if (['div-montant', 'div-taux', 'div-date'].includes(e.target.id)) majApercuDividende();
-  if (e.target.id === 'alloc-versement') majPlanVersement();
 });
 document.addEventListener('change', e => {
   if (e.target.id === 'div-brut' || e.target.id === 'div-date') majApercuDividende();
@@ -6175,8 +5926,6 @@ function traiterAjoutURL(){
 /* ================= DÉMARRAGE ================= */
 (async function init(){
   peuplerCatRapide();
-  document.getElementById('liste-secteurs').innerHTML = SECTEURS.map(s => `<option value="${s}">`).join('');
-  document.getElementById('liste-zones').innerHTML = ZONES.map(z => `<option value="${z}">`).join('');
   verrouiller();                          // affiché avant tout si le verrou est actif
   demanderDeverrouillage(true);           // tente Face ID immédiatement
   document.getElementById('ver').textContent = 'v' + APP_VERSION + ' · Hors-ligne';
