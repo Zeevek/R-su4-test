@@ -477,6 +477,22 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
 .bloc-edit{border:1px solid var(--trait);border-radius:12px;padding:11px;margin-bottom:9px;background:var(--carte)}
 .bloc-edit .bloc-tete{display:flex;align-items:center;gap:8px;margin-bottom:9px}
 .bloc-edit .bloc-tete .titre-bloc{font-weight:800;font-size:14px;color:var(--encre);flex:1;min-width:0}
+.mini-barres{display:flex;align-items:flex-end;gap:6px;height:96px;padding:10px 2px 0}
+.mb-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%}
+.mb-zone{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center}
+.mb-barre{width:70%;max-width:26px;border-radius:4px 4px 0 0;background:var(--trait)}
+.mb-col.encours .mb-barre{background:var(--laiton)}
+.mb-col.prevu .mb-barre{background:repeating-linear-gradient(45deg,var(--laiton-clair),var(--laiton-clair) 3px,transparent 3px,transparent 6px);
+  border:1px dashed var(--laiton)}
+.mb-val{font-size:10px;font-weight:700;color:var(--encre2)}
+.mb-col.encours .mb-val{color:var(--laiton)}
+.mb-lab{font-size:9.5px;color:var(--encre2);text-transform:uppercase;letter-spacing:.03em}
+.detail-tend{margin-top:7px}
+.detail-tend summary{font-size:11.5px;color:var(--laiton);font-weight:700;cursor:pointer;list-style:none;padding:3px 0}
+.detail-tend summary::-webkit-details-marker{display:none}
+.detail-tend summary::before{content:'▸ ';transition:transform .2s}
+.detail-tend[open] summary::before{content:'▾ '}
+.tend-val .faible{font-weight:500;color:var(--encre2);font-size:11px}
 .tend{padding:9px 0;border-bottom:1px dashed var(--trait)}
 .tend:last-child{border-bottom:none}
 .tend-tete{display:flex;align-items:baseline;gap:8px;margin-bottom:5px}
@@ -537,6 +553,7 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
         Entrée ⏎ pour valider, expressions acceptées (« 7+3.5 »). Une puce pré-remplit l'intitulé et le dernier montant utilisé.</p>
       </div>
     </div>
+    <div id="acc-dividendes"></div>
     <div class="carte">
       <div class="tete"><h3>📊 Estimation dépense par jour</h3><button class="info-btn" data-infocle="hero" aria-label="Informations">i</button><div class="tot" id="est-ref"></div></div>
       <div class="corps">
@@ -1091,8 +1108,11 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '8.2.1';
+const APP_VERSION = '8.3.0';
 const CHANGELOG = [
+  {v: '8.3.0', d: '16/08/2026', pts: [
+    "Tendances du mois : chaque barre porte enfin son mois, la période de référence est réglable (3, 6 ou 12 mois), et le détail mois par mois s'ouvre à la demande.",
+    "Dividendes : la carte rejoint l'Accueil, juste sous la dépense rapide, avec un résumé annuel, une frise des encaissements sur l'année et un journal des derniers versements."]},
   {v: '8.2.1', d: '13/08/2026', pts: [
     "Faille corrigée : les noms de comptes, de positions et de projets sont désormais échappés avant affichage — une sauvegarde reçue d'un tiers ne peut plus injecter de code dans la page.",
     "Bug corrigé : le relevé de l'indice de référence était dupliqué sept fois et rattaché à la suppression d'une période au lieu de l'enregistrement.",
@@ -2734,47 +2754,70 @@ function carteRetraite(){
     </div></div>`;
 }
 function carteDividendes(){
-  const j = journalDividendes(12);
+  const j = journalDividendes(6);
   const an = String(new Date().getFullYear());
   const c = cumulDividendes(an);
+  const cAvant = cumulDividendes(String(+an - 1));
   const sources = [...new Set([
     ...['positionsTR', 'positionsPEA', 'positionsPER'].flatMap(k => (etat.investissements[k] || []).map(p => p.label)),
     ...journalDividendes(9999).map(d => d.source),
   ])].filter(Boolean).sort((a, b) => a.localeCompare(b, 'fr'));
+  // cumul mois par mois de l'année, pour la frise
+  const parMois = Array(12).fill(0);
+  for (const d of journalDividendes(9999))
+    if (String(d.dateDiv || '').startsWith(an)) parMois[+d.dateDiv.slice(5, 7) - 1] += +d.montant || 0;
+  const maxM = Math.max(1, ...parMois);
+  const moisNoms = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+  const moisActuel = new Date().getMonth();
   return `<div class="carte"><div class="tete"><h3>💸 Dividendes perçus</h3>${infoBtn('dividendes')}
     <div class="tot pos">${fmt(c.net)}</div></div>
     <div class="corps">
-      <div class="champs">
-        <label class="ch"><span>Source</span>
-          <input id="div-source" list="div-sources" placeholder="ex. TotalEnergies" autocomplete="off">
-          <datalist id="div-sources">${sources.map(s => `<option value="${echap(s)}">`).join('')}</datalist></label>
-        <label class="ch"><span>Date de perception</span>
-          <input id="div-date" type="date" value="${jourISO()}"></label>
-        <label class="ch"><span>Montant perçu</span>
-          <span class="unite"><input id="div-montant" inputmode="text" placeholder="0"><span class="u">${devise().sym}</span></span></label>
-        <label class="ch" id="div-champ-taux" style="${etat.config.divBrutDefaut ? '' : 'display:none'}"><span>Prélèvements</span>
-          <span class="unite"><input id="div-taux" inputmode="decimal" value="${etat.config.divTaux ?? PFU_DEFAUT}"><span class="u">%</span></span></label>
+      ${c.nb ? `
+        <div class="div-resume">
+          <div><span class="e">Encaissé en ${an}</span><b class="pos">${fmt(c.net)}</b></div>
+          <div><span class="e">Versements</span><b>${c.nb} · ${c.sources} source${c.sources > 1 ? 's' : ''}</b></div>
+          <div><span class="e">Moyenne</span><b>${fmt(c.net / Math.max(1, moisActuel + 1))} / mois</b></div>
+          ${cAvant.nb ? `<div><span class="e">vs ${+an - 1}</span><b class="${cls(c.net - cAvant.net)}">${
+            c.net >= cAvant.net ? '+' : ''}${((c.net / Math.max(0.01, cAvant.net) - 1) * 100).toFixed(0)} %</b></div>` : ''}
+        </div>
+        <div class="div-frise">${parMois.map((v, m) => `
+          <div class="dfm ${m === moisActuel ? 'actuel' : ''}" title="${moisNoms[m]} : ${fmt(v)}">
+            <div class="dfm-zone"><div class="dfm-barre" style="height:${(v / maxM * 100).toFixed(1)}%"></div></div>
+            <span>${moisNoms[m]}</span></div>`).join('')}</div>
+        <p class="note" style="margin:2px 0 12px">Répartition des encaissements sur l'année.</p>
+      ` : ''}
+      <div class="div-saisie">
+        <div class="champs">
+          <label class="ch"><span>Source</span>
+            <input id="div-source" list="div-sources" placeholder="ex. TotalEnergies" autocomplete="off">
+            <datalist id="div-sources">${sources.map(s => `<option value="${echap(s)}">`).join('')}</datalist></label>
+          <label class="ch"><span>Date de perception</span>
+            <input id="div-date" type="date" value="${jourISO()}"></label>
+          <label class="ch"><span>Montant</span>
+            <span class="unite"><input id="div-montant" inputmode="text" placeholder="0"><span class="u">${devise().sym}</span></span></label>
+          <label class="ch" id="div-champ-taux" style="${etat.config.divBrutDefaut ? '' : 'display:none'}"><span>Prélèvements</span>
+            <span class="unite"><input id="div-taux" inputmode="decimal" value="${etat.config.divTaux ?? PFU_DEFAUT}"><span class="u">%</span></span></label>
+        </div>
+        <div class="op-sens" style="margin-top:9px">
+          <button class="op-choix ${etat.config.divBrutDefaut ? '' : 'actif'}" data-divtype="net">💶 Montant reçu</button>
+          <button class="op-choix ${etat.config.divBrutDefaut ? 'actif' : ''}" data-divtype="brut">🧾 Avant prélèvements</button>
+        </div>
+        <div id="div-apercu" class="tr-apercu"></div>
+        <button class="btn or ligne2" id="div-valider">＋ Enregistrer</button>
       </div>
-      <div class="op-sens" style="margin-top:10px">
-        <button class="op-choix ${etat.config.divBrutDefaut ? '' : 'actif'}" data-divtype="net">💶 J'ai reçu ce montant</button>
-        <button class="op-choix ${etat.config.divBrutDefaut ? 'actif' : ''}" data-divtype="brut">🧾 Montant avant prélèvements</button>
-      </div>
-      <div id="div-apercu" class="tr-apercu"></div>
-      <button class="btn or ligne2" id="div-valider">＋ Enregistrer le dividende</button>
-      <p class="note">Un dividende perçu ce mois-ci est comptabilisé dans les entrées du <b>mois suivant</b>,
-      comme sur ton relevé. ${c.nb ? `Cumul ${an} : <b>${fmt(c.net)}</b> net sur ${c.nb} versement${c.nb > 1 ? 's' : ''}
-      de ${c.sources} source${c.sources > 1 ? 's' : ''}${c.brut > c.net + 0.004 ? ` (${fmt(c.brut)} brut)` : ''}.` : ''}</p>
-      ${j.length ? `<div class="separateur"></div>
-        ${j.map(d => `<div class="op-item">
-          <span class="op-badge vente">💸</span>
-          <div class="op-txt">
-            <div class="op-nom">${echap(d.source)}</div>
-            <div class="op-meta">perçu le ${new Date(d.dateDiv).toLocaleDateString('fr-FR')} · compté en ${libelleMois(d.cleMois)}${
-              d.brut ? ` · brut ${fmt(d.montantBrut)} − ${d.tauxPrelev} %` : ' · net'}</div>
+      ${j.length ? `
+        <div class="separateur"></div>
+        ${j.map(d => `<div class="div-item">
+          <div class="div-src">
+            <span class="div-nom">${echap(d.source)}</span>
+            <span class="div-meta">${new Date(d.dateDiv).toLocaleDateString('fr-FR', {day: '2-digit', month: 'short'})}
+              → compté en ${libelleMois(d.cleMois)}${d.brut ? ` · brut ${fmt(d.montantBrut)}` : ''}</span>
           </div>
-          <span class="op-mt pos">${fmt(d.montant)}</span>
+          <span class="div-mt pos">${fmt(d.montant)}</span>
           <button class="sup" data-divsup="${d.cleMois}|${d.i}" aria-label="Supprimer">✕</button>
-        </div>`).join('')}` : ''}
+        </div>`).join('')}`
+      : `<p class="note">Aucun dividende enregistré pour l'instant. Un dividende perçu ce mois-ci sera compté
+         dans les entrées du <b>mois suivant</b>, comme sur ton relevé bancaire.</p>`}
     </div></div>`;
 }
 function majApercuDividende(){
@@ -3017,23 +3060,33 @@ function suiviBudgets(cle){
 
 /* Mini-courbe des derniers mois : donne le mouvement d'un coup d'œil, là où
    un pourcentage isolé ne dit pas si la hausse est ponctuelle ou installée. */
-function sparkline(serie, l = 62, h = 18){
-  if (!serie || serie.length < 2) return '';
-  const max = Math.max(...serie), min = Math.min(...serie);
-  const amp = (max - min) || 1;
-  const pts = serie.map((v, i) => `${(i / (serie.length - 1) * l).toFixed(1)},${(h - (v - min) / amp * (h - 3) - 1.5).toFixed(1)}`);
-  const monte = serie[serie.length - 1] >= serie[0];
-  return `<svg width="${l}" height="${h}" viewBox="0 0 ${l} ${h}" aria-hidden="true" style="flex:none">
-    <polyline points="${pts.join(' ')}" fill="none" stroke="${monte ? 'var(--rouge)' : 'var(--vert)'}" stroke-width="1.6"
-      stroke-linecap="round" stroke-linejoin="round" opacity=".85"/>
-    <circle cx="${pts[pts.length-1].split(',')[0]}" cy="${pts[pts.length-1].split(',')[1]}" r="2"
-      fill="${monte ? 'var(--rouge)' : 'var(--vert)'}"/></svg>`;
+/* Mini-barres étiquetées : chaque barre est un mois, avec son initiale dessous
+   et le mois en cours distingué. Une courbe sans repère ne disait pas de quoi
+   elle parlait ; ici on lit directement « juin plus haut que mai ». */
+function miniBarres(serie, libelles, encours, prevu){
+  if (!serie || !serie.length) return '';
+  const max = Math.max(...serie, prevu || 0, 1);
+  const barre = (v, lab, classe) => `
+    <div class="mb-col ${classe}">
+      <div class="mb-zone"><div class="mb-barre" style="height:${Math.max(3, v / max * 100).toFixed(0)}%"></div></div>
+      <div class="mb-val">${v >= 1000 ? Math.round(v / 100) / 10 + 'k' : Math.round(v)}</div>
+      <div class="mb-lab">${lab}</div>
+    </div>`;
+  return `<div class="mini-barres">
+    ${serie.map((v, i) => barre(v, libelles[i] || '', '')).join('')}
+    ${barre(encours, libelles[serie.length] || 'en cours', 'encours')}
+    ${prevu != null ? barre(prevu, 'prévu', 'prevu') : ''}
+  </div>`;
 }
 
 /* ===== Tendances par catégorie =====
    Compare le mois en cours à la moyenne des mois précédents et signale les
    écarts marquants. Aide à repérer une dérive avant la fin du mois. */
 function tendances(cleMois, nbRef = 3, tousLesPostes = false){
+  const abrege = c => {
+    const [a, m] = c.split('-');
+    return ['janv','févr','mars','avr','mai','juin','juil','août','sept','oct','nov','déc'][+m - 1];
+  };
   const cles = clesMois().filter(k => k < cleMois && k <= cleAujourdhui()).slice(-nbRef);
   if (!cles.length) return [];
   const postes = [
@@ -3058,7 +3111,8 @@ function tendances(cleMois, nbRef = 3, tousLesPostes = false){
     if (!tousLesPostes && Math.abs(ecart) < 0.25) continue;   // sous 25 % : bruit normal
     // historique des mois de référence, pour la mini-courbe
     const serie = cles.map(k => Math.abs(calculerMois(k)[champ] || 0));
-    out.push({nom, reel, moy, attendu, ecart, serie, mois: cles.length,
+    const libelles = [...cles.map(abrege), abrege(cleMois)];
+    out.push({nom, reel, moy, attendu, ecart, serie, libelles, mois: cles.length,
               projection: partMois > 0 ? reel / partMois : reel,
               partiel: partMois < 0.98});
   }
@@ -3299,32 +3353,42 @@ function rendreAccueil(){
       <div class="jauge" style="margin:6px 0 3px"><div class="jauge-barre" style="width:${Math.min(100, Math.max(0, ba.tauxEpargne * 100)).toFixed(1)}%"></div></div>
       <p class="note">Taux d'épargne : <b>${(ba.tauxEpargne * 100).toFixed(1)} %</b> des entrées.
       Moyenne mensuelle : ${fmt(ba.moyEntrees)} d'entrées, ${fmt(ba.moyDepenses)} de dépenses.</p>`;
-  const tds = tendances(cleAujourdhui(), 3, true);
-  const maxT = Math.max(1, ...tds.map(t => Math.max(t.reel, t.attendu, ...t.serie)));
-  document.getElementById('tendances-corps').innerHTML = tds.length ? `
-    <p class="note" style="margin-bottom:10px">Consommé à ce stade du mois, comparé à la moyenne des ${tds[0].mois} derniers mois
-    ramenée à la même portion de mois.</p>
-    ${tds.map(t => {
-      const fort = Math.abs(t.ecart) >= 0.25;
-      const couleur = t.ecart > 0 ? 'var(--rouge)' : 'var(--vert)';
-      return `<div class="tend">
-        <div class="tend-tete">
-          <span class="tend-nom">${echap(t.nom)}</span>
-          <span class="tend-ecart" style="color:${fort ? couleur : 'var(--encre2)'}">
-            ${t.ecart > 0 ? '▲' : t.ecart < 0 ? '▼' : '='} ${Math.abs(t.ecart * 100).toFixed(0)} %</span>
-        </div>
-        <div class="tend-barres">
-          <div class="tend-b"><span class="tend-jauge reel" style="width:${(t.reel / maxT * 100).toFixed(1)}%;background:${fort ? couleur : 'var(--laiton)'}"></span>
-            <span class="tend-val">${fmt(t.reel)}</span></div>
-          <div class="tend-b"><span class="tend-jauge attendu" style="width:${(t.attendu / maxT * 100).toFixed(1)}%"></span>
-            <span class="tend-val faible">${fmt(t.attendu)} attendu</span></div>
-        </div>
-        <div class="tend-pied">
-          ${sparkline(t.serie)}
-          <span>${t.serie.map(v => fmt(v)).join(' · ')}${t.partiel ? ` → ${fmt(t.projection)} prévu en fin de mois` : ''}</span>
-        </div>
-      </div>`;
-    }).join('')}` : `<p class="note">Rien à comparer pour l\u2019instant : il faut au moins un mois complet d\u2019historique.</p>`;
+  const refMois = etat.config.tendanceRef || 3;
+  const tds = tendances(cleAujourdhui(), refMois, true);
+  document.getElementById('tendances-corps').innerHTML = `
+    <div class="chips" style="margin-bottom:10px">
+      ${[3, 6, 12].map(n => `<button class="chip ${n === refMois ? 'choisi' : ''}" data-tendref="${n}">${n} mois</button>`).join('')}
+    </div>
+    ${tds.length ? `
+      <p class="note" style="margin-bottom:12px">Comparaison de ce qui est <b>déjà consommé ce mois-ci</b> avec ce qui l'était,
+      en moyenne, au même jour des ${tds[0].mois} mois précédents.</p>
+      ${tds.map(t => {
+        const fort = Math.abs(t.ecart) >= 0.25;
+        const couleur = t.ecart > 0 ? 'var(--rouge)' : 'var(--vert)';
+        const maxB = Math.max(t.reel, t.attendu, 1);
+        return `<div class="tend">
+          <div class="tend-tete">
+            <span class="tend-nom">${echap(t.nom)}</span>
+            <span class="tend-ecart" style="color:${fort ? couleur : 'var(--encre2)'}">
+              ${t.ecart > 0 ? '▲' : t.ecart < 0 ? '▼' : '='} ${Math.abs(t.ecart * 100).toFixed(0)} %</span>
+          </div>
+          <div class="tend-barres">
+            <div class="tend-b"><span class="tend-jauge" style="width:${(t.reel / maxB * 100).toFixed(1)}%;background:${fort ? couleur : 'var(--laiton)'}"></span>
+              <span class="tend-val">${fmt(t.reel)} <span class="faible">dépensé</span></span></div>
+            <div class="tend-b"><span class="tend-jauge attendu" style="width:${(t.attendu / maxB * 100).toFixed(1)}%"></span>
+              <span class="tend-val faible">${fmt(t.attendu)} habituel au même jour</span></div>
+          </div>
+          <details class="detail-tend">
+            <summary>Mois par mois${t.partiel ? ` · ${fmt(t.projection)} prévu fin ${t.libelles[t.libelles.length - 1]}` : ''}</summary>
+            ${miniBarres(t.serie, t.libelles, t.reel, t.partiel ? t.projection : null)}
+            <p class="note">Total de chaque mois complet, puis le mois en cours et sa projection au rythme actuel.</p>
+          </details>
+        </div>`;
+      }).join('')}`
+    : `<p class="note">Rien à comparer pour l\u2019instant : il faut au moins un mois complet d\u2019historique.</p>`}`;
+
+  document.getElementById('acc-dividendes').innerHTML = carteDividendes();
+  majApercuDividende();
 
   const brut = liv.total + inv.total + avc.totalDispo;
   const dettes = totalPassifs();
@@ -3815,8 +3879,7 @@ function rendreInvest(){
         </div>
       </div></div>`;
   document.getElementById('inv-blocs').insertAdjacentHTML('beforeend',
-    carteDividendes()
-    + cartePerformanceReelle() + carteProjection() + carteRetraite());
+    cartePerformanceReelle() + carteProjection() + carteRetraite());
   rendreGraph(); rendreHistTable();
   document.getElementById('btn-enregistrer-hist').onclick = () => {
     const p = document.getElementById('hist-periode').value.trim();
@@ -4319,13 +4382,13 @@ document.querySelector('main').addEventListener('click', e => {
     etat.config.divTaux = Number(document.getElementById('div-taux').value) || PFU_DEFAUT;
     if (!r.ok) return toast('⚠️ ' + r.msg);
     memoriserPourAnnuler('saisie du dividende');
-    sauver(); rendreTout();
+    sauver(); rafraichirPage();
     toast(`💸 ${fmt(r.net)} net compté en ${libelleMois(r.cle)}${r.prelev > 0.004 ? ` (${fmt(r.prelev)} de prélèvements)` : ''}`, true);
   } else if (el.dataset.divsup){            // retirer un dividende
     const [cle, i] = el.dataset.divsup.split('|');
     memoriserPourAnnuler('suppression du dividende');
     etat.months[cle].entrees.splice(+i, 1);
-    sauver(); rendreTout(); toast('Dividende retiré', true);
+    sauver(); rafraichirPage(); toast('Dividende retiré', true);
   } else if (el.dataset.opsens){            // bascule achat / vente
     document.querySelectorAll('[data-opsens]').forEach(b => b.classList.toggle('actif', b === el));
     majApercuOperation();
@@ -4377,6 +4440,9 @@ document.querySelector('main').addEventListener('click', e => {
     etat.config.chipsMasquees.push(lab);
     sauver(); majSuggestions(); rafraichirPage();
     toast(`Puce « ${lab} » masquée`);
+  } else if (el.dataset.tendref){
+    etat.config.tendanceRef = +el.dataset.tendref;
+    sauver(); rendreAccueil(); appliquerReplis();
   } else if (el.dataset.annee){
     etat.config.anneeBilan = el.dataset.annee;
     sauver(); rendreAccueil(); appliquerReplis();

@@ -9,6 +9,10 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v8.3.0 — 16/08/2026
+- **Tendances du mois enfin lisibles.** La courbe ne disait pas à quoi elle correspondait, et la suite de nombres qui la suivait était une énigme. Chaque **barre porte désormais le nom de son mois**, la barre dorée est le mois en cours (forcément incomplet) et une barre en pointillés montre la projection de fin de mois. Le détail mois par mois s'ouvre à la demande plutôt que d'encombrer la vue. Un **sélecteur 3 / 6 / 12 mois** permet de choisir la période de référence : 3 mois réagit vite, 12 mois lisse les variations saisonnières.
+- **Dividendes déplacés sur l'Accueil**, juste sous la dépense rapide — là où on les saisit naturellement, plutôt qu'au milieu de la page Investissements. La carte est repensée : **résumé annuel** (encaissé, nombre de versements et de sources, moyenne mensuelle, écart avec l'année précédente), **frise des douze mois** montrant la saisonnalité des encaissements, formulaire de saisie regroupé sur fond distinct, et **journal des derniers versements** indiquant pour chacun la date réelle et le mois de rattachement.
+
 ## v8.2.1 — 13/08/2026 — *revue de sécurité, correction et optimisation*
 
 ### Faille corrigée : injection de code par une sauvegarde
