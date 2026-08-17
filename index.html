@@ -147,13 +147,8 @@ main{max-width:760px;margin:0 auto;padding:14px 12px 24px}
   font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;background:#FDFAF2}
 
 /* ===== Sélecteur de mois ===== */
-.selmois{display:flex;align-items:center;gap:8px;margin-bottom:12px}
-.selmois select{flex:1;padding:9px 12px;border:1px solid var(--trait);border-radius:10px;background:var(--carte);font-weight:700;font-size:15px}
-.selmois button{padding:9px 13px;border:1px solid var(--trait);border-radius:10px;background:var(--carte);font-weight:700}
 
 /* ===== Bilan mensuel bandeau ===== */
-.bilan5{display:grid;grid-template-columns:repeat(5,1fr);background:var(--entete);color:var(--entete-texte);border-radius:12px;
-  padding:10px 6px;margin-bottom:12px;text-align:center;gap:2px}
 .bilan5 .eti{font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;color:#9AA1B4;display:block}
 .bilan5 .val{font-size:13px;font-weight:700;display:block;margin-top:2px}
 .bilan5 .val.or{color:var(--laiton-clair)}
@@ -432,6 +427,45 @@ header.compact .marque .ver{display:none}
 .ps-actions{display:grid;grid-template-columns:2fr 1fr;gap:var(--esp-2);margin-top:var(--esp-4)}
 .ps-actions .btn{width:100%;padding:14px}
 
+
+/* ===== Page Mois : barre de mois collante ===== */
+.selmois{position:sticky;top:calc(env(safe-area-inset-top) + 52px);z-index:20;
+  display:flex;align-items:center;gap:var(--esp-2);margin:0 0 var(--esp-3);
+  background:var(--papier);padding:var(--esp-2) 0}
+.selmois button{width:40px;height:40px;flex:none;border-radius:var(--r-s);background:var(--carte);
+  border:1px solid var(--trait);color:var(--encre);font-size:19px;font-weight:700;
+  transition:background var(--duree) var(--courbe), transform .14s var(--courbe)}
+.selmois button:active{transform:scale(.92)}
+.selmois button:hover{background:var(--carte2);border-color:var(--violet);color:var(--violet)}
+.sm-centre{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;
+  background:var(--carte);border:1px solid var(--trait);border-radius:var(--r-s);padding:5px 8px}
+.sm-centre select{width:100%;text-align:center;font-weight:800;font-size:15.5px;padding:1px 0;
+  background:transparent;border:none;color:var(--encre)}
+.sm-centre select:focus{box-shadow:none;background:transparent}
+.sm-solde{font-size:10.5px;font-weight:700;letter-spacing:.04em;color:var(--encre2)}
+
+/* ===== Bandeau de bilan du mois ===== */
+.bilan5{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--esp-2);margin-bottom:var(--esp-3)}
+.bilan5>div{background:var(--carte);border:1px solid var(--trait);border-radius:var(--r-m);
+  padding:11px var(--esp-3);display:flex;flex-direction:column;gap:3px;
+  transition:transform var(--duree) var(--courbe)}
+.bilan5>div:hover{transform:translateY(-1px)}
+.bilan5 .e{font-size:9.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--encre2)}
+.bilan5 .v{font-size:16px;font-weight:800;letter-spacing:-.01em}
+@media (max-width:520px){ .bilan5{grid-template-columns:repeat(2,1fr)} }
+
+/* ===== Cartes de catégorie : une couleur par famille ===== */
+.carte[data-fam]>.tete{border-left:3px solid var(--fam,var(--trait))}
+.carte[data-fam="entrees"]{--fam:var(--menthe)}
+.carte[data-fam="fixe"]{--fam:#8B5CF6}
+.carte[data-fam="abo"]{--fam:#0EA5E9}
+.carte[data-fam="courant"]{--fam:var(--ambre)}
+.carte[data-fam="transport"]{--fam:#38BDF8}
+.carte[data-fam="vacances"]{--fam:#F472B6}
+.carte[data-fam="invest"]{--fam:var(--menthe)}
+.carte[data-fam="epargne"]{--fam:var(--violet)}
+.carte[data-fam]>.tete h3{color:var(--fam,var(--encre2))}
+
 /* ===== Micro-interactions =====
    Le mouvement sert à comprendre : d'où vient un élément, ce qui vient de
    changer, ce qui est en cours. Tout est désactivé si le système demande
@@ -704,21 +738,6 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
       <div class="barre"><span id="h-jauge" style="width:0%"></span></div>
     </div>
     <div class="kpis" id="kpis-accueil"></div>
-    <div class="carte">
-      <div class="tete"><h3>⚡ Dépense rapide</h3><div class="tot" id="dl-acc-mois" style="font-size:12px;color:var(--encre2)"></div></div>
-      <div class="corps">
-        <div class="saisie-rapide">
-          <input class="sl" id="dl-acc-label" placeholder="Quoi ? (ex. Boulangerie)" autocomplete="off">
-          <input class="sm" id="dl-acc-mnt" inputmode="text" placeholder="€" autocomplete="off">
-          <button class="btn or" id="dl-acc-btn">＋</button>
-        </div>
-        <select id="dl-acc-cat" class="sel-rapide" aria-label="Destination"></select>
-        <select id="dl-acc-vac" class="sel-rapide" aria-label="Poste vacances" style="display:none"></select>
-        <div class="chips" id="dl-acc-chips"></div>
-        <p class="note">Ajoutée aux dépenses libres du mois en cours. Tape juste « 12 » : le signe − est mis tout seul.
-        Entrée ⏎ pour valider, expressions acceptées (« 7+3.5 »). Une puce pré-remplit l'intitulé et le dernier montant utilisé.</p>
-      </div>
-    </div>
     <div id="acc-dividendes"></div>
     <div class="carte">
       <div class="tete"><h3>📊 Estimation dépense par jour</h3><button class="info-btn" data-infocle="hero" aria-label="Informations">i</button><div class="tot" id="est-ref"></div></div>
@@ -754,10 +773,13 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
   <!-- ============ MOIS ============ -->
   <section class="page" id="page-mois">
     <div class="selmois">
-      <button id="mois-prec" aria-label="Mois précédent">◀</button>
-      <select id="mois-select"></select>
-      <button id="mois-suiv" aria-label="Mois suivant">▶</button>
-      <button id="mois-nouveau" class="btn or" style="padding:9px 12px">＋ Mois</button>
+      <button id="mois-prec" aria-label="Mois précédent">‹</button>
+      <div class="sm-centre">
+        <select id="mois-select"></select>
+        <span class="sm-solde" id="mois-solde"></span>
+      </div>
+      <button id="mois-suiv" aria-label="Mois suivant">›</button>
+      <button id="mois-nouveau" aria-label="Ajouter un mois">＋</button>
     </div>
     <div class="bilan5" id="mois-bilan"></div>
     <div id="mois-blocs"></div>
@@ -1294,8 +1316,12 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '9.1.0-mvp2';
+const APP_VERSION = '9.2.0-mvp3';
 const CHANGELOG = [
+  {v: '9.2.0 (lot 3)', d: '17/08/2026', pts: [
+    "La carte de saisie de l'Accueil disparaît : le bouton flottant la remplace avantageusement depuis toutes les pages.",
+    "Page Mois : barre de mois collante rappelant le solde, bilan en six tuiles colorées selon le signe.",
+    "Code couleur par famille de catégorie (entrées, charges fixes, abonnements, vie courante, transport, vacances, investissements, épargne) — liseré et titre colorés sur chaque carte."]},
   {v: '9.1.0 (lot 2)', d: '17/08/2026', pts: [
     "Saisie accessible partout : un bouton flottant ouvre une feuille de saisie depuis n'importe quelle page, avec destination, sous-catégorie vacances et puces de suggestion.",
     "En-tête épuré : marque compacte, recherche en bouton libellé (réduit à une loupe sur petit écran), indicateur d'enregistrement réduit à un point coloré.",
@@ -3446,7 +3472,7 @@ function ligneEditable(chemin, item, i){
 function carteListe(titre, chemin, liste, opts = {}){
   const total = somme(liste);
   const cat = chemin.split('.')[2] || '';
-  return `<div class="carte">
+  return `<div class="carte"${opts.fam ? ` data-fam="${opts.fam}"` : ''}>
     <div class="tete"><h3>${titre}</h3>${opts.info ? infoBtn(opts.info) : ''}<div class="tot ${cls(total)}">${fmt(total)}</div></div>
     <div class="corps">
       ${composeur(chemin, opts.signe || '-', opts.exemple)}
@@ -3527,7 +3553,6 @@ function resoudre(chemin){
 /* ================= RENDU : PAGES ================= */
 function rendreAccueil(){
   const cle = moisCourantCle(), c = calculerMois(cle);
-  document.getElementById('dl-acc-mois').textContent = libelleMois(cleAujourdhui());
   majSuggestions();
   const auj = new Date(); const cleAuj = auj.getFullYear() + '-' + String(auj.getMonth()+1).padStart(2,'0');
   const estCeMois = cle === cleAuj;
@@ -3668,12 +3693,19 @@ function rendreMois(){
     cles.map(k => `<option value="${k}" ${k === moisActif ? 'selected' : ''}>${libelleMois(k)}</option>`).join('');
   const m = etat.months[moisActif], c = calculerMois(moisActif), P = 'months.' + moisActif + '.';
   document.getElementById('mois-bilan').innerHTML = [
-    ['💵 Entrées', fmt(c.totalEntrees), ''],
-    ['💸 Sorties', fmt(c.totalSorties), ''],
-    ['📊 Solde', fmtS(c.solde), ''],
-    ['📥 Reste enveloppe', fmt(c.resteEnv), 'or'],
-    ['💰 Reste fin', fmt(c.resteFin), 'or'],
-  ].map(([e, v, k]) => `<div><span class="eti">${e}</span><span class="val ${k}">${v}</span></div>`).join('');
+    ['💵 Entrées', fmt(c.totalEntrees), 'pos'],
+    ['💸 Sorties', fmt(c.totalSorties), 'neg'],
+    ['📊 Solde', fmtS(c.solde), cls(c.solde)],
+    ['📥 Reste enveloppe', fmt(c.resteEnv), cls(c.resteEnv)],
+    ['💰 Reste fin de mois', fmt(c.resteFin), cls(c.resteFin)],
+    ['📈 Investi', fmt(-c.totInv), 'pos'],
+  ].map(([e, v, k]) => `<div><span class="e">${e}</span><span class="v ${k}">${v}</span></div>`).join('');
+  // rappel du solde sous le sélecteur de mois
+  const sm = document.getElementById('mois-solde');
+  if (sm){
+    sm.textContent = `solde ${fmtS(c.solde)} · reste ${fmt(c.resteFin)}`;
+    sm.className = 'sm-solde ' + cls(c.solde);
+  }
 
   const totVacBloc = c.tVac;
   const detTR = c.totTR;
@@ -3684,7 +3716,7 @@ function rendreMois(){
   document.getElementById('mois-blocs').innerHTML = `
     <div class="carte"><div class="tete"><h3>🌊 Flux du mois</h3>${infoBtn('flux')}</div>
       <div class="corps flux-defile">${fluxSVG(moisActif)}</div></div>
-    <div class="carte"><div class="tete"><h3>💰 Répartition épargne</h3>${infoBtn('repartition')}<div class="tot">${fmt(c.nonAttribue)}</div></div>
+    <div class="carte" data-fam="epargne"><div class="tete"><h3>💰 Répartition épargne</h3>${infoBtn('repartition')}<div class="tot">${fmt(c.nonAttribue)}</div></div>
       <div class="corps">
         <div class="ligne"><input class="lab" value="Somme pour le mois ${etiquetteEnv}" readonly>${infoBtn('enveloppe')}<span class="mnt">${fmt(c.sommeMois)}</span></div>
         <div class="ligne"><input class="lab" value="Reste du mois précédent (auto)" readonly><span class="mnt">${fmt(c.resteM1Entree)}</span></div>
@@ -3693,9 +3725,9 @@ function rendreMois(){
           : m.repartitionOverride ? '<p class="note">⚠️ Répartition figée manuellement pour ce mois (valeurs du classeur d\u2019origine).</p>'
           : '<p class="note">Poches modifiables dans Réglages → 🪙 Poches de répartition.</p>'}
       </div></div>
-    ${carteListe('💰 Entrées', P + 'entrees', m.entrees, {signe:'+'})}
-    ${carteListe('🏠 Charges fixes', P + 'chargesFixes', m.chargesFixes, {info: 'recurrents'})}
-    ${carteListe('📱 Abo. obligatoires', P + 'aboObligatoires', m.aboObligatoires, {info: 'recurrents', etaler: true})}
+    ${carteListe('💰 Entrées', P + 'entrees', m.entrees, {signe:'+', fam: 'entrees'})}
+    ${carteListe('🏠 Charges fixes', P + 'chargesFixes', m.chargesFixes, {info: 'recurrents', fam: 'fixe'})}
+    ${carteListe('📱 Abo. obligatoires', P + 'aboObligatoires', m.aboObligatoires, {info: 'recurrents', etaler: true, fam: 'abo'})}
     <div class="carte"><div class="tete"><h3>📈 Investissements</h3><div class="tot neg">${fmt(c.totInv)}</div></div>
       <div class="corps">
         <div class="ligne"><input class="lab" value="🏦 Trade Republic (détail ci-dessous)" readonly><span class="mnt neg">${fmt(detTR)}</span></div>
@@ -3704,17 +3736,17 @@ function rendreMois(){
         <div class="ligne"><input class="lab" value="🛡️ PER" readonly>
           <input class="mnt neg" value="${m.invPER}" data-direct="invPER" inputmode="text"></div>
       </div></div>
-    ${carteListe('🎮 Abo. loisirs', P + 'aboLoisirs', m.aboLoisirs, {info: 'recurrents', etaler: true})}
-    ${carteListe('💳 Paiements échelonnés', P + 'echelonnes', m.echelonnes, {etaler: true})}
-    ${carteListe('🚗 Transport', P + 'transport', m.transport)}
-    <div class="carte"><div class="tete"><h3>🛒 Dépenses libres</h3><div class="tot ${cls(c.tLibres)}">${fmt(c.tLibres)}</div></div>
+    ${carteListe('🎮 Abo. loisirs', P + 'aboLoisirs', m.aboLoisirs, {info: 'recurrents', etaler: true, fam: 'abo'})}
+    ${carteListe('💳 Paiements échelonnés', P + 'echelonnes', m.echelonnes, {etaler: true, fam: 'fixe'})}
+    ${carteListe('🚗 Transport', P + 'transport', m.transport, {fam: 'transport'})}
+    <div class="carte" data-fam="courant"><div class="tete"><h3>🛒 Dépenses libres</h3><div class="tot ${cls(c.tLibres)}">${fmt(c.tLibres)}</div></div>
       <div class="corps">
         ${composeur(P + 'depensesLibres', '-', 'Quoi ? (ex. Boulangerie)')}
         <div class="chips">${chipsHTML('mois')}</div>
         ${m.depensesLibres.map((it, i) => ligneEditable(P + 'depensesLibres', it, i)).reverse().join('') || '<p class="note">Aucune dépense libre ce mois-ci.</p>'}
       </div></div>
-    ${carteListe('💵 Remboursements / entrées', P + 'remboursements', m.remboursements, {signe:'+'})}
-    <div class="carte"><div class="tete"><h3>🏖️ Vacances</h3>
+    ${carteListe('💵 Remboursements / entrées', P + 'remboursements', m.remboursements, {signe:'+', fam: 'entrees'})}
+    <div class="carte" data-fam="vacances"><div class="tete"><h3>🏖️ Vacances</h3>
       <div class="tot ${cls(totVacBloc)}">${vacancesActives(moisActif) ? fmt(totVacBloc) : ''}</div></div>
       <div class="corps">
         <label class="bascule"><input type="checkbox" id="vac-actif" ${vacancesActives(moisActif) ? 'checked' : ''}>
@@ -3724,22 +3756,22 @@ function rendreMois(){
           : "Décoché : les six cartes de détail sont masquées. Elles réapparaissent avec leurs montants si tu recoches."}</p>
       </div></div>
     ${vacancesActives(moisActif) ? `
-    ${carteListe('🏨 Vacances · Hôtel / Airbnb', P + 'vacHotel', m.vacHotel)}
-    ${carteListe('✈️ Vacances · Transport', P + 'vacTransport', m.vacTransport)}
-    ${carteListe('🍽️ Vacances · Alimentation', P + 'vacAlim', m.vacAlim)}
-    ${carteListe('🎢 Vacances · Loisirs', P + 'vacLoisirs', m.vacLoisirs)}
-    ${carteListe('📦 Vacances · Autres', P + 'vacAutres', m.vacAutres)}
-    ${carteListe('💶 Vacances · Remboursements reçus', P + 'vacRemb', m.vacRemb, {signe: '+', exemple: 'Part de Léa (hôtel)'})}` : ''}
+    ${carteListe('🏨 Vacances · Hôtel / Airbnb', P + 'vacHotel', m.vacHotel, {fam: 'vacances'})}
+    ${carteListe('✈️ Vacances · Transport', P + 'vacTransport', m.vacTransport, {fam: 'vacances'})}
+    ${carteListe('🍽️ Vacances · Alimentation', P + 'vacAlim', m.vacAlim, {fam: 'vacances'})}
+    ${carteListe('🎢 Vacances · Loisirs', P + 'vacLoisirs', m.vacLoisirs, {fam: 'vacances'})}
+    ${carteListe('📦 Vacances · Autres', P + 'vacAutres', m.vacAutres, {fam: 'vacances'})}
+    ${carteListe('💶 Vacances · Remboursements reçus', P + 'vacRemb', m.vacRemb, {signe: '+', exemple: 'Part de Léa (hôtel)', fam: 'vacances'})}` : ''}
     <div class="sep"></div>
-    <div class="carte"><div class="tete"><h3>📈 Détail Trade Republic</h3>${infoBtn('recurrents')}<div class="tot neg">${fmt(detTR)}</div></div>
+    <div class="carte" data-fam="invest"><div class="tete"><h3>📈 Détail Trade Republic</h3>${infoBtn('recurrents')}<div class="tot neg">${fmt(detTR)}</div></div>
       <div class="corps">
         <p class="note">Plans d'épargne du mois — astuce : tape « -8*4 » pour 4 semaines à 8 €.</p>
         <div class="sous-cartes">
-    ${carteListe('📊 TR · Actions', P + 'trActions', m.trActions)}
-    ${carteListe('📈 TR · ETF', P + 'trETF', m.trETF)}
-    ${carteListe('🥇 TR · Métaux', P + 'trMetaux', m.trMetaux)}
-    ${carteListe('₿ TR · Crypto', P + 'trCrypto', m.trCrypto)}
-    ${carteListe('🏦 TR · Private Equity', P + 'trPE', m.trPE)}
+    ${carteListe('📊 TR · Actions', P + 'trActions', m.trActions, {fam: 'invest'})}
+    ${carteListe('📈 TR · ETF', P + 'trETF', m.trETF, {fam: 'invest'})}
+    ${carteListe('🥇 TR · Métaux', P + 'trMetaux', m.trMetaux, {fam: 'invest'})}
+    ${carteListe('₿ TR · Crypto', P + 'trCrypto', m.trCrypto, {fam: 'invest'})}
+    ${carteListe('🏦 TR · Private Equity', P + 'trPE', m.trPE, {fam: 'invest'})}
         </div>
       </div></div>
     ${(() => {
@@ -4693,20 +4725,11 @@ document.querySelector('main').addEventListener('click', e => {
     sauver(); rendreAccueil(); appliquerReplis();
   } else if (el.dataset.chip != null){       // puce → pré-remplit la saisie rapide
     let cl, cm;
-    if (el.dataset.cible === 'acc'){
-      cl = document.getElementById('dl-acc-label'); cm = document.getElementById('dl-acc-mnt');
-    } else {
-      const z = document.querySelector(`[data-comp$="depensesLibres"]`);
-      if (z){ cl = z.querySelector('[data-cl]'); cm = z.querySelector('[data-cm]'); }
-    }
+    const z = document.querySelector(`[data-comp$="depensesLibres"]`);
+    if (z){ cl = z.querySelector('[data-cl]'); cm = z.querySelector('[data-cm]'); }
     if (cl && cm){
       cl.value = el.dataset.chip; cm.value = el.dataset.mnt; cm.focus();
-      const catSel = document.getElementById('dl-acc-cat');   // les puces sont des dépenses libres
-      if (catSel && el.dataset.cible === 'acc') catSel.value = 'depensesLibres';
-    }
-  } else if (el.id === 'dl-acc-btn'){
-    ajouterDepenseLibre(cleAujourdhui(), 'dl-acc-label', 'dl-acc-mnt');
-  } else if (el.classList && el.classList.contains('eta-go')){
+    }  } else if (el.classList && el.classList.contains('eta-go')){
     const zone = el.closest('[data-eta]');
     const cat = zone.dataset.eta;
     const label = zone.querySelector('.eta-lab').value.trim();
@@ -4748,8 +4771,7 @@ document.querySelector('main').addEventListener('click', e => {
 function majSuggestions(){
   document.getElementById('dl-suggestions').innerHTML =
     suggestionsDepenses().map(l => `<option value="${echap(l)}">`).join('');
-  const chips = document.getElementById('dl-acc-chips');
-  if (chips) chips.innerHTML = chipsHTML('acc');
+
 }
 /* Destinations de la saisie rapide : [catégorie, libellé, signe par défaut] */
 const CATS_RAPIDES = [
@@ -4773,47 +4795,10 @@ const SOUS_CATS_VAC = [
 ];
 const signeCategorie = cat =>
   (CATS_RAPIDES.find(c => c[0] === cat) || SOUS_CATS_VAC.find(c => c[0] === cat) || [, , '-'])[2];
-function ajouterDepenseLibre(cible, idLabel, idMnt){
-  const labEl = document.getElementById(idLabel), mntEl = document.getElementById(idMnt);
-  const catSel = document.getElementById('dl-acc-cat');
-  let cat = (catSel && catSel.value) || 'depensesLibres';
-  if (cat === 'vac'){
-    const sv = document.getElementById('dl-acc-vac');
-    cat = (sv && sv.value) || 'vacAutres';
-  }
-  const label = labEl.value.trim();
-  if (!label) { toast('Indique un intitulé'); labEl.focus(); return; }
-  const brut = evalMontant(mntEl.value);
-  if (isNaN(brut) || Math.abs(brut) < 0.005) { toast('Montant invalide'); mntEl.focus(); return; }
-  const signe = signeCategorie(cat);
-  const v = +((signe === '-' ? (brut > 0 ? -brut : brut) : (brut < 0 ? -brut : brut))).toFixed(2);
-  while (!etat.months[cible]) creerMoisSuivant();      // crée le mois si besoin (retour de longue absence)
-  const ligne = {label, montant: v};
-  etat.months[cible][cat].push(ligne);
-  let sup = '';
-  const n = propagerRecurrent(cible, cat, null, ligne);
-  if (n > 0) sup = ` ↪ ${n} mois suivant${n > 1 ? 's' : ''}`;
-  sauver();
-  const nomCat = (CATS_RAPIDES.find(c => c[0] === cat) || SOUS_CATS_VAC.map(([v, l]) => [v, '🏖️ Vacances · ' + l]).find(c => c[0] === cat) || ['', cat])[1];
-  toast(`${label} ${fmt(v)} → ${nomCat}${sup}`);
-  rafraichirPage();
-  const el = document.getElementById(idLabel);
-  if (el){ el.value = ''; el.focus(); }
-}
-function peuplerCatRapide(){
-  const sel = document.getElementById('dl-acc-cat');
-  if (!sel || sel.options.length) return;
-  sel.innerHTML = CATS_RAPIDES.map(([v, l]) => `<option value="${v}">→ ${l}</option>`).join('');
-  const sv = document.getElementById('dl-acc-vac');
-  sv.innerHTML = SOUS_CATS_VAC.map(([v, l]) => `<option value="${v}">🏖️ → ${l}</option>`).join('');
-  sel.addEventListener('change', () => { sv.style.display = sel.value === 'vac' ? '' : 'none'; });
-}
+
 document.querySelector('main').addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
-  const id = e.target.id;
-  if (id === 'dl-acc-label') document.getElementById('dl-acc-mnt').focus();
-  else if (id === 'dl-acc-mnt') document.getElementById('dl-acc-btn').click();
-  else if (e.target.closest && e.target.closest('[data-comp]')){
+  if (e.target.closest && e.target.closest('[data-comp]')){
     // Entrée dans l'intitulé → passe au montant ; dans le montant → valide
     if (e.target.hasAttribute('data-cl')){
       e.preventDefault();
@@ -6309,7 +6294,6 @@ function traiterAjoutURL(){
 
 /* ================= DÉMARRAGE ================= */
 (async function init(){
-  peuplerCatRapide();
   verrouiller();                          // affiché avant tout si le verrou est actif
   demanderDeverrouillage(true);           // tente Face ID immédiatement
   document.getElementById('ver').textContent = 'v' + APP_VERSION + ' · Hors-ligne';

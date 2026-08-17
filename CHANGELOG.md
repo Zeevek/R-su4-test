@@ -9,6 +9,16 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v9.2.0 — lot 3 : page Mois — 17/08/2026
+
+### Accueil allégé
+La carte « Dépense rapide » disparaît : le bouton flottant du lot 2 fait le même travail depuis n'importe quelle page, sans occuper d'espace permanent. L'Accueil se concentre sur ce qu'il doit montrer — le montant du jour, les quatre chiffres clés, les dividendes, les tendances, le patrimoine.
+
+### Page Mois
+- **Barre de mois collante** : elle reste visible pendant le défilement et rappelle en permanence le solde et le reste de fin de mois. Les flèches deviennent des boutons carrés à retour tactile, l'ajout de mois se réduit à un « ＋ ».
+- **Bilan en six tuiles** (entrées, sorties, solde, reste d'enveloppe, reste de fin de mois, investi), colorées **selon le signe** plutôt qu'uniformément.
+- **Code couleur par famille** : chaque carte de catégorie porte un liseré et un titre colorés selon sa nature — menthe pour les entrées, violet pour les charges fixes, bleu pour les abonnements, ambre pour la vie courante, cyan pour le transport, rose pour les vacances, menthe pour les investissements. Huit familles, appliquées à seize cartes : on repère une rubrique sans lire son titre.
+
 ## v9.1.0 — lot 2 : navigation et en-tête — 17/08/2026
 
 ### Saisie rapide accessible partout
