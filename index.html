@@ -381,6 +381,57 @@ input[type="checkbox"]{accent-color:var(--violet)}
   border-radius:var(--r-s);padding:7px var(--esp-2)}
 .ligne input.lab:focus, .ligne input.mnt:focus, td input:focus{background:var(--carte2);border-color:var(--violet)}
 
+
+/* ===== En-tête ===== */
+.marque{display:flex;align-items:center;gap:9px;min-width:0}
+.marque .logo{font-size:21px;line-height:1}
+.marque-txt{display:flex;flex-direction:column;line-height:1.1}
+.marque .nom{font-size:15px;font-weight:800;letter-spacing:-.01em;color:var(--entete-texte)}
+.marque .ver{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--encre2)}
+.btn-rech{flex:1;max-width:230px;margin-left:auto;display:flex;align-items:center;gap:8px;
+  background:var(--carte2);border:1px solid var(--trait);border-radius:var(--r-rond);
+  padding:8px 14px;color:var(--encre2);font-size:13px;font-weight:600;
+  transition:border-color var(--duree) var(--courbe), background var(--duree) var(--courbe), transform .14s var(--courbe)}
+.btn-rech:hover{border-color:var(--violet);color:var(--violet)}
+.btn-rech:active{transform:scale(.97)}
+.btn-rech .loupe{font-size:13px}
+.statut{display:flex;align-items:center;gap:5px;font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--encre2);
+  white-space:nowrap;flex:none;max-width:96px;overflow:hidden;text-overflow:ellipsis}
+.statut .pt{width:6px;height:6px;border-radius:50%;background:var(--encre2);flex:none;
+  transition:background var(--duree) var(--courbe), box-shadow var(--duree) var(--courbe)}
+.statut.ok .pt{background:var(--menthe);box-shadow:0 0 8px var(--menthe)}
+.statut.ko .pt{background:var(--corail);box-shadow:0 0 8px var(--corail)}
+header.compact .marque .ver{display:none}
+@media (max-width:520px){
+  .btn-rech .txt{display:none}
+  .btn-rech{flex:none;width:38px;justify-content:center;padding:8px}
+  .statut{max-width:76px;font-size:9px}
+}
+
+/* ===== Bouton de saisie flottant ===== */
+#fab{position:fixed;right:16px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:40;
+  width:56px;height:56px;border-radius:50%;font-size:26px;font-weight:400;line-height:1;
+  background:linear-gradient(140deg,var(--violet),var(--violet-clair));color:#fff;
+  box-shadow:0 8px 24px rgba(124,92,255,.45);
+  transition:transform .18s var(--courbe), box-shadow var(--duree) var(--courbe)}
+#fab:active{transform:scale(.9)}
+#fab:hover{box-shadow:0 12px 30px rgba(124,92,255,.55)}
+#haut{bottom:calc(150px + env(safe-area-inset-bottom));right:22px;width:38px;height:38px;font-size:16px}
+
+/* ===== Feuille de saisie ===== */
+#voile-saisie{position:fixed;inset:0;background:rgba(8,9,14,.6);backdrop-filter:blur(3px);z-index:120;
+  display:none;align-items:flex-end;justify-content:center}
+#voile-saisie.vu{display:flex}
+#panneau-saisie{background:var(--carte);border-radius:var(--r-xl) var(--r-xl) 0 0;width:100%;max-width:560px;
+  padding:var(--esp-3) var(--esp-4) calc(var(--esp-5) + env(safe-area-inset-bottom));
+  box-shadow:0 -10px 40px rgba(0,0,0,.5);animation:monteFeuille .28s var(--courbe)}
+@keyframes monteFeuille{from{transform:translateY(100%)}to{transform:none}}
+.ps-poignee{width:38px;height:4px;border-radius:2px;background:var(--trait);margin:0 auto var(--esp-3)}
+#panneau-saisie h4{font-size:12px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--encre2);margin-bottom:var(--esp-3)}
+.ps-actions{display:grid;grid-template-columns:2fr 1fr;gap:var(--esp-2);margin-top:var(--esp-4)}
+.ps-actions .btn{width:100%;padding:14px}
+
 /* ===== Micro-interactions =====
    Le mouvement sert à comprendre : d'où vient un élément, ce qui vient de
    changer, ce qui est en cours. Tout est désactivé si le système demande
@@ -470,8 +521,6 @@ nav button{min-height:48px}
 
 
 /* ===== Recherche globale ===== */
-#btn-recherche{margin-left:auto;background:rgba(255,255,255,.12);color:var(--entete-texte);
-  width:34px;height:34px;border-radius:9px;font-size:15px;flex:none}
 #voile-recherche{position:fixed;inset:0;background:rgba(30,36,48,.55);z-index:90;display:none;
   align-items:flex-start;justify-content:center;padding:14px}
 #voile-recherche.vu{display:flex}
@@ -631,9 +680,17 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
 </head>
 <body>
 <header>
-  <div class="titre">📒 Budget Personnel<small id="ver">·</small></div>
-  <button id="btn-recherche" aria-label="Rechercher">🔍</button>
-  <div class="statut" id="statut-sync">—</div>
+  <div class="marque">
+    <span class="logo">📒</span>
+    <div class="marque-txt">
+      <span class="nom">Budget</span>
+      <span class="ver" id="ver">·</span>
+    </div>
+  </div>
+  <button id="btn-recherche" class="btn-rech" aria-label="Rechercher">
+    <span class="loupe">🔍</span><span class="txt">Rechercher</span>
+  </button>
+  <div class="statut" id="statut-sync" title="État de l'enregistrement">—</div>
 </header>
 
 <main>
@@ -981,7 +1038,26 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
   </div>
 </div></div>
 <div id="voile-info"><div id="panneau-info"><h4 id="info-titre"></h4><p id="info-texte"></p><button class="fermer" id="info-fermer">Compris</button></div></div>
+<button id="fab" aria-label="Saisir une dépense">＋</button>
 <button id="haut" aria-label="Revenir en haut">↑</button>
+<div id="voile-saisie"><div id="panneau-saisie">
+  <div class="ps-poignee"></div>
+  <h4>Saisie rapide</h4>
+  <div class="champs">
+    <label class="ch"><span>Intitulé</span>
+      <input id="ps-label" placeholder="ex. Boulangerie" autocomplete="off"></label>
+    <label class="ch"><span>Montant</span>
+      <span class="unite"><input id="ps-montant" inputmode="text" placeholder="0"><span class="u" id="ps-devise">€</span></span></label>
+  </div>
+  <label class="ch" style="margin-top:9px"><span>Destination</span>
+    <select id="ps-cat"></select></label>
+  <select id="ps-vac" style="display:none;margin-top:8px"></select>
+  <div class="chips" id="ps-chips"></div>
+  <div class="ps-actions">
+    <button class="btn or" id="ps-valider">Enregistrer</button>
+    <button class="btn" id="ps-fermer">Annuler</button>
+  </div>
+</div></div>
 <div id="voile-recherche"><div id="panneau-recherche">
   <div class="rech-tete">
     <input id="rech-champ" placeholder="Rechercher un libellé, une position…" autocomplete="off" autocapitalize="off">
@@ -1218,8 +1294,13 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '9.0.1-mvp1';
+const APP_VERSION = '9.1.0-mvp2';
 const CHANGELOG = [
+  {v: '9.1.0 (lot 2)', d: '17/08/2026', pts: [
+    "Saisie accessible partout : un bouton flottant ouvre une feuille de saisie depuis n'importe quelle page, avec destination, sous-catégorie vacances et puces de suggestion.",
+    "En-tête épuré : marque compacte, recherche en bouton libellé (réduit à une loupe sur petit écran), indicateur d'enregistrement réduit à un point coloré.",
+    "Navigation : indicateur lumineux sous l'onglet actif et icône qui se soulève.",
+    "Le raccourci clavier « n » ouvre la saisie où que l'on soit."]},
   {v: '9.0.1 (lot 1)', d: '17/08/2026', pts: [
     "Correctif : une accolade manquante dans la feuille de style faisait perdre au navigateur toutes les règles suivantes — panneaux non masqués, mises en page cassées.",
     "Champs de saisie harmonisés : coins arrondis, fond légèrement en retrait, anneau violet au focus, flèche personnalisée sur les listes déroulantes.",
@@ -1445,10 +1526,18 @@ function sauver(){
     }catch(e){ majStatut('⚠️ échec sauvegarde'); }
   }, 350);
 }
+/* Statut discret : un point coloré et deux mots. L'important est de savoir que
+   la saisie est bien enregistrée, sans occuper la moitié de l'en-tête. */
 function majStatut(txt){
   const el = document.getElementById('statut-sync');
-  el.textContent = txt;
-  clearTimeout(el._t); el._t = setTimeout(() => el.textContent = navigator.onLine ? 'hors-ligne prêt' : 'hors-ligne', 2200);
+  const etatVisuel = /enregistr|✓/i.test(txt) ? 'ok' : /erreur|⚠/i.test(txt) ? 'ko' : 'neutre';
+  el.className = 'statut ' + etatVisuel;
+  el.innerHTML = `<span class="pt"></span>${echap(txt)}`;
+  clearTimeout(el._t);
+  el._t = setTimeout(() => {
+    el.className = 'statut neutre';
+    el.innerHTML = '<span class="pt"></span>' + (etat.config.demo ? 'démo' : 'prêt');
+  }, 2200);
 }
 function migrer(){
   if (typeof invaliderCalculs === 'function') invaliderCalculs();
@@ -5945,7 +6034,7 @@ document.addEventListener('change', e => {
   document.getElementById('btn-recherche').onclick = ouvrir;
   document.getElementById('rech-fermer').onclick = fermer;
   voile.addEventListener('click', e => { if (e.target === voile) fermer(); });
-  addEventListener('keydown', e => { if (e.key === 'Escape') fermer(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape'){ fermer(); fermerSaisie(); } });
   let minuteur;
   champ.addEventListener('input', () => {
     clearTimeout(minuteur);
@@ -5995,14 +6084,8 @@ addEventListener('keydown', e => {
   if (e.key === '/'){                       // « / » : recherche, comme sur le web
     e.preventDefault(); document.getElementById('btn-recherche').click(); return;
   }
-  if (e.key.toLowerCase() === 'n'){         // « n » : saisir une dépense
-    const champ = document.getElementById('dl-acc-label');
-    if (champ){
-      e.preventDefault();
-      document.querySelector('nav button[data-page="accueil"]').click();
-      champ.focus(); champ.scrollIntoView({block: 'center', behavior: 'smooth'});
-    }
-    return;
+  if (e.key.toLowerCase() === 'n'){         // « n » : saisir une dépense, où qu'on soit
+    e.preventDefault(); ouvrirSaisie(); return;
   }
   if (e.key === '?'){ e.preventDefault(); ouvrirInfo('clavier'); }
 });
@@ -6016,6 +6099,75 @@ addEventListener('keydown', e => {
     if (compact !== dernier){ h.classList.toggle('compact', compact); dernier = compact; }
   }, {passive: true});
 })();
+
+/* ===== Saisie rapide accessible partout =====
+   Le geste le plus fréquent — noter une dépense — ne doit pas imposer de
+   revenir à l'Accueil. Une feuille monte depuis le bas, quelle que soit la page. */
+function ouvrirSaisie(){
+  const sel = document.getElementById('ps-cat');
+  if (!sel.options.length)
+    sel.innerHTML = CATS_RAPIDES.map(([v, l]) => `<option value="${v}">${l}</option>`).join('');
+  const sv = document.getElementById('ps-vac');
+  if (!sv.options.length)
+    sv.innerHTML = SOUS_CATS_VAC.map(([v, l]) => `<option value="${v}">${l}</option>`).join('');
+  document.getElementById('ps-devise').textContent = devise().sym;
+  document.getElementById('ps-label').value = '';
+  document.getElementById('ps-montant').value = '';
+  const puces = frequentesAvecMontant(6);
+  document.getElementById('ps-chips').innerHTML = puces.length
+    ? puces.map(f => `<button class="chip" data-pschip="${echap(f.label)}" data-psmnt="${Math.abs(f.montant)}">${echap(f.label)} · ${fmt(Math.abs(f.montant))}</button>`).join('')
+    : `<p class="note" style="margin:0">Les libellés que tu saisis souvent apparaîtront ici en raccourci.${
+        (etat.config.chipsMasquees || []).length ? ` (${etat.config.chipsMasquees.length} masqué${etat.config.chipsMasquees.length > 1 ? 's' : ''} — réaffichables dans Réglages.)` : ''}</p>`;
+  document.getElementById('voile-saisie').classList.add('vu');
+  setTimeout(() => document.getElementById('ps-label').focus(), 120);
+}
+function fermerSaisie(){ document.getElementById('voile-saisie').classList.remove('vu'); }
+function validerSaisie(){
+  const label = document.getElementById('ps-label').value.trim();
+  if (!label) return toast('Indique un intitulé');
+  const brut = evalMontant(document.getElementById('ps-montant').value);
+  if (isNaN(brut) || Math.abs(brut) < 0.005) return toast('Montant invalide');
+  let cat = document.getElementById('ps-cat').value;
+  if (cat === 'vac') cat = document.getElementById('ps-vac').value;
+  const signe = signeCategorie(cat);
+  const montant = +((signe === '-' ? (brut > 0 ? -brut : brut) : (brut < 0 ? -brut : brut))).toFixed(2);
+  const cle = cleAujourdhui();
+  while (!etat.months[cle]) creerMoisSuivant();
+  const liste = etat.months[cle][cat];
+  if (doublonProbable(liste, label, montant)
+      && !confirm(`« ${label} » ${fmt(montant)} figure déjà dans cette liste.\n\nL'ajouter une seconde fois ?`)) return;
+  memoriserPourAnnuler(`ajout de « ${label} »`);
+  const ligne = {label, montant};
+  liste.push(ligne);
+  let sup = '';
+  const n = propagerRecurrent(cle, cat, null, ligne);
+  if (n > 0) sup = ` ↪ ${n} mois suivant${n > 1 ? 's' : ''}`;
+  sauver(); fermerSaisie(); rafraichirPage();
+  signaler(document.querySelector('.hero'));
+  toast(`${label} ${fmt(montant)}${sup}`, true);
+}
+document.getElementById('fab').onclick = ouvrirSaisie;
+document.getElementById('ps-fermer').onclick = fermerSaisie;
+document.getElementById('ps-valider').onclick = validerSaisie;
+document.getElementById('voile-saisie').addEventListener('click', e => {
+  if (e.target.id === 'voile-saisie') fermerSaisie();
+});
+document.getElementById('ps-cat').addEventListener('change', e => {
+  document.getElementById('ps-vac').style.display = e.target.value === 'vac' ? '' : 'none';
+});
+document.getElementById('ps-chips').addEventListener('click', e => {
+  const b = e.target.closest('[data-pschip]');
+  if (!b) return;
+  document.getElementById('ps-label').value = b.dataset.pschip;
+  document.getElementById('ps-montant').value = b.dataset.psmnt;
+  document.getElementById('ps-montant').focus();
+});
+document.getElementById('panneau-saisie').addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  if (e.target.id === 'ps-label') document.getElementById('ps-montant').focus();
+  else validerSaisie();
+});
 
 /* Bouton de retour en haut : visible seulement quand on a défilé */
 (function(){

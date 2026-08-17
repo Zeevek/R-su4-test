@@ -9,6 +9,17 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v9.1.0 — lot 2 : navigation et en-tête — 17/08/2026
+
+### Saisie rapide accessible partout
+Noter une dépense est le geste le plus fréquent : il ne devait plus imposer de revenir à l'Accueil. Un **bouton flottant** ouvre désormais, depuis n'importe quelle page, une **feuille qui monte depuis le bas** — intitulé, montant, destination (avec sous-menu pour les vacances), puces de suggestion des libellés fréquents. Validation à la touche Entrée, fermeture par Échap, en dehors de la feuille ou par le bouton Annuler. Le raccourci clavier **n** l'ouvre également.
+
+### En-tête
+Marque compacte sur deux lignes (nom + version discrète), **recherche transformée en bouton libellé** plutôt qu'en simple loupe — et réduite à une icône sur les petits écrans. L'indicateur d'enregistrement, qui occupait un tiers de la barre, se résume à **un point coloré et deux mots** : vert quand la sauvegarde vient d'aboutir, corail en cas d'erreur, neutre au repos.
+
+### Navigation
+**Indicateur lumineux** sous l'onglet actif, icône qui se soulève légèrement, barre translucide avec flou d'arrière-plan. Le bouton de retour en haut se décale pour ne pas gêner le bouton de saisie.
+
 ## v9.0.1 — correctifs du lot 1 — 17/08/2026
 - **Feuille de style réparée.** En adaptant le compte rendu à la nouvelle palette, l'accolade fermante de sa règle avait disparu : le navigateur avalait alors **toutes les règles suivantes**. D'où les panneaux (bienvenue, verrou, rappel de sauvegarde) affichés en clair au milieu de la page, les grilles éclatées et les champs sans style. Un **contrôle de validité du CSS** — accolades équilibrées, règles bien formées, propriétés orphelines — rejoint la procédure de vérification : cette classe d'erreur ne peut plus passer.
 - **Champs de saisie intégrés à l'interface.** Ils gardaient l'apparence par défaut du navigateur : angles droits, fond blanc, bordure grise. Un traitement unique s'applique désormais partout — coins arrondis, fond légèrement en retrait de la carte, **anneau violet au focus**, flèche dessinée sur les listes déroulantes. Les cellules des listes restent discrètes (transparentes au repos, mises en évidence à la saisie) : ce sont des cellules de tableau, pas des formulaires.
