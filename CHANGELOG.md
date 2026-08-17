@@ -9,6 +9,27 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v9.0.0 — lot 1 : fondations, Accueil, compte rendu — 16/08/2026
+
+Première étape du redesign complet, orientation **« Néo »** (sombre, contrasté, énergique) avec les micro-interactions du registre tableau de bord.
+
+### Fondations
+- **Système de jetons** : couleurs, espacements (4 → 32 px), rayons (10 → 26 px), ombres, durées et courbes d'animation sont définis une seule fois et pilotent toute la feuille de style.
+- **Palette** : fond `#0F1117`, surfaces `#191C25`, **violet `#7C5CFF`** pour les actions, **corail `#FF6B5A`** pour les sorties, **menthe `#2FD9A0`** pour les entrées, **ambre** pour les alertes. Les anciens noms de variables restent des alias, ce qui évite de tout réécrire d'un coup.
+- **Ménage des thèmes** : les quatre thèmes (clair, sombre, forêt, minuit) laissent place à **deux variantes du même thème** — sombre par défaut, clair en option, « automatique » suivant le réglage du téléphone. Quatorze blocs de règles devenus inutiles ont été supprimés.
+
+### Composants
+Cartes à grand rayon et ombre douce qui se soulèvent au survol, en-têtes cliquables, boutons principaux en dégradé violet avec halo, champs à focus violet, puces réactives, **navigation translucide** avec indicateur lumineux sous l'onglet actif, et un nouveau composant **tuile** pour les chiffres clés.
+
+### Micro-interactions
+Apparition en cascade des cartes à l'ouverture d'une page, glissement latéral entre onglets, **compteurs qui montent** au lieu d'apparaître brutalement, jauges qui se remplissent, impulsion lumineuse sur un élément qui vient de changer, squelettes pendant les calculs, en-tête qui se compacte au défilement. Tout est neutralisé si le système demande de réduire les animations.
+
+### Accueil
+Héro en dégradé violet avec le montant du jour **animé** et sa barre de progression, puis quatre tuiles porteuses de sens : solde du mois et reste de fin de mois en menthe ou corail selon le signe, épargne, investissements avec la plus-value en sous-titre.
+
+### Compte rendu PDF
+Palette alignée sur la direction artistique (titres violets, filets colorés, tuiles arrondies) tout en **conservant un fond blanc** : c'est un document destiné à l'impression.
+
 ## v8.3.0 — 16/08/2026
 - **Tendances du mois enfin lisibles.** La courbe ne disait pas à quoi elle correspondait, et la suite de nombres qui la suivait était une énigme. Chaque **barre porte désormais le nom de son mois**, la barre dorée est le mois en cours (forcément incomplet) et une barre en pointillés montre la projection de fin de mois. Le détail mois par mois s'ouvre à la demande plutôt que d'encombrer la vue. Un **sélecteur 3 / 6 / 12 mois** permet de choisir la période de référence : 3 mois réagit vite, 12 mois lisse les variations saisonnières.
 - **Dividendes déplacés sur l'Accueil**, juste sous la dépense rapide — là où on les saisit naturellement, plutôt qu'au milieu de la page Investissements. La carte est repensée : **résumé annuel** (encaissé, nombre de versements et de sources, moyenne mensuelle, écart avec l'année précédente), **frise des douze mois** montrant la saisonnalité des encaissements, formulaire de saisie regroupé sur fond distinct, et **journal des derniers versements** indiquant pour chacun la date réelle et le mois de rattachement.

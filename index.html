@@ -12,71 +12,75 @@
 <meta name="mobile-web-app-capable" content="yes">
 <title>📒 Mon Budget Personnel v4</title>
 <style>
+/* ===== Jetons — thème « Néo » (sombre par défaut) =====
+   Source unique de vérité : couleurs, espacements, rayons, ombres, mouvement. */
 :root{
-  --papier:#F6F5F0; --carte:#FFFFFF; --encre:#1E2430; --encre2:#5A6072;
-  --laiton:#B08D3E; --laiton-clair:#E6C882;
-  --vert:#2E7D5B; --vert-fond:#EAF4EF; --rouge:#C0392B; --rouge-fond:#FAEDEB;
-  --trait:#E4E1D8; --ombre:0 1px 3px rgba(30,36,48,.08);
-  --entete:#1E2430; --entete-texte:#F6F5F0; --tete:#FBF9F2; --papier2:#FBF9F2;
+  --papier:#0F1117; --carte:#191C25; --carte2:#212533;
+  --encre:#F2F3F7; --encre2:#9AA0B4; --trait:#2A2F3D;
+  --violet:#7C5CFF; --violet-clair:#A78BFF; --violet-sourd:rgba(124,92,255,.14);
+  --corail:#FF6B5A; --corail-sourd:rgba(255,107,90,.13);
+  --menthe:#2FD9A0; --menthe-sourd:rgba(47,217,160,.13);
+  --ambre:#FFB84D;  --ambre-sourd:rgba(255,184,77,.14);
+  /* alias hérités : le code existant continue de fonctionner */
+  --laiton:var(--violet); --laiton-clair:var(--violet-clair);
+  --vert:var(--menthe); --vert-fond:var(--menthe-sourd);
+  --rouge:var(--corail); --rouge-fond:var(--corail-sourd);
+  --entete:#12141C; --entete-texte:#F2F3F7; --tete:#1E2230; --papier2:#1E2230;
+  --esp-1:4px; --esp-2:8px; --esp-3:12px; --esp-4:16px; --esp-5:24px; --esp-6:32px;
+  --r-s:10px; --r-m:16px; --r-l:20px; --r-xl:26px; --r-rond:999px;
+  --ombre:0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.22);
+  --ombre-forte:0 8px 30px rgba(0,0,0,.38);
+  --lueur:0 0 0 1px rgba(124,92,255,.35), 0 8px 28px rgba(124,92,255,.22);
+  --duree:.22s; --courbe:cubic-bezier(.22,.9,.28,1);
 }
-/* 🌙 Sombre */
-[data-theme="sombre"]{
-  --papier:#13161D; --carte:#1C212C; --encre:#E9E5D9; --encre2:#9BA1AF;
-  --laiton:#C9A55C; --laiton-clair:#8A6D1F;
-  --vert:#63BE93; --vert-fond:#1C2B24; --rouge:#E07862; --rouge-fond:#33201C;
-  --trait:#2E3542; --ombre:0 1px 3px rgba(0,0,0,.4);
-  --entete:#0D1016; --entete-texte:#E9E5D9; --tete:#232936; --papier2:#232936;
+/* ===== Variante claire du même thème ===== */
+[data-theme="clair"]{
+  --papier:#F5F5FA; --carte:#FFFFFF; --carte2:#F1F2F8;
+  --encre:#191C25; --encre2:#5F6683; --trait:#E3E5EF;
+  --violet:#6344F5; --violet-clair:#8B72FF; --violet-sourd:rgba(99,68,245,.10);
+  --corail:#E5503F; --corail-sourd:rgba(229,80,63,.10);
+  --menthe:#0FA97A; --menthe-sourd:rgba(15,169,122,.10);
+  --ambre:#C98A16; --ambre-sourd:rgba(201,138,22,.12);
+  --entete:#FFFFFF; --entete-texte:#191C25; --tete:#F7F8FC; --papier2:#F7F8FC;
+  --ombre:0 1px 2px rgba(25,28,37,.05), 0 4px 16px rgba(25,28,37,.06);
+  --ombre-forte:0 10px 34px rgba(25,28,37,.12);
+  --lueur:0 0 0 1px rgba(99,68,245,.25), 0 8px 24px rgba(99,68,245,.14);
 }
-/* 🌲 Forêt (clair, accents verts) */
-[data-theme="foret"]{
-  --papier:#F1F5EE; --carte:#FBFDF9; --encre:#1F2E22; --encre2:#5C6E5F;
-  --laiton:#3E7D5B; --laiton-clair:#A7CDB8;
-  --vert:#2E7D5B; --vert-fond:#E6F2EA; --rouge:#B5543B; --rouge-fond:#F8ECE7;
-  --trait:#DCE4D8; --ombre:0 1px 3px rgba(31,46,34,.08);
-  --entete:#1F3527; --entete-texte:#EFF5EE; --tete:#F4F8F1; --papier2:#F4F8F1;
-}
-/* 🌌 Minuit (sombre, bleu nuit et or) */
-[data-theme="minuit"]{
-  --papier:#0E1424; --carte:#171F33; --encre:#E8E9F2; --encre2:#98A0BC;
-  --laiton:#D8B45E; --laiton-clair:#8A701F;
-  --vert:#5EC6A0; --vert-fond:#15302A; --rouge:#E8826B; --rouge-fond:#39221D;
-  --trait:#26304A; --ombre:0 1px 3px rgba(0,0,0,.5);
-  --entete:#080D1A; --entete-texte:#E8E9F2; --tete:#1E2740; --papier2:#1E2740;
-}
+
 /* Ajustements des fonds clairs codés en dur sur les thèmes sombres */
-[data-theme="sombre"] .chip, [data-theme="minuit"] .chip{background:rgba(255,255,255,.06);color:var(--encre2);border-color:var(--trait)}
-[data-theme="sombre"] .chip .chip-x, [data-theme="minuit"] .chip .chip-x{background:rgba(255,255,255,.12);color:var(--encre2)}
-[data-theme="sombre"] details.etaler, [data-theme="minuit"] details.etaler,
-[data-theme="sombre"] .rep, [data-theme="minuit"] .rep{background:rgba(201,165,92,.08)}
-[data-theme="sombre"] .saisie-rapide input, [data-theme="minuit"] .saisie-rapide input{background:rgba(255,255,255,.05) !important;color:var(--encre)}
-[data-theme="sombre"] td.px-ancien, [data-theme="minuit"] td.px-ancien{background:rgba(201,165,92,.14)}
-[data-theme="sombre"] td.px-ancien input, [data-theme="minuit"] td.px-ancien input{color:var(--laiton)}
-[data-theme="sombre"] td.px-manuel, [data-theme="minuit"] td.px-manuel{background:rgba(99,190,147,.10)}
-[data-theme="sombre"] td.px-fige, [data-theme="minuit"] td.px-fige{background:rgba(255,255,255,.04)}
-[data-theme="sombre"] td.px-fige input, [data-theme="minuit"] td.px-fige input{color:var(--encre2)}
-[data-theme="sombre"] .barre-tri select, [data-theme="minuit"] .barre-tri select{background:rgba(255,255,255,.05)}
-[data-theme="sombre"] .legende-prix .lp, [data-theme="minuit"] .legende-prix .lp{background:rgba(255,255,255,.07)}
-[data-theme="sombre"] .chlog b, [data-theme="minuit"] .chlog b{color:var(--encre)}
 
 *{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
-body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--papier);color:var(--encre);
-  font-variant-numeric:tabular-nums;padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+body{background:var(--papier);color:var(--encre);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;line-height:1.5;
+  padding:0 0 calc(78px + env(safe-area-inset-bottom));min-height:100vh}
 button{font:inherit;cursor:pointer;border:none;background:none;color:inherit;-webkit-tap-highlight-color:transparent}
 input,select{font:inherit;color:inherit}
 h1,h2,h3{font-weight:700}
 
 /* ===== En-tête ===== */
-header{background:var(--entete);color:var(--entete-texte);padding:calc(10px + env(safe-area-inset-top)) 16px 10px;
-  position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px}
+header{background:rgba(18,20,28,.9);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  color:var(--entete-texte);padding:calc(env(safe-area-inset-top) + 10px) var(--esp-4) 10px;
+  display:flex;align-items:center;gap:var(--esp-3);position:sticky;top:0;z-index:25;
+  border-bottom:1px solid var(--trait);transition:padding var(--duree) var(--courbe)}
+header.compact{padding-top:calc(env(safe-area-inset-top) + 4px);padding-bottom:5px}
 header .titre{font-size:15px;letter-spacing:.08em;text-transform:uppercase;font-weight:700}
 header .titre small{display:block;font-size:10px;letter-spacing:.18em;color:var(--laiton-clair);font-weight:600}
 header .statut{margin-left:auto;font-size:10px;letter-spacing:.1em;color:#9AA1B4;text-transform:uppercase}
 
 /* ===== Navigation basse ===== */
-nav{position:fixed;bottom:0;left:0;right:0;background:var(--entete);display:flex;z-index:30;
-  padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -2px 8px rgba(0,0,0,.18)}
-nav button{flex:1;padding:8px 2px 7px;color:#8A90A3;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:2px;letter-spacing:.02em}
+nav{position:fixed;bottom:0;left:0;right:0;background:rgba(18,20,28,.92);backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);border-top:1px solid var(--trait);display:flex;z-index:30;
+  padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;padding:9px 2px 8px;color:var(--encre2);font-size:10px;font-weight:700;
+  display:flex;flex-direction:column;align-items:center;gap:3px;background:none;position:relative;
+  transition:color var(--duree) var(--courbe)}
+nav button .ico{font-size:19px;transition:transform var(--duree) var(--courbe)}
+nav button.actif{color:var(--violet)}
+nav button.actif .ico{transform:translateY(-2px) scale(1.08)}
+nav button.actif::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:26px;height:3px;border-radius:0 0 3px 3px;background:var(--violet);
+  box-shadow:0 0 12px var(--violet)}
 nav button .ico{font-size:19px;line-height:1}
 nav button.actif{color:var(--laiton-clair)}
 nav button.actif .ico{transform:translateY(-1px)}
@@ -87,9 +91,15 @@ main{max-width:760px;margin:0 auto;padding:14px 12px 24px}
 @keyframes app{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 
 /* ===== Cartes ===== */
-.carte{background:var(--carte);border:1px solid var(--trait);border-radius:12px;box-shadow:var(--ombre);margin-bottom:12px;overflow:hidden}
-.carte>.tete{display:flex;align-items:baseline;gap:8px;padding:10px 14px;border-bottom:1px solid var(--trait);
-  background:var(--tete);cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;padding-right:32px}
+.carte{background:var(--carte);border-radius:var(--r-l);box-shadow:var(--ombre);margin-bottom:var(--esp-3);
+  overflow:hidden;border:1px solid var(--trait);
+  transition:transform var(--duree) var(--courbe), box-shadow var(--duree) var(--courbe)}
+.carte:hover{transform:translateY(-1px);box-shadow:var(--ombre-forte)}
+.carte>.tete{display:flex;align-items:center;gap:var(--esp-2);padding:14px var(--esp-4) 12px;
+  background:transparent;border-bottom:1px solid var(--trait);cursor:pointer;
+  -webkit-tap-highlight-color:transparent;position:relative;padding-right:38px;
+  transition:background var(--duree) var(--courbe)}
+.carte>.tete:active{background:var(--carte2)}
 .carte>.tete::after{content:'';position:absolute;right:13px;top:calc(50% - 3px);width:7px;height:7px;
   border-right:2px solid var(--encre2);border-bottom:2px solid var(--encre2);
   transform:rotate(45deg);transition:transform .18s ease;opacity:.65}
@@ -97,9 +107,9 @@ main{max-width:760px;margin:0 auto;padding:14px 12px 24px}
 .carte.replie>.tete{border-bottom:none}
 .carte.replie>.corps{display:none}
 .carte.replie{margin-bottom:8px}
-.carte>.tete h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--encre2)}
+.carte>.tete h3{font-size:12px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--encre2)}
 .carte>.tete .tot{margin-left:auto;font-weight:700;font-size:14px}
-.carte .corps{padding:8px 14px 12px}
+.carte .corps{padding:var(--esp-4)}
 .pos{color:var(--vert)} .neg{color:var(--rouge)} .neutre{color:var(--encre2)}
 
 /* ===== Héro : reste du jour ===== */
@@ -122,7 +132,8 @@ main{max-width:760px;margin:0 auto;padding:14px 12px 24px}
 .kpi .val{font-size:17px;font-weight:700;margin-top:2px}
 
 /* ===== Lignes éditables ===== */
-.ligne{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px dashed var(--trait)}
+.ligne{display:flex;align-items:center;gap:var(--esp-2);padding:9px 0;border-bottom:1px solid var(--trait)}
+.ligne:last-child{border-bottom:none}
 .ligne:last-child{border-bottom:none}
 .ligne input.lab{flex:1;min-width:0;border:none;background:transparent;padding:4px 2px;font-size:14px}
 .ligne input.mnt{width:88px;border:none;background:transparent;text-align:right;padding:4px 2px;font-size:14px;font-weight:600}
@@ -181,9 +192,12 @@ td.px-fige input{color:#4A5570;font-style:italic}
 .p-actions{background:#C6EFCE;color:#14532D}.p-etfs{background:#BDD7EE;color:#1E3A5F}.p-pe{background:#E2D5F1;color:#4C2A6E}
 .p-cryptos{background:#FFE699;color:#6B4E00}.p-metaux{background:#F8CBAD;color:#7A3E12}.p-obligations{background:#DCDCE4;color:#3A3F52}
 
-.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:10px;background:var(--entete);color:var(--entete-texte);
-  font-weight:700;font-size:13px;letter-spacing:.04em}
-.btn.or{background:var(--laiton);color:#fff}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px 18px;
+  border-radius:var(--r-s);background:var(--carte2);color:var(--encre);font-weight:700;font-size:14px;
+  transition:transform .14s var(--courbe), background var(--duree) var(--courbe), box-shadow var(--duree) var(--courbe)}
+.btn:active{transform:scale(.97)}
+.btn.or{background:linear-gradient(135deg,var(--violet),var(--violet-clair));color:#fff;box-shadow:var(--lueur)}
+.btn.or:active{filter:brightness(1.06)}
 .btn.ligne2{width:100%;justify-content:center;margin-top:8px}
 .btn.discret{background:var(--carte);color:var(--encre);border:1px solid var(--trait)}
 
@@ -201,9 +215,6 @@ td.px-fige input{color:#4A5570;font-style:italic}
 .jour.passe{opacity:.38}
 .jour.auj{border-color:var(--laiton);background:#FDF8EC;box-shadow:0 0 0 1px var(--laiton)}
 .jour.auj .n, .jour.auj .v{color:#8A6D1F}
-[data-theme="sombre"] .jour.auj, [data-theme="minuit"] .jour.auj{background:rgba(201,165,92,.16)}
-[data-theme="sombre"] .jour.auj .n, [data-theme="minuit"] .jour.auj .n,
-[data-theme="sombre"] .jour.auj .v, [data-theme="minuit"] .jour.auj .v{color:var(--laiton)}
 .jour .n{font-size:9px;color:var(--encre2);letter-spacing:.06em}
 .jour .v{font-size:12px;font-weight:700}
 
@@ -221,7 +232,10 @@ details.aide summary{cursor:pointer;font-weight:600;color:var(--laiton)}
 @media (min-width:700px){ .kpis{grid-template-columns:repeat(4,1fr)} }
 /* ===== Saisie rapide & puces de suggestion ===== */
 .saisie-rapide{display:flex;gap:6px;align-items:center;margin-bottom:4px}
-.saisie-rapide input{border:1px solid var(--trait);border-radius:9px;padding:9px 10px;font-size:14px;background:var(--carte)}
+.saisie-rapide input{border:1px solid var(--trait);border-radius:var(--r-s);padding:12px var(--esp-3);
+  font-size:15px;background:var(--carte2);color:var(--encre);
+  transition:border-color var(--duree) var(--courbe), box-shadow var(--duree) var(--courbe)}
+.saisie-rapide input:focus{outline:none;border-color:var(--violet);box-shadow:0 0 0 3px var(--violet-sourd)}
 .saisie-rapide .sl{flex:1;min-width:0}
 .saisie-rapide .sm{width:86px;text-align:right;font-weight:600}
 .saisie-rapide button{flex:none;padding:9px 14px}
@@ -286,7 +300,11 @@ details.aide summary{cursor:pointer;font-weight:600;color:var(--laiton)}
 .jauge-barre.pleine{background:linear-gradient(90deg,var(--vert),#7FC5A3)}
 .jauge-barre.depasse{background:linear-gradient(90deg,var(--rouge),#E08A78)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
-.chip{font-size:12px;padding:5px 11px;border:1px solid var(--trait);border-radius:99px;background:#FBFAF6;color:var(--encre2);font-weight:600}
+.chip{font-size:12.5px;padding:7px 13px;border:1px solid var(--trait);border-radius:var(--r-rond);
+  background:var(--carte2);color:var(--encre2);font-weight:600;
+  transition:transform .14s var(--courbe), background var(--duree) var(--courbe), color var(--duree) var(--courbe)}
+.chip:active{transform:scale(.95)}
+.chip:hover{background:var(--violet-sourd);color:var(--violet);border-color:var(--violet)}
 .chip:active{background:#FDF8EC;border-color:var(--laiton);color:var(--laiton)}
 .chip .chip-x{display:inline-flex;align-items:center;justify-content:center;margin-left:7px;
   width:17px;height:17px;border-radius:50%;background:#EAE7DE;color:var(--encre2);font-size:10px;font-weight:800}
@@ -298,27 +316,88 @@ details.aide summary{cursor:pointer;font-weight:600;color:var(--laiton)}
 .chlog .vers{display:flex;gap:8px;align-items:baseline;margin-top:8px}
 .chlog .vers .v{font-weight:800;color:var(--laiton);letter-spacing:.04em;flex:none}
 
+
+/* ===== Tuiles de chiffre clé ===== */
+.tuile{background:var(--carte);border:1px solid var(--trait);border-radius:var(--r-l);padding:var(--esp-4);
+  display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden;
+  transition:transform var(--duree) var(--courbe), box-shadow var(--duree) var(--courbe)}
+.tuile:hover{transform:translateY(-2px);box-shadow:var(--ombre-forte)}
+.tuile .eti{font-size:10.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--encre2)}
+.tuile .val{font-size:23px;font-weight:800;letter-spacing:-.02em;color:var(--encre)}
+.tuile .sous{font-size:11.5px;color:var(--encre2)}
+.tuile.accent{background:linear-gradient(150deg,var(--violet),var(--violet-clair));border:none;color:#fff}
+.tuile.accent .eti,.tuile.accent .sous{color:rgba(255,255,255,.82)}
+.tuile.accent .val{color:#fff}
+.tuile.sortie .val{color:var(--corail)} .tuile.entree .val{color:var(--menthe)}
+.tuile::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:radial-gradient(120% 90% at 100% 0%,rgba(255,255,255,.07),transparent 60%)}
+
+/* ===== Héro : le chiffre du jour ===== */
+.hero{background:linear-gradient(150deg,var(--violet) 0%,#6244E8 55%,#4C33C4 100%);
+  border-radius:var(--r-xl);padding:22px var(--esp-5) var(--esp-5);color:#fff;position:relative;overflow:hidden;
+  box-shadow:0 10px 34px rgba(124,92,255,.28)}
+.hero::after{content:'';position:absolute;right:-70px;top:-90px;width:260px;height:260px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.18),transparent 62%)}
+.hero .eti{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.8);
+  display:flex;align-items:center;gap:6px}
+.hero .gros{font-size:clamp(42px,13vw,58px);font-weight:800;letter-spacing:-.03em;line-height:1.02;margin:6px 0 2px}
+.hero .unite{font-size:19px;font-weight:600;opacity:.85;margin-left:5px}
+.hero .detail{font-size:12.5px;color:rgba(255,255,255,.85)}
+.hero .barre{height:6px;border-radius:var(--r-rond);background:rgba(255,255,255,.22);margin-top:14px;overflow:hidden}
+.hero .barre span{display:block;height:100%;background:#fff;border-radius:inherit;
+  transition:width .7s var(--courbe)}
+.hero-i{border-color:rgba(255,255,255,.6)!important;color:rgba(255,255,255,.85)!important;
+  width:17px;height:17px;min-height:17px;font-size:10px}
+
+/* ===== Grille de tuiles ===== */
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--esp-2);margin:var(--esp-3) 0}
+@media (min-width:640px){ .kpis{grid-template-columns:repeat(4,1fr)} }
+
+
+/* ===== Micro-interactions =====
+   Le mouvement sert à comprendre : d'où vient un élément, ce qui vient de
+   changer, ce qui est en cours. Tout est désactivé si le système demande
+   « réduire les animations ». */
+@keyframes apparait{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes glisseD{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 var(--violet-sourd)}70%{box-shadow:0 0 0 12px transparent}100%{box-shadow:0 0 0 0 transparent}}
+@keyframes chargement{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.page.actif{display:block;animation:glisseD .26s var(--courbe)}
+.page.actif > *{animation:apparait .3s var(--courbe) backwards}
+.page.actif > *:nth-child(1){animation-delay:.02s}
+.page.actif > *:nth-child(2){animation-delay:.06s}
+.page.actif > *:nth-child(3){animation-delay:.1s}
+.page.actif > *:nth-child(4){animation-delay:.14s}
+.page.actif > *:nth-child(n+5){animation-delay:.17s}
+.maj{animation:pulse .9s var(--courbe)}
+.squelette{background:linear-gradient(90deg,var(--carte2) 25%,var(--trait) 50%,var(--carte2) 75%);
+  background-size:200% 100%;animation:chargement 1.2s infinite;border-radius:var(--r-s);color:transparent}
+.jauge-barre, .hm-barre, .dfm-barre, .tend-jauge{transition:width .6s var(--courbe), height .6s var(--courbe)}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important}
+}
+
 /* ===== Compte rendu A4 (impression / PDF) ===== */
 #rapport{display:none}
-/* Le compte rendu A4 force le thème clair : les variables sont redéfinies ici */
-.rp{--papier:#fff; --carte:#fff; --encre:#1E2430; --encre2:#5A6072; --trait:#E4E1D8;
-    --laiton:#B08D3E; --vert:#2E7D5B; --rouge:#C0392B;
+/* Le compte rendu A4 reste sur fond blanc pour l'impression, mais reprend
+   les accents de la direction artistique (violet, corail, menthe). */
+.rp{--papier:#fff; --carte:#fff; --encre:#191C25; --encre2:#5F6683; --trait:#E3E5EF;
+    --violet:#6344F5; --laiton:#6344F5; --vert:#0FA97A; --menthe:#0FA97A;
+    --rouge:#E5503F; --corail:#E5503F; --tete:#F7F8FC;
     width:210mm;min-height:296mm;box-sizing:border-box;padding:11mm 13mm;background:#fff;color:var(--encre);
-  page-break-after:always;break-after:page;font-variant-numeric:tabular-nums;
-  -webkit-print-color-adjust:exact;print-color-adjust:exact}
 .rp:last-child{page-break-after:auto}
-.rp .rp-tete{display:flex;align-items:baseline;gap:10px;border-bottom:3px solid var(--encre);padding-bottom:6px;margin-bottom:8px}
-.rp .rp-tete h1{font-size:22px;letter-spacing:.04em}
+.rp .rp-tete{display:flex;align-items:baseline;gap:10px;border-bottom:3px solid var(--violet);padding-bottom:7px;margin-bottom:9px}
+.rp .rp-tete h1{font-size:22px;letter-spacing:-.01em;font-weight:800;color:var(--violet)}
 .rp .rp-tete .badge{font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
   padding:3px 10px;border-radius:99px;background:var(--entete);color:var(--entete-texte)}
 .rp .rp-tete .badge.prev{background:#fff;color:var(--laiton);border:1.5px solid var(--laiton)}
 .rp .rp-tete .app{margin-left:auto;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--encre2)}
-.rp .kpi5{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:9px}
-.rp .kpi5>div{border:1.5px solid var(--encre);border-radius:8px;padding:6px 8px}
+.rp .kpi5{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:9px}
+.rp .kpi5>div{background:var(--tete);border:1px solid var(--trait);border-radius:9px;padding:6px 8px;display:flex;flex-direction:column;gap:2px}
 .rp .kpi5 .e{font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--encre2);display:block}
 .rp .kpi5 .v{font-size:13.5px;font-weight:800;display:block;margin-top:2px}
 .rp .cols{display:grid;grid-template-columns:88mm 1fr;gap:8mm;margin-bottom:8px}
-.rp h2{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--encre2);
+.rp h2{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--violet);font-weight:800;
   border-bottom:1px solid var(--trait);padding-bottom:3px;margin:7px 0 5px}
 .rp table{width:100%;border-collapse:collapse;font-size:10.5px}
 .rp td{padding:2.5px 3px;border-bottom:1px dashed var(--trait);text-align:right;white-space:nowrap}
@@ -532,10 +611,11 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
   <!-- ============ ACCUEIL ============ -->
   <section class="page actif" id="page-accueil">
     <div class="hero">
-      <div class="eti">Reste disponible aujourd'hui <button class="info-btn" data-infocle="hero" aria-label="Informations" style="border-color:var(--laiton-clair);color:var(--laiton-clair);width:18px;height:18px;min-height:18px;font-size:10px">i</button></div>
-      <div class="gros" id="h-jour">— <small>€ / jour</small></div>
-      <div class="sous" id="h-sous">—</div>
-      <div class="jauge"><div id="h-jauge" style="width:0%"></div></div>
+      <div class="eti">Disponible aujourd'hui
+        <button class="info-btn hero-i" data-infocle="hero" aria-label="Informations">i</button></div>
+      <div class="gros"><span id="h-jour">—</span><span class="unite" id="h-unite">/ jour</span></div>
+      <div class="detail" id="h-sous">—</div>
+      <div class="barre"><span id="h-jauge" style="width:0%"></span></div>
     </div>
     <div class="kpis" id="kpis-accueil"></div>
     <div class="carte">
@@ -637,10 +717,8 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
         <div class="ligne"><input class="lab" value="Thème" readonly>
           <select id="cfg-theme" style="border:1px solid var(--trait);border-radius:8px;padding:8px;background:var(--carte);font-weight:600">
             <option value="auto">🌗 Automatique (réglage du téléphone)</option>
-            <option value="clair">☀️ Clair</option>
             <option value="sombre">🌙 Sombre</option>
-            <option value="foret">🌲 Forêt</option>
-            <option value="minuit">🌌 Minuit</option>
+            <option value="clair">☀️ Clair</option>
           </select></div>
         <div class="ligne"><input class="lab" value="Densité d'affichage" readonly>
           <select id="cfg-densite" style="border:1px solid var(--trait);border-radius:8px;padding:8px;background:var(--carte);font-weight:600">
@@ -915,10 +993,12 @@ window.addEventListener('error', e => {
   }catch(_){}
 });
 
-/* ================= THÈME (clair / sombre / forêt / minuit) ================= */
+/* ================= THÈME (sombre / clair) ================= */
+/* Deux variantes d'un même thème : sombre (défaut) et clair.
+   « auto » suit le réglage du téléphone. */
 function resoudreTheme(choix, systemeSombre){
   if (!choix || choix === 'auto') return systemeSombre ? 'sombre' : 'clair';
-  return ['clair', 'sombre', 'foret', 'minuit'].includes(choix) ? choix : 'clair';
+  return ['clair', 'sombre'].includes(choix) ? choix : 'sombre';
 }
 function appliquerDensite(d){
   const v = ['compact', 'normal', 'confort'].includes(d) ? d : 'normal';
@@ -930,8 +1010,9 @@ appliquerDensite((() => { try{ return localStorage.getItem('bv4-densite'); }catc
 function appliquerTheme(choix){
   const sombreSys = matchMedia('(prefers-color-scheme: dark)').matches;
   const t = resoudreTheme(choix, sombreSys);
-  if (t === 'clair') document.documentElement.removeAttribute('data-theme');
-  else document.documentElement.setAttribute('data-theme', t);
+  // le sombre est la base : seul le clair ajoute un attribut
+  if (t === 'sombre') document.documentElement.removeAttribute('data-theme');
+  else document.documentElement.setAttribute('data-theme', 'clair');
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute('content',
     getComputedStyle(document.documentElement).getPropertyValue('--entete').trim() || '#1E2430');
@@ -1108,8 +1189,14 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '8.3.0';
+const APP_VERSION = '9.0.0-mvp1';
 const CHANGELOG = [
+  {v: '9.0.0 (lot 1)', d: '16/08/2026', pts: [
+    "Nouvelle direction artistique « Néo » : fond profond, accent violet, corail pour les sorties, menthe pour les entrées. Un système de jetons (couleurs, espacements, rayons, ombres, mouvement) pilote désormais toute l'interface.",
+    "Les quatre anciens thèmes laissent place à deux variantes d'un même thème : sombre (par défaut) et clair.",
+    "Micro-interactions : apparition en cascade des cartes, glissement entre onglets, soulèvement au survol, jauges et compteurs animés, en-tête qui se compacte au défilement, squelettes de chargement — le tout désactivé si le téléphone demande de réduire les animations.",
+    "Accueil repensé : héro violet avec montant animé, quatre tuiles colorées porteuses de sens.",
+    "Compte rendu PDF aligné sur la nouvelle palette, en conservant un fond blanc pour l'impression."]},
   {v: '8.3.0', d: '16/08/2026', pts: [
     "Tendances du mois : chaque barre porte enfin son mois, la période de référence est réglable (3, 6 ou 12 mois), et le détail mois par mois s'ouvre à la demande.",
     "Dividendes : la carte rejoint l'Accueil, juste sous la dépense rapide, avec un résumé annuel, une frise des encaissements sur l'année et un journal des derniers versements."]},
@@ -1378,6 +1465,7 @@ function migrer(){
   etat.historique = etat.historique || [];
   if (etat.config.enveloppeFixe == null || etat.config.enveloppeFixe === '' || isNaN(Number(etat.config.enveloppeFixe))) etat.config.enveloppeFixe = null;
   etat.config.triPositions = etat.config.triPositions || {};
+  if (etat.config.theme && !['auto', 'clair', 'sombre'].includes(etat.config.theme)) etat.config.theme = 'auto';
   etat.config.chipsMasquees = etat.config.chipsMasquees || [];
   // Premier lancement : les cartes de configuration rarement touchées sont
   // repliées pour que les Réglages tiennent en un écran ou deux.
@@ -3169,6 +3257,32 @@ function vacancesActives(cle){
     .some(k => (m[k] || []).some(x => Math.abs(+x.montant || 0) > 0.004));
 }
 
+/* Compteur animé : un montant qui monte est plus lisible qu'un chiffre qui
+   apparaît d'un coup — on voit le sens de la variation. */
+function animerMontant(el, valeur, formateur = fmt){
+  if (!el) return;
+  const depart = el._val ?? 0;
+  el._val = valeur;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches || Math.abs(valeur - depart) < 0.01){
+    el.textContent = formateur(valeur); return;
+  }
+  const t0 = performance.now(), duree = 520;
+  const pas = t => {
+    const k = Math.min(1, (t - t0) / duree);
+    const doux = 1 - Math.pow(1 - k, 3);
+    el.textContent = formateur(depart + (valeur - depart) * doux);
+    if (k < 1) requestAnimationFrame(pas);
+  };
+  requestAnimationFrame(pas);
+}
+/* Signale visuellement l'élément qui vient d'être modifié */
+function signaler(el){
+  if (!el) return;
+  el.classList.remove('maj');
+  void el.offsetWidth;
+  el.classList.add('maj');
+}
+
 /* ===== Cartes repliables (mémorisé d'une session à l'autre) =====
    L'état est retenu par titre de carte : les cartes sont recréées à chaque
    rendu, un identifiant stable est donc nécessaire. */
@@ -3257,6 +3371,7 @@ function ajouterViaComposeur(zone){
     if (n > 0) sup = ` ↪ ${n} mois suivant${n > 1 ? 's' : ''}`;
   }
   sauver(); rafraichirPage();
+  signaler(document.querySelector('.hero'));      // le montant du jour vient de changer
   toast(`${label} ${fmt(montant)}${sup}`);
   // le composeur est recréé par le rendu : on rend la main au champ intitulé
   setTimeout(() => {
@@ -3298,19 +3413,26 @@ function rendreAccueil(){
   const jour = estCeMois ? auj.getDate() : 1;
   const ref = etat.config.estimationRef ?? c.resteEnv;
   const parJour = Math.max(0, ref / (nbJ + 1 - jour));
-  document.getElementById('h-jour').innerHTML =
-    parJour.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' <small>€ / jour</small>';
+  animerMontant(document.getElementById('h-jour'), parJour,
+    v => v.toLocaleString(devise().loc, {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+  document.getElementById('h-unite').textContent = devise().sym + ' / jour';
   document.getElementById('h-sous').textContent =
     `Enveloppe restante ${fmt(ref)} · ${nbJ + 1 - jour} jour${nbJ-jour ? 's' : ''} restant${nbJ-jour ? 's' : ''} — ${libelleMois(cle)}`;
-  document.getElementById('h-jauge').style.width = Math.max(0, Math.min(100, ref / c.sommeMois * 100)) + '%';
+  requestAnimationFrame(() => {
+    document.getElementById('h-jauge').style.width = Math.max(0, Math.min(100, ref / c.sommeMois * 100)) + '%';
+  });
 
   const liv = calculerLivrets(), inv = calculerInvest(), avc = calculerAchatVente();
-  document.getElementById('kpis-accueil').innerHTML = [
-    ['Solde du mois', fmtS(c.solde), cls(c.solde)],
-    ['Reste fin de mois', fmt(c.resteFin), cls(c.resteFin)],
-    ['Livrets', fmt(liv.total), ''],
-    ['Investissements', fmt(inv.total), ''],
-  ].map(([e, v, k]) => `<div class="kpi"><span class="eti">${e}</span><div class="val ${k}">${v}</div></div>`).join('');
+  const tuiles = [
+    ['💰 Solde du mois', fmt(c.solde), c.solde >= 0 ? 'entree' : 'sortie', `${libelleMois(cle)}`],
+    ['📅 Reste fin de mois', fmt(c.resteFin), c.resteFin >= 0 ? 'entree' : 'sortie', 'après charges et épargne'],
+    ['🏦 Épargne', fmt(liv.total), '', `${(etat.comptes || []).length} compte${(etat.comptes || []).length > 1 ? 's' : ''}`],
+    ['📈 Investissements', fmt(inv.total + inv.perfTotale), inv.perfTotale >= 0 ? 'entree' : 'sortie',
+     `${inv.perfTotale >= 0 ? '+' : ''}${fmt(inv.perfTotale)} de plus-value`],
+  ];
+  document.getElementById('kpis-accueil').innerHTML = tuiles.map(([e, v, cl, s]) =>
+    `<div class="tuile ${cl}"><span class="eti">${e}</span><div class="val">${v}</div>
+     <span class="sous">${s}</span></div>`).join('');
 
   // estimation
   document.getElementById('est-montant').value = ref.toFixed(2);
@@ -4308,6 +4430,7 @@ document.querySelector('main').addEventListener('change', e => {
     toast(el.checked ? '🏖️ Budget vacances activé' : 'Budget vacances masqué');
   } else if (el.dataset.tri){               // tri d'un portefeuille
     etat.config.triPositions = etat.config.triPositions || {};
+  if (etat.config.theme && !['auto', 'clair', 'sombre'].includes(etat.config.theme)) etat.config.theme = 'auto';
     etat.config.triPositions[el.dataset.tri] = el.value;
   sauver(); rendreInvest();
   } else if (el.dataset.pch){               // positions invest
@@ -5850,6 +5973,16 @@ addEventListener('keydown', e => {
   }
   if (e.key === '?'){ e.preventDefault(); ouvrirInfo('clavier'); }
 });
+
+/* En-tête compact dès qu'on défile : rend l'écran au contenu */
+(function(){
+  const h = document.querySelector('header');
+  let dernier = false;
+  addEventListener('scroll', () => {
+    const compact = window.scrollY > 40;
+    if (compact !== dernier){ h.classList.toggle('compact', compact); dernier = compact; }
+  }, {passive: true});
+})();
 
 /* Bouton de retour en haut : visible seulement quand on a défilé */
 (function(){
