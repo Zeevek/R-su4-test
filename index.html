@@ -354,6 +354,33 @@ details.aide summary{cursor:pointer;font-weight:600;color:var(--laiton)}
 @media (min-width:640px){ .kpis{grid-template-columns:repeat(4,1fr)} }
 
 
+
+/* ===== Champs de saisie : un seul traitement pour toute l'application =====
+   Fond légèrement en retrait de la carte, coins arrondis, anneau violet au
+   focus. Sans cela, les champs paraissent posés sur l'interface plutôt
+   qu'intégrés à elle. */
+input, select, textarea{font-family:inherit;font-size:14px;color:var(--encre);
+  background:var(--carte2);border:1px solid var(--trait);border-radius:var(--r-s);
+  padding:11px var(--esp-3);
+  transition:border-color var(--duree) var(--courbe), box-shadow var(--duree) var(--courbe),
+             background var(--duree) var(--courbe)}
+input:focus, select:focus, textarea:focus{outline:none;border-color:var(--violet);
+  background:var(--carte);box-shadow:0 0 0 3px var(--violet-sourd)}
+input::placeholder{color:var(--encre2);opacity:.62}
+input[readonly]{background:transparent;border-color:transparent;padding-left:0}
+input[disabled]{opacity:.45}
+select{-webkit-appearance:none;appearance:none;cursor:pointer;padding-right:32px;
+  background-image:linear-gradient(45deg,transparent 50%,var(--encre2) 50%),
+                   linear-gradient(135deg,var(--encre2) 50%,transparent 50%);
+  background-position:calc(100% - 17px) center, calc(100% - 12px) center;
+  background-size:5px 5px, 5px 5px;background-repeat:no-repeat}
+input[type="date"]{min-height:42px}
+input[type="checkbox"]{accent-color:var(--violet)}
+/* les champs de ligne (listes) restent discrets : ce sont des cellules, pas des formulaires */
+.ligne input.lab, .ligne input.mnt, td input{background:transparent;border-color:transparent;
+  border-radius:var(--r-s);padding:7px var(--esp-2)}
+.ligne input.lab:focus, .ligne input.mnt:focus, td input:focus{background:var(--carte2);border-color:var(--violet)}
+
 /* ===== Micro-interactions =====
    Le mouvement sert à comprendre : d'où vient un élément, ce qui vient de
    changer, ce qui est en cours. Tout est désactivé si le système demande
@@ -385,6 +412,8 @@ details.aide summary{cursor:pointer;font-weight:600;color:var(--laiton)}
     --violet:#6344F5; --laiton:#6344F5; --vert:#0FA97A; --menthe:#0FA97A;
     --rouge:#E5503F; --corail:#E5503F; --tete:#F7F8FC;
     width:210mm;min-height:296mm;box-sizing:border-box;padding:11mm 13mm;background:#fff;color:var(--encre);
+    page-break-after:always;break-after:page;font-variant-numeric:tabular-nums;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif}
 .rp:last-child{page-break-after:auto}
 .rp .rp-tete{display:flex;align-items:baseline;gap:10px;border-bottom:3px solid var(--violet);padding-bottom:7px;margin-bottom:9px}
 .rp .rp-tete h1{font-size:22px;letter-spacing:-.01em;font-weight:800;color:var(--violet)}
@@ -1189,8 +1218,12 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '9.0.0-mvp1';
+const APP_VERSION = '9.0.1-mvp1';
 const CHANGELOG = [
+  {v: '9.0.1 (lot 1)', d: '17/08/2026', pts: [
+    "Correctif : une accolade manquante dans la feuille de style faisait perdre au navigateur toutes les règles suivantes — panneaux non masqués, mises en page cassées.",
+    "Champs de saisie harmonisés : coins arrondis, fond légèrement en retrait, anneau violet au focus, flèche personnalisée sur les listes déroulantes.",
+    "L'assistant de bienvenue ne s'ouvre plus lorsque des données existent déjà."]},
   {v: '9.0.0 (lot 1)', d: '16/08/2026', pts: [
     "Nouvelle direction artistique « Néo » : fond profond, accent violet, corail pour les sorties, menthe pour les entrées. Un système de jetons (couleurs, espacements, rayons, ombres, mouvement) pilote désormais toute l'interface.",
     "Les quatre anciens thèmes laissent place à deux variantes d'un même thème : sombre (par défaut) et clair.",
@@ -6139,9 +6172,16 @@ function traiterAjoutURL(){
   if (selTheme) selTheme.value = etat.config.theme || 'auto';
   rendreTout();
   if (traiterAjoutURL()) rendreTout();
-  // première ouverture, application vierge → assistant
-  if (!etat.config.bienvenueFaite && !clesMois().some(k => somme(etat.months[k].entrees) > 0))
+  // Assistant : seulement sur une application réellement vierge. Toute trace de
+  // saisie (entrée, dépense, compte garni, position) signifie qu'il est inutile.
+  const dejaUtilisee = clesMois().some(k => {
+    const m = etat.months[k];
+    return somme(m.entrees) > 0 || somme(m.depensesLibres) !== 0 || somme(m.chargesFixes) !== 0;
+  }) || (etat.comptes || []).some(c => (Number(c.initial) || 0) !== 0 || (c.mouvements || []).length)
+     || ['positionsTR','positionsPEA','positionsPER'].some(k => (etat.investissements[k] || []).length);
+  if (!etat.config.bienvenueFaite && !dejaUtilisee)
     document.getElementById('voile-bienvenue').classList.add('vu');
+  else if (dejaUtilisee) etat.config.bienvenueFaite = true;
   if (doitRappelerSauvegarde(etat.config))
     document.getElementById('voile-rappel').classList.add('vu');
   // filet : si aucune page n'est active (état inattendu), afficher l'Accueil

@@ -9,6 +9,11 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v9.0.1 — correctifs du lot 1 — 17/08/2026
+- **Feuille de style réparée.** En adaptant le compte rendu à la nouvelle palette, l'accolade fermante de sa règle avait disparu : le navigateur avalait alors **toutes les règles suivantes**. D'où les panneaux (bienvenue, verrou, rappel de sauvegarde) affichés en clair au milieu de la page, les grilles éclatées et les champs sans style. Un **contrôle de validité du CSS** — accolades équilibrées, règles bien formées, propriétés orphelines — rejoint la procédure de vérification : cette classe d'erreur ne peut plus passer.
+- **Champs de saisie intégrés à l'interface.** Ils gardaient l'apparence par défaut du navigateur : angles droits, fond blanc, bordure grise. Un traitement unique s'applique désormais partout — coins arrondis, fond légèrement en retrait de la carte, **anneau violet au focus**, flèche dessinée sur les listes déroulantes. Les cellules des listes restent discrètes (transparentes au repos, mises en évidence à la saisie) : ce sont des cellules de tableau, pas des formulaires.
+- **Assistant de bienvenue** : il s'ouvrait dès que la configuration n'avait pas été validée, même avec des données présentes. Il ne s'affiche plus si un mois, un compte ou une position contient quoi que ce soit.
+
 ## v9.0.0 — lot 1 : fondations, Accueil, compte rendu — 16/08/2026
 
 Première étape du redesign complet, orientation **« Néo »** (sombre, contrasté, énergique) avec les micro-interactions du registre tableau de bord.
