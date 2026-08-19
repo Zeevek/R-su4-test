@@ -9,6 +9,19 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v9.5.0 — lots 6 et 7 : Achat-Vente et Réglages — 17/08/2026
+
+### Achat-Vente : un formulaire qui pose des questions
+Le formulaire alignait ses champs sans hiérarchie. Il se déroule maintenant en **trois étapes numérotées**, chacune introduite par une question : « Quel sens ? » (deux gros boutons *J'achète* / *Je vends*), « Sur quel compte, et quelle ligne ? », « Combien, et quand ? ». Les champs sont étiquetés et portent leur unité.
+
+Le **journal devient un flux temporel** : les opérations sont regroupées par mois, chaque groupe affichant son solde net, et reliées par un fil vertical ponctué de pastilles directionnelles — corail avec flèche descendante pour un achat, menthe avec flèche montante pour une vente. On lit son activité par période plutôt que ligne à ligne.
+
+### Réglages : cinq sections au lieu de quatorze cartes
+L'ordre était historique : Apparence et Verrouillage arrivaient avant les paramètres du budget, la Zone sensible se perdait au milieu. Les cartes sont regroupées sous cinq intertitres — **Mon budget** (paramètres, poches, budgets par poste), **Mon patrimoine** (comptes, projets et emprunts), **Confort et sécurité** (apparence, verrouillage, profils), **Mes données** (sauvegarde, compte rendu, analyse IA, raccourci), **À propos** (journal des versions, zone sensible).
+
+### Le redesign est complet
+Les sept écrans du plan sont traités : fondations, Accueil, navigation et en-tête, Mois, Épargne, Investissements, Achat-Vente et Réglages. **140 tests** couvrent l'ensemble, sans régression sur les calculs.
+
 ## v9.4.0 — lot 5 : page Investissements — 17/08/2026
 
 ### Positions en cartes

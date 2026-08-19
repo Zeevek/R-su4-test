@@ -245,23 +245,10 @@ details.aide summary{cursor:pointer;font-weight:600;color:var(--laiton)}
   border-top:1px solid var(--trait)}
 .sous-cartes .carte{margin-bottom:6px;box-shadow:none;border:1px solid var(--trait)}
 /* Formulaire d'opération et journal */
-.op-grille{display:flex;flex-direction:column;gap:8px}
 .op-sens{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .op-choix{border:1px solid var(--trait);border-radius:10px;padding:11px;font-weight:700;font-size:14px;
   background:var(--carte);color:var(--encre2)}
-.op-choix.actif{background:var(--laiton);color:#fff;border-color:var(--laiton)}
-.op-grille select, .op-grille input{border:1px solid var(--trait);border-radius:9px;padding:10px;
-  background:var(--carte);color:var(--encre);font-size:14px;font-weight:600;width:100%}
-.op-ligne{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.op-ligne #op-date{grid-column:1/3}
-.op-item{display:flex;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px dashed var(--trait)}
-.op-badge{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
-  font-size:14px;flex:none}
-.op-badge.achat{background:var(--rouge-fond)} .op-badge.vente{background:var(--vert-fond)}
-.op-txt{flex:1;min-width:0}
-.op-nom{font-weight:700;font-size:13.5px;color:var(--encre);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.op-meta{font-size:11px;color:var(--encre2)}
-.op-mt{font-weight:700;font-size:13.5px;white-space:nowrap}
+.op-choix.actif{background:var(--laiton);color:#fff;border-color:var(--laiton)} .op-badge.vente{background:var(--vert-fond)}
 .separateur{height:1px;background:var(--trait);margin:8px 0}
 .transfert{display:grid;grid-template-columns:1fr;gap:2px}
 .tr-bloc{border:1px solid var(--trait);border-radius:var(--r-m);padding:11px var(--esp-3);
@@ -524,6 +511,48 @@ header.compact .marque .ver{display:none}
 }
 /* pastilles de catégorie : rendu compact dans l'en-tête de position */
 .pos .sel-cat{flex:none;max-width:132px}
+
+
+/* ===== Formulaire d'opération : trois étapes numérotées ===== */
+.op-etape{display:flex;gap:var(--esp-3);padding:var(--esp-3) 0;border-bottom:1px dashed var(--trait)}
+.op-etape:last-of-type{border-bottom:none}
+.op-num{width:24px;height:24px;flex:none;border-radius:50%;background:var(--violet-sourd);color:var(--violet);
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;margin-top:2px}
+.op-contenu{flex:1;min-width:0}
+.op-lib{display:block;font-size:12.5px;font-weight:700;color:var(--encre);margin-bottom:7px}
+.op-sens{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.op-choix{border:1px solid var(--trait);border-radius:var(--r-s);padding:11px;font-weight:700;font-size:13.5px;
+  background:var(--carte2);color:var(--encre2);
+  transition:background var(--duree) var(--courbe), color var(--duree) var(--courbe), transform .14s var(--courbe)}
+.op-choix:active{transform:scale(.96)}
+.op-choix.actif{background:linear-gradient(135deg,var(--violet),var(--violet-clair));color:#fff;border-color:transparent}
+
+/* ===== Journal en flux temporel ===== */
+.flux-mois{margin-bottom:var(--esp-4)}
+.flux-mois:last-child{margin-bottom:0}
+.fm-tete{display:flex;align-items:baseline;gap:var(--esp-2);padding:0 2px 6px;
+  border-bottom:1px solid var(--trait);margin-bottom:6px}
+.fm-lib{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--encre2)}
+.fm-net{margin-left:auto;font-size:13px;font-weight:800}
+.flux-op{display:flex;align-items:center;gap:var(--esp-2);padding:8px 2px;position:relative}
+.flux-op::before{content:'';position:absolute;left:13px;top:0;bottom:0;width:1px;background:var(--trait);z-index:0}
+.flux-op:first-of-type::before{top:50%}
+.flux-op:last-of-type::before{bottom:50%}
+.fo-pastille{width:27px;height:27px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:800;position:relative;z-index:1;border:2px solid var(--carte)}
+.fo-pastille.achat{background:var(--corail-sourd);color:var(--corail)}
+.fo-pastille.vente{background:var(--menthe-sourd);color:var(--menthe)}
+.fo-txt{flex:1;min-width:0}
+.fo-nom{font-weight:700;font-size:13.5px;color:var(--encre);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fo-meta{font-size:10.5px;color:var(--encre2)}
+.fo-mt{font-weight:800;font-size:13.5px;white-space:nowrap}
+
+
+/* ===== Titres de section (Réglages) ===== */
+.sect{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--violet);
+  margin:var(--esp-5) 0 var(--esp-2);padding-left:2px;display:flex;align-items:center;gap:var(--esp-2)}
+.sect::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--trait),transparent)}
+.sect:first-of-type{margin-top:var(--esp-2)}
 
 /* ===== Micro-interactions =====
    Le mouvement sert à comprendre : d'où vient un élément, ce qui vient de
@@ -878,6 +907,79 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
 
   <!-- ============ RÉGLAGES ============ -->
   <section class="page" id="page-reglages">
+    <h2 class="sect">Mon budget</h2>
+    <div class="carte">
+      <div class="tete"><h3>⚙️ Paramètres</h3></div>
+      <div class="corps">
+        <div class="ligne"><input class="lab" value="Enveloppe quotidienne (€/jour)" readonly>
+          <input class="mnt" id="cfg-jour" inputmode="decimal"></div>
+        <div class="ligne"><input class="lab" value="Enveloppe fixe (€/mois — vide = €/jour)" readonly>
+          <input class="mnt" id="cfg-fixe" inputmode="decimal" placeholder="—"></div>
+        <div class="ligne"><input class="lab" value="Reste initial (avant 1er mois)" readonly>
+          <input class="mnt" id="cfg-reste" inputmode="decimal"></div>
+        <button class="ajout" id="btn-chips-reset">♻️ Réafficher les puces de suggestion masquées</button>
+        <p class="note">Un changement d'enveloppe ne prend effet qu'<b>à partir du mois suivant</b> : le mois en cours et les mois écoulés conservent leurs valeurs, ce qui permet d'anticiper sans fausser le mois entamé.</p>
+      </div>
+    </div>
+    <div class="carte">
+      <div class="tete"><h3>🪙 Poches de répartition</h3><button class="info-btn" data-infocle="repartition" aria-label="Informations">i</button></div>
+      <div class="corps">
+        <div id="poches-liste"></div>
+        <button class="ajout" id="poche-ajouter">＋ Ajouter une poche</button>
+        <div class="chips" id="poches-presets" style="margin-top:8px">
+          <button class="chip" data-pochepreset="pea">＋ 📈 PEA</button>
+          <button class="chip" data-pochepreset="per">＋ 🛡️ PER</button>
+          <button class="chip" data-pochepreset="projet">＋ 🎯 Projet</button>
+        </div>
+        <p class="note">Le non attribué de chaque mois est ventilé dans ces poches, dans l'ordre :
+        <b>1/3 ↑</b> (tiers arrondi au centime supérieur), <b>% du NA</b>, <b>€ fixe</b>, puis <b>reste</b> pour le reliquat.
+        Destination : Livret A, LDDS, disponible d'investissement (Achat-Vente) ou simple suivi.
+        Toute modification ne s'applique qu'<b>à partir du mois suivant</b> : le mois en cours et les mois écoulés sont figés, on peut donc préparer un changement à l'avance.</p>
+      </div>
+    </div>
+    <div class="carte">
+      <div class="tete"><h3>🎯 Budgets par poste</h3><button class="info-btn" data-infocle="budgets" aria-label="Informations">i</button></div>
+      <div class="corps">
+        <div id="budgets-liste"></div>
+        <p class="note">Fixe un plafond mensuel par poste (laisse vide pour ne pas en avoir). Une jauge apparaît alors sur la page Mois,
+        avec une alerte quand le rythme de dépense laisse prévoir un dépassement avant la fin du mois.</p>
+      </div>
+    </div>
+    <h2 class="sect">Mon patrimoine</h2>
+    <div class="carte">
+      <div class="tete"><h3>🏦 Comptes d'épargne</h3><button class="info-btn" data-infocle="comptes" aria-label="Informations">i</button></div>
+      <div class="corps">
+        <div id="comptes-liste"></div>
+        <div class="saisie-rapide" style="margin-top:8px">
+          <select id="cpt-modele" class="sl" style="border:1px solid var(--trait);border-radius:9px;padding:9px;background:var(--carte)"></select>
+          <button class="btn or" id="cpt-ajouter">＋</button>
+        </div>
+        <div class="ligne" style="margin-top:8px"><input class="lab" value="Si un plafond est atteint, verser sur" readonly>
+          <select id="cfg-debordement" style="border:1px solid var(--trait);border-radius:8px;padding:8px;background:var(--carte);font-weight:600"></select></div>
+        <p class="note">Laisse le plafond vide pour un compte sans limite.
+        Ajoute les comptes que tu possèdes (Livret A, LDDS, LEP, Livret Jeune, PEL, CEL, compte à terme…).
+        Les plafonds réglementaires sont pré-remplis et modifiables. <b>Quand un compte est plein, la part qui lui était destinée
+        part automatiquement vers le compte de repli choisi ici</b> — plus besoin de refaire la répartition à la main.</p>
+      </div>
+    </div>
+    <div class="carte">
+      <div class="tete"><h3>🎯 Projets et emprunts</h3><button class="info-btn" data-infocle="engagements" aria-label="Informations">i</button></div>
+      <div class="corps">
+        <div id="engagements-liste"></div>
+        <div class="champs" style="margin-top:10px">
+          <label class="ch"><span>Nom</span>
+            <input id="eng-nom" placeholder="ex. Achat appartement" autocomplete="off"></label>
+          <label class="ch"><span>Nature</span>
+            <select id="eng-type"></select></label>
+        </div>
+        <button class="btn or ligne2" id="eng-ajouter">＋ Ajouter</button>
+        <p class="note">Un même endroit pour ce que tu prépares et ce que tu rembourses.
+        <b>Projet</b> : l'application suit l'épargne mise de côté via une poche dédiée, et pour un achat immobilier calcule
+        l'emprunt nécessaire et la mensualité estimée. <b>Emprunt en cours</b> : le capital restant dû est recalculé chaque mois
+        et vient en déduction du patrimoine, qui devient un patrimoine net. Les champs s'adaptent à la nature choisie.</p>
+      </div>
+    </div>
+    <h2 class="sect">Confort et sécurité</h2>
     <div class="carte">
       <div class="tete"><h3>🎨 Apparence</h3></div>
       <div class="corps">
@@ -909,35 +1011,6 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
       </div>
     </div>
     <div class="carte">
-      <div class="tete"><h3>⚙️ Paramètres</h3></div>
-      <div class="corps">
-        <div class="ligne"><input class="lab" value="Enveloppe quotidienne (€/jour)" readonly>
-          <input class="mnt" id="cfg-jour" inputmode="decimal"></div>
-        <div class="ligne"><input class="lab" value="Enveloppe fixe (€/mois — vide = €/jour)" readonly>
-          <input class="mnt" id="cfg-fixe" inputmode="decimal" placeholder="—"></div>
-        <div class="ligne"><input class="lab" value="Reste initial (avant 1er mois)" readonly>
-          <input class="mnt" id="cfg-reste" inputmode="decimal"></div>
-        <button class="ajout" id="btn-chips-reset">♻️ Réafficher les puces de suggestion masquées</button>
-        <p class="note">Un changement d'enveloppe ne prend effet qu'<b>à partir du mois suivant</b> : le mois en cours et les mois écoulés conservent leurs valeurs, ce qui permet d'anticiper sans fausser le mois entamé.</p>
-      </div>
-    </div>
-    <div class="carte">
-      <div class="tete"><h3>🏦 Comptes d'épargne</h3><button class="info-btn" data-infocle="comptes" aria-label="Informations">i</button></div>
-      <div class="corps">
-        <div id="comptes-liste"></div>
-        <div class="saisie-rapide" style="margin-top:8px">
-          <select id="cpt-modele" class="sl" style="border:1px solid var(--trait);border-radius:9px;padding:9px;background:var(--carte)"></select>
-          <button class="btn or" id="cpt-ajouter">＋</button>
-        </div>
-        <div class="ligne" style="margin-top:8px"><input class="lab" value="Si un plafond est atteint, verser sur" readonly>
-          <select id="cfg-debordement" style="border:1px solid var(--trait);border-radius:8px;padding:8px;background:var(--carte);font-weight:600"></select></div>
-        <p class="note">Laisse le plafond vide pour un compte sans limite.
-        Ajoute les comptes que tu possèdes (Livret A, LDDS, LEP, Livret Jeune, PEL, CEL, compte à terme…).
-        Les plafonds réglementaires sont pré-remplis et modifiables. <b>Quand un compte est plein, la part qui lui était destinée
-        part automatiquement vers le compte de repli choisi ici</b> — plus besoin de refaire la répartition à la main.</p>
-      </div>
-    </div>
-    <div class="carte">
       <div class="tete"><h3>👥 Profils</h3><button class="info-btn" data-infocle="profils" aria-label="Informations">i</button></div>
       <div class="corps">
         <div id="profils-liste"></div>
@@ -952,47 +1025,7 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
         Changer de profil recharge l'application.</p>
       </div>
     </div>
-    <div class="carte">
-      <div class="tete"><h3>🎯 Budgets par poste</h3><button class="info-btn" data-infocle="budgets" aria-label="Informations">i</button></div>
-      <div class="corps">
-        <div id="budgets-liste"></div>
-        <p class="note">Fixe un plafond mensuel par poste (laisse vide pour ne pas en avoir). Une jauge apparaît alors sur la page Mois,
-        avec une alerte quand le rythme de dépense laisse prévoir un dépassement avant la fin du mois.</p>
-      </div>
-    </div>
-    <div class="carte">
-      <div class="tete"><h3>🎯 Projets et emprunts</h3><button class="info-btn" data-infocle="engagements" aria-label="Informations">i</button></div>
-      <div class="corps">
-        <div id="engagements-liste"></div>
-        <div class="champs" style="margin-top:10px">
-          <label class="ch"><span>Nom</span>
-            <input id="eng-nom" placeholder="ex. Achat appartement" autocomplete="off"></label>
-          <label class="ch"><span>Nature</span>
-            <select id="eng-type"></select></label>
-        </div>
-        <button class="btn or ligne2" id="eng-ajouter">＋ Ajouter</button>
-        <p class="note">Un même endroit pour ce que tu prépares et ce que tu rembourses.
-        <b>Projet</b> : l'application suit l'épargne mise de côté via une poche dédiée, et pour un achat immobilier calcule
-        l'emprunt nécessaire et la mensualité estimée. <b>Emprunt en cours</b> : le capital restant dû est recalculé chaque mois
-        et vient en déduction du patrimoine, qui devient un patrimoine net. Les champs s'adaptent à la nature choisie.</p>
-      </div>
-    </div>
-    <div class="carte">
-      <div class="tete"><h3>🪙 Poches de répartition</h3><button class="info-btn" data-infocle="repartition" aria-label="Informations">i</button></div>
-      <div class="corps">
-        <div id="poches-liste"></div>
-        <button class="ajout" id="poche-ajouter">＋ Ajouter une poche</button>
-        <div class="chips" id="poches-presets" style="margin-top:8px">
-          <button class="chip" data-pochepreset="pea">＋ 📈 PEA</button>
-          <button class="chip" data-pochepreset="per">＋ 🛡️ PER</button>
-          <button class="chip" data-pochepreset="projet">＋ 🎯 Projet</button>
-        </div>
-        <p class="note">Le non attribué de chaque mois est ventilé dans ces poches, dans l'ordre :
-        <b>1/3 ↑</b> (tiers arrondi au centime supérieur), <b>% du NA</b>, <b>€ fixe</b>, puis <b>reste</b> pour le reliquat.
-        Destination : Livret A, LDDS, disponible d'investissement (Achat-Vente) ou simple suivi.
-        Toute modification ne s'applique qu'<b>à partir du mois suivant</b> : le mois en cours et les mois écoulés sont figés, on peut donc préparer un changement à l'avance.</p>
-      </div>
-    </div>
+    <h2 class="sect">Mes données</h2>
     <div class="carte">
       <div class="tete"><h3>💾 Sauvegarde</h3><button class="info-btn" data-infocle="chiffrement" aria-label="Informations">i</button></div>
       <div class="corps">
@@ -1022,23 +1055,6 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
       </div>
     </div>
     <div class="carte">
-      <div class="tete"><h3>📜 Journal des versions</h3></div>
-      <div class="corps" id="changelog-corps"></div>
-    </div>
-    <div class="carte">
-      <div class="tete"><h3>📱 Raccourci iOS / Android</h3><button class="info-btn" data-infocle="raccourci" aria-label="Informations">i</button></div>
-      <div class="corps">
-        <p class="note">Crée un raccourci « Ajouter une dépense » qui enregistre une dépense sans ouvrir l'app ni naviguer.
-        Sur iPhone : app <b>Raccourcis</b> → ＋ → <i>Demander une entrée</i> (texte : l'intitulé), puis une seconde
-        <i>Demander une entrée</i> (nombre : le montant), puis <i>Ouvrir l'URL</i> avec l'adresse ci-dessous où tu insères
-        les deux réponses. Ajoute-le à l'écran d'accueil ou demande-le à Siri.</p>
-        <div class="ligne"><input class="lab" id="raccourci-url" readonly value=""></div>
-        <button class="btn ligne2 discret" id="btn-raccourci-copier">📋 Copier le modèle d'adresse</button>
-        <p class="note">Catégories acceptées via <code>&cat=</code> : depensesLibres (par défaut), transport, chargesFixes,
-        aboLoisirs, entrees, remboursements, vacAlim…</p>
-      </div>
-    </div>
-    <div class="carte">
       <div class="tete"><h3>🤖 Analyse par une IA</h3><button class="info-btn" data-infocle="dossierIA" aria-label="Informations">i</button></div>
       <div class="corps">
         <div class="ligne"><input class="lab" value="Angle d'étude" readonly>
@@ -1053,6 +1069,24 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
         question prête à l'emploi. Dépose-le dans ChatGPT, Claude ou Gemini, ou colle simplement le texte copié.
         Pense à ce que tu partages : l'option « anonymiser » retire les libellés et ne garde que des totaux.</p>
       </div>
+    </div>
+    <div class="carte">
+      <div class="tete"><h3>📱 Raccourci iOS / Android</h3><button class="info-btn" data-infocle="raccourci" aria-label="Informations">i</button></div>
+      <div class="corps">
+        <p class="note">Crée un raccourci « Ajouter une dépense » qui enregistre une dépense sans ouvrir l'app ni naviguer.
+        Sur iPhone : app <b>Raccourcis</b> → ＋ → <i>Demander une entrée</i> (texte : l'intitulé), puis une seconde
+        <i>Demander une entrée</i> (nombre : le montant), puis <i>Ouvrir l'URL</i> avec l'adresse ci-dessous où tu insères
+        les deux réponses. Ajoute-le à l'écran d'accueil ou demande-le à Siri.</p>
+        <div class="ligne"><input class="lab" id="raccourci-url" readonly value=""></div>
+        <button class="btn ligne2 discret" id="btn-raccourci-copier">📋 Copier le modèle d'adresse</button>
+        <p class="note">Catégories acceptées via <code>&cat=</code> : depensesLibres (par défaut), transport, chargesFixes,
+        aboLoisirs, entrees, remboursements, vacAlim…</p>
+      </div>
+    </div>
+    <h2 class="sect">À propos</h2>
+    <div class="carte">
+      <div class="tete"><h3>📜 Journal des versions</h3></div>
+      <div class="corps" id="changelog-corps"></div>
     </div>
     <div class="carte">
       <div class="tete"><h3>🧨 Zone sensible</h3></div>
@@ -1375,8 +1409,12 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '9.4.0-mvp5';
+const APP_VERSION = '9.5.0';
 const CHANGELOG = [
+  {v: '9.5.0', d: '17/08/2026', pts: [
+    "Achat-Vente : formulaire en trois étapes numérotées (sens, compte et position, montant et date) et journal regroupé par mois en flux temporel.",
+    "Réglages : les quatorze cartes sont regroupées en cinq sections — Mon budget, Mon patrimoine, Confort et sécurité, Mes données, À propos.",
+    "Le redesign couvre désormais l'ensemble des écrans."]},
   {v: '9.4.0 (lot 5)', d: '17/08/2026', pts: [
     "Positions en cartes plutôt qu'en tableau : valeur et performance en tête, champs étiquetés dessous, plus aucun défilement horizontal sur mobile.",
     "Palette des catégories et des graphiques alignée sur la charte : violet pour les actions, bleu pour les ETF, ambre pour les métaux, orange pour les cryptos.",
@@ -4331,49 +4369,88 @@ function rendreAV(){
   const carteSaisie = `
     <div class="carte" data-fam="invest"><div class="tete"><h3>➕ Enregistrer une opération</h3>${infoBtn('operation')}</div>
       <div class="corps">
-        <div class="op-grille">
-          <div class="op-sens">
-            <button class="op-choix actif" data-opsens="Achat">🛒 Achat</button>
-            <button class="op-choix" data-opsens="Vente">💰 Vente</button>
+        <div class="op-etape">
+          <span class="op-num">1</span>
+          <div class="op-contenu">
+            <span class="op-lib">Quel sens ?</span>
+            <div class="op-sens">
+              <button class="op-choix actif" data-opsens="Achat">🛒 J'achète</button>
+              <button class="op-choix" data-opsens="Vente">💰 Je vends</button>
+            </div>
           </div>
-          <select id="op-compte">${COMPTES_OPS.map(c =>
-            `<option value="${echap(c.id)}" ${c.id === compteChoisi ? 'selected' : ''}>${echap(c.nom)}</option>`).join('')}</select>
-          <select id="op-position">
-            <option value="">— Position (facultatif) —</option>
-            ${optsPos(compteChoisi)}
-            <option value="__autre">✏️ Autre intitulé…</option>
-          </select>
-          <input id="op-label" placeholder="Intitulé libre" style="display:none">
-          <div class="op-ligne">
-            <input id="op-montant" inputmode="text" placeholder="Montant ${devise().sym}">
-            <input id="op-prix" inputmode="text" placeholder="Prix unitaire (facultatif)">
-            <input id="op-date" type="date" value="${jourISO()}">
+        </div>
+        <div class="op-etape">
+          <span class="op-num">2</span>
+          <div class="op-contenu">
+            <span class="op-lib">Sur quel compte, et quelle ligne ?</span>
+            <div class="champs">
+              <label class="ch"><span>Compte</span>
+                <select id="op-compte">${COMPTES_OPS.map(c =>
+                  `<option value="${echap(c.id)}" ${c.id === compteChoisi ? 'selected' : ''}>${echap(c.nom)}</option>`).join('')}</select></label>
+              <label class="ch"><span>Position</span>
+                <select id="op-position">
+                  <option value="">— aucune —</option>
+                  ${optsPos(compteChoisi)}
+                  <option value="__autre">✏️ Autre intitulé…</option>
+                </select></label>
+            </div>
+            <input id="op-label" placeholder="Intitulé libre" style="display:none;margin-top:7px;width:100%">
           </div>
-          <button class="btn or" id="op-valider">Enregistrer l'opération</button>
+        </div>
+        <div class="op-etape">
+          <span class="op-num">3</span>
+          <div class="op-contenu">
+            <span class="op-lib">Combien, et quand ?</span>
+            <div class="champs">
+              <label class="ch"><span>Montant</span>
+                <span class="unite"><input id="op-montant" inputmode="text" placeholder="0"><span class="u">${devise().sym}</span></span></label>
+              <label class="ch"><span>Prix unitaire</span>
+                <span class="unite"><input id="op-prix" inputmode="text" placeholder="cours actuel"><span class="u">${devise().sym}</span></span></label>
+              <label class="ch"><span>Date</span>
+                <input id="op-date" type="date" value="${jourISO()}"></label>
+            </div>
+          </div>
         </div>
         <div id="op-apercu" class="tr-apercu"></div>
-        <p class="note">Choisir une position met à jour son nombre de parts et son prix de revient moyen automatiquement.
-        Le montant est prélevé sur le disponible du compte (ou l'y reverse en cas de vente).</p>
+        <button class="btn or ligne2" id="op-valider">Enregistrer l'opération</button>
+        <p class="note">Choisir une position met à jour son nombre de parts et son prix de revient moyen.
+        Le montant est prélevé sur le disponible du compte, ou l'y reverse en cas de vente.</p>
       </div></div>`;
 
   // --- Journal chronologique, lisible sur mobile ---
   const jrn = journalOperations();
-  const carteJournal = `
-    <div class="carte" data-fam="invest"><div class="tete"><h3>📜 Journal des opérations</h3>
-      <div class="tot" style="font-size:12px;color:var(--encre2)">${jrn.length} dernière${jrn.length > 1 ? 's' : ''}</div></div>
+  const carteJournal = (() => {
+    // regroupement par mois : un flux se lit par période, pas ligne à ligne
+    const parMois = {};
+    for (const t of jrn){
+      const k = String(t.date || '').slice(0, 7) || 'sans-date';
+      (parMois[k] = parMois[k] || []).push(t);
+    }
+    const groupes = Object.entries(parMois).sort((a, b) => b[0].localeCompare(a[0]));
+    return `<div class="carte" data-fam="invest"><div class="tete"><h3>📜 Journal des opérations</h3>
+      <div class="tot" style="font-size:12px;color:var(--encre2)">${jrn.length} récente${jrn.length > 1 ? 's' : ''}</div></div>
       <div class="corps">
-        ${jrn.length ? jrn.map(t => `
-          <div class="op-item">
-            <span class="op-badge ${t.sens === 'Achat' ? 'achat' : 'vente'}">${t.sens === 'Achat' ? '🛒' : '💰'}</span>
-            <div class="op-txt">
-              <div class="op-nom">${echap(t.label || '(sans intitulé)')}</div>
-              <div class="op-meta">${echap(t.compte)} · ${t.date ? new Date(t.date).toLocaleDateString('fr-FR') : 'sans date'}${t.type ? ' · ' + echap(t.type) : ''}</div>
+        ${groupes.length ? groupes.map(([mois, ops]) => {
+          const net = ops.reduce((s, t) => s + (t.sens === 'Achat' ? -1 : 1) * Math.abs(+t.montant || 0), 0);
+          return `<div class="flux-mois">
+            <div class="fm-tete">
+              <span class="fm-lib">${mois === 'sans-date' ? 'Sans date' : libelleMois(mois)}</span>
+              <span class="fm-net ${cls(net)}">${fmtS(net)}</span>
             </div>
-            <span class="op-mt ${t.sens === 'Achat' ? 'neg' : 'pos'}">${t.sens === 'Achat' ? '−' : '+'}${fmt(Math.abs(+t.montant || 0)).replace('-', '')}</span>
-            <button class="sup" data-tsupch="${t.cle}" data-i="${t.i}" aria-label="Supprimer">✕</button>
-          </div>`).join('')
+            ${ops.map(t => `<div class="flux-op">
+              <span class="fo-pastille ${t.sens === 'Achat' ? 'achat' : 'vente'}">${t.sens === 'Achat' ? '↓' : '↑'}</span>
+              <div class="fo-txt">
+                <div class="fo-nom">${echap(t.label || '(sans intitulé)')}</div>
+                <div class="fo-meta">${echap(t.compte)}${t.date ? ' · ' + new Date(t.date).toLocaleDateString('fr-FR', {day: '2-digit', month: 'short'}) : ''}${t.type ? ' · ' + echap(t.type) : ''}</div>
+              </div>
+              <span class="fo-mt ${t.sens === 'Achat' ? 'neg' : 'pos'}">${t.sens === 'Achat' ? '−' : '+'}${fmt(Math.abs(+t.montant || 0)).replace('-', '')}</span>
+              <button class="sup" data-tsupch="${t.cle}" data-i="${t.i}" aria-label="Supprimer">✕</button>
+            </div>`).join('')}
+          </div>`;
+        }).join('')
         : '<p class="note">Aucune opération enregistrée. Utilise le formulaire ci-dessus : chaque achat ou vente apparaîtra ici et mettra à jour ta position.</p>'}
       </div></div>`;
+  })();
 
   // --- Une seule carte pour les disponibles, avec le détail de leur composition ---
   const carteDispo = `
