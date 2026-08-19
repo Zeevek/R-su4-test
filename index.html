@@ -113,7 +113,6 @@ main{max-width:760px;margin:0 auto;padding:14px 12px 24px}
 .pos{color:var(--vert)} .neg{color:var(--rouge)} .neutre{color:var(--encre2)}
 
 /* ===== Héro : reste du jour ===== */
-.hero{background:var(--entete);color:var(--entete-texte);border-radius:14px;padding:18px 16px 16px;margin-bottom:14px;position:relative;overflow:hidden}
 
 
 .hero .eti{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--laiton-clair)}
@@ -124,7 +123,6 @@ main{max-width:760px;margin:0 auto;padding:14px 12px 24px}
 .hero .jauge>div{height:100%;background:linear-gradient(90deg,var(--laiton),var(--laiton-clair));border-radius:3px;transition:width .4s ease}
 
 /* ===== Grille indicateurs ===== */
-.kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 .kpi{background:var(--carte);border:1px solid var(--trait);border-radius:10px;padding:10px 12px}
 .kpi .eti{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--encre2)}
 .kpi .val{font-size:17px;font-weight:700;margin-top:2px}
@@ -247,9 +245,6 @@ details.aide summary{cursor:pointer;font-weight:600;color:var(--laiton)}
   border-top:1px solid var(--trait)}
 .sous-cartes .carte{margin-bottom:6px;box-shadow:none;border:1px solid var(--trait)}
 /* Formulaire d'opération et journal */
-.op-sens{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.op-choix{border:1px solid var(--trait);border-radius:10px;padding:11px;font-weight:700;font-size:14px;
-  background:var(--carte);color:var(--encre2)}
 .op-choix.actif{background:var(--laiton);color:#fff;border-color:var(--laiton)} .op-badge.vente{background:var(--vert-fond)}
 .separateur{height:1px;background:var(--trait);margin:8px 0}
 .transfert{display:grid;grid-template-columns:1fr;gap:2px}
@@ -371,7 +366,7 @@ select{-webkit-appearance:none;appearance:none;cursor:pointer;padding-right:32px
                    linear-gradient(135deg,var(--encre2) 50%,transparent 50%);
   background-position:calc(100% - 17px) center, calc(100% - 12px) center;
   background-size:5px 5px, 5px 5px;background-repeat:no-repeat}
-input[type="date"]{min-height:42px}
+input[type="date"]{min-height:44px}
 input[type="checkbox"]{accent-color:var(--violet)}
 /* les champs de ligne (listes) restent discrets : ce sont des cellules, pas des formulaires */
 .ligne input.lab, .ligne input.mnt, td input{background:transparent;border-color:transparent;
@@ -413,7 +408,12 @@ header.compact .marque .ver{display:none}
   transition:transform .18s var(--courbe), box-shadow var(--duree) var(--courbe)}
 #fab:active{transform:scale(.9)}
 #fab:hover{box-shadow:0 12px 30px rgba(124,92,255,.55)}
-#haut{bottom:calc(150px + env(safe-area-inset-bottom));right:22px;width:38px;height:38px;font-size:16px}
+#haut{position:fixed;right:23px;bottom:calc(152px + env(safe-area-inset-bottom));z-index:39;
+  width:38px;height:38px;min-height:38px;border-radius:50%;background:var(--carte2);color:var(--encre);
+  border:1px solid var(--trait);font-size:15px;font-weight:700;box-shadow:var(--ombre);
+  opacity:0;pointer-events:none;transition:opacity var(--duree) var(--courbe), transform .14s var(--courbe)}
+#haut.vu{opacity:.95;pointer-events:auto}
+#haut:active{transform:scale(.9)}
 
 /* ===== Feuille de saisie ===== */
 #voile-saisie{position:fixed;inset:0;background:rgba(8,9,14,.6);backdrop-filter:blur(3px);z-index:120;
@@ -431,9 +431,11 @@ header.compact .marque .ver{display:none}
 
 
 /* ===== Page Mois : barre de mois collante ===== */
-.selmois{position:sticky;top:calc(env(safe-area-inset-top) + 52px);z-index:20;
+.selmois{position:sticky;top:var(--h-entete,56px);z-index:20;
   display:flex;align-items:center;gap:var(--esp-2);margin:0 0 var(--esp-3);
-  background:var(--papier);padding:var(--esp-2) 0}
+  background:var(--papier);padding:var(--esp-2) 0 var(--esp-2);
+  /* le fond déborde latéralement pour masquer le contenu qui défile dessous */
+  box-shadow:0 0 0 var(--esp-4) var(--papier)}
 .selmois button{width:40px;height:40px;flex:none;border-radius:var(--r-s);background:var(--carte);
   border:1px solid var(--trait);color:var(--encre);font-size:19px;font-weight:700;
   transition:background var(--duree) var(--courbe), transform .14s var(--courbe)}
@@ -484,9 +486,9 @@ header.compact .marque .ver{display:none}
    Une carte par ligne : sur un téléphone, un tableau à huit colonnes impose un
    défilement horizontal et rend la lecture pénible. */
 .positions{display:flex;flex-direction:column;gap:var(--esp-2)}
-.pos{background:var(--carte2);border:1px solid var(--trait);border-radius:var(--r-m);padding:11px var(--esp-3);
+.pos-carte{background:var(--carte2);border:1px solid var(--trait);border-radius:var(--r-m);padding:11px var(--esp-3);
   transition:border-color var(--duree) var(--courbe), transform var(--duree) var(--courbe)}
-.pos:hover{border-color:var(--violet);transform:translateY(-1px)}
+.pos-carte:hover{border-color:var(--violet);transform:translateY(-1px)}
 .pos-tete{display:flex;align-items:center;gap:var(--esp-2);margin-bottom:9px}
 .pos-nom{flex:1;min-width:0;font-weight:700;font-size:14px;background:transparent;border-color:transparent;padding:5px 6px}
 .pos-nom:focus{background:var(--carte);border-color:var(--violet)}
@@ -513,7 +515,7 @@ header.compact .marque .ver{display:none}
   .pos-champs{grid-template-columns:repeat(4,1fr)}
 }
 /* pastilles de catégorie : rendu compact dans l'en-tête de position */
-.pos .sel-cat{flex:none;max-width:132px}
+.pos-carte .sel-cat{flex:none;max-width:132px}
 
 
 /* ===== Formulaire d'opération : trois étapes numérotées ===== */
@@ -575,6 +577,19 @@ button, select, input[type="date"], input[type="checkbox"]{min-height:40px}
   :root{--trait:#4A5170; --encre2:#B9BFD4}
   .carte{border-width:1.5px}
 }
+
+
+/* ===== Étiquettes sous le diagramme de flux ===== */
+.flux-tags{margin-top:var(--esp-3);padding-top:var(--esp-3);border-top:1px solid var(--trait)}
+.ft-tete{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--encre2);margin-bottom:7px}
+.ft-ligne{display:flex;align-items:center;gap:var(--esp-2);padding:4px 0}
+.ft-nom{font-size:12.5px;font-weight:700;color:var(--violet);min-width:88px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ft-barre{flex:1;height:8px;border-radius:var(--r-rond);background:var(--trait);overflow:hidden;min-width:40px}
+.ft-barre i{display:block;height:100%;border-radius:inherit;
+  background:linear-gradient(90deg,var(--violet),var(--violet-clair));transition:width .6s var(--courbe)}
+.ft-val{font-size:12.5px;font-weight:800;color:var(--encre);white-space:nowrap}
 
 /* ===== Micro-interactions =====
    Le mouvement sert à comprendre : d'où vient un élément, ce qui vient de
@@ -684,10 +699,6 @@ nav button{min-height:48px}
 /* ===== Retour en haut (pages longues) ===== */
 #toast button{margin-left:10px;background:var(--laiton);color:#fff;border-radius:8px;
   padding:4px 10px;font-size:12px;font-weight:700;min-height:0}
-#haut{position:fixed;right:14px;bottom:calc(70px + env(safe-area-inset-bottom));z-index:40;
-  width:42px;height:42px;border-radius:50%;background:var(--entete);color:var(--entete-texte);
-  font-size:19px;font-weight:700;box-shadow:0 3px 12px rgba(0,0,0,.28);
-  opacity:0;pointer-events:none;transition:opacity .2s ease}
 #haut.vu{opacity:.92;pointer-events:auto}
 
 /* ===== Assistant de premier démarrage ===== */
@@ -774,8 +785,15 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
 .ch{display:flex;flex-direction:column;gap:3px;min-width:0}
 .ch>span{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--encre2);
   line-height:1.25;min-height:2.5em;display:flex;align-items:flex-end}
-.ch input, .ch select{border:1px solid var(--trait);border-radius:9px;padding:9px 10px;background:var(--carte);
-  color:var(--encre);font-size:14px;font-weight:600;width:100%}
+.ch input, .ch select{border:1px solid var(--trait);border-radius:var(--r-s);padding:0 var(--esp-3);
+  background:var(--carte2);color:var(--encre);font-size:14px;font-weight:600;width:100%;
+  height:44px;line-height:44px;box-sizing:border-box}
+.ch .unite{display:block;position:relative}
+.ch .unite input{padding-right:34px}
+/* le champ date natif s'aligne sur les autres : même hauteur, même alignement */
+.ch input[type="date"]{min-height:44px;text-align:left;-webkit-appearance:none;appearance:none;
+  font-variant-numeric:tabular-nums}
+.ch input[type="date"]::-webkit-date-and-time-value{text-align:left;margin:0}
 .ch .unite{position:relative}
 .ch .unite input{padding-right:32px}
 .ch .unite .u{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:12px;
@@ -1437,8 +1455,13 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '9.6.0';
+const APP_VERSION = '9.6.1';
 const CHANGELOG = [
+  {v: '9.6.1', d: '19/08/2026', pts: [
+    "Les champs d'une même grille ont désormais tous la même hauteur — le champ de date, stylé par le système, dépassait les autres.",
+    "Le bouton de saisie et celui de retour en haut ne se chevauchent plus : une règle en double annulait le repositionnement.",
+    "La barre de mois se cale exactement sous l'en-tête, dont la hauteur réelle est mesurée — plus d'espace vide au-dessus.",
+    "Le diagramme de flux liste les étiquettes du mois : ce que chaque sujet (#voiture, #chat…) a coûté, toutes catégories confondues."]},
   {v: '9.6.0', d: '17/08/2026', pts: [
     "Écrans annexes au nouveau thème : verrouillage, assistant de démarrage, rappel de sauvegarde, recherche et bulles d'aide (voiles floutés, panneaux animés).",
     "Dernières couleurs claires héritées supprimées — elles étaient invisibles ou illisibles sur fond sombre.",
@@ -2712,8 +2735,21 @@ function construireFlux(cle){
     {nom: '🏖️ Vacances', v: -c.tVac, coul: '#E0A93F'},
   ].filter(x => x.v > 0.004);
   if (soldeFlux > 0.004) cats.push({nom: '📊 Épargné (solde)', v: soldeFlux, coul: '#2FD9A0', epargne: true});
+
+  /* Dépenses portant une étiquette (#voiture, #chat…) : elles traversent les
+     catégories, on les montre à part pour voir ce qu'un sujet coûte ce mois-ci. */
+  const parTag = {};
+  for (const cat of Object.keys(LIBELLES_CATS))
+    for (const it of (m[cat] || [])){
+      const v = -(+it.montant || 0);
+      if (v <= 0.004) continue;
+      for (const t of etiquettesDe(it.label)) parTag[t] = (parTag[t] || 0) + v;
+    }
+  const tags = Object.entries(parTag).map(([t, v]) => ({nom: '#' + t, v: +v.toFixed(2)}))
+    .sort((a, b) => b.v - a.v).slice(0, 5);
+
   const totalIn = sources.reduce((s, x) => s + x.v, 0);
-  return {sources, cats, totalIn, soldeFlux};
+  return {sources, cats, totalIn, soldeFlux, tags};
 }
 function fluxSVG(cle){
   const F = construireFlux(cle);
@@ -2779,7 +2815,19 @@ function fluxSVG(cle){
     out += `<rect x="${X.cat}" y="${cat.y}" width="${NW}" height="${cat.h}" rx="3" fill="${cat.coul}"/>
       <text x="${X.cat + NW + 6}" y="${cat.y + cat.h / 2 + 4}" font-size="12" fill="var(--encre)">${echap(cat.nom)} · ${fmt(cat.v)}</text>`;
   }
-  return `<svg viewBox="0 0 ${L} ${Math.ceil(Math.max(H, HAUT * 2 + 60))}" role="img" aria-label="Flux du mois">${out}</svg>`;
+  const svg = `<svg viewBox="0 0 ${L} ${Math.ceil(Math.max(H, HAUT * 2 + 60))}" role="img" aria-label="Flux du mois">${out}</svg>`;
+  if (!F.tags || !F.tags.length) return svg;
+  // Les étiquettes traversent les catégories : elles se lisent à part
+  const maxTag = Math.max(...F.tags.map(t => t.v));
+  return svg + `<div class="flux-tags">
+    <div class="ft-tete">🏷️ Étiquettes du mois</div>
+    ${F.tags.map(t => `<div class="ft-ligne">
+      <span class="ft-nom">${echap(t.nom)}</span>
+      <span class="ft-barre"><i style="width:${(t.v / maxTag * 100).toFixed(1)}%"></i></span>
+      <span class="ft-val">${fmt(t.v)}</span>
+    </div>`).join('')}
+    <p class="note" style="margin:6px 0 0">Total de ce que chaque sujet a coûté ce mois-ci, toutes catégories confondues.</p>
+  </div>`;
 }
 
 
@@ -4246,7 +4294,7 @@ function tablePositions(titre, chemin, calc, totalCompte){
   const cartes = lignes.map(p => {
     const cat = categorieNormale(p.type);
     const etatPrix = statutPrix(p, etat.config.derniereMajCours);
-    return `<div class="pos">
+    return `<div class="pos-carte">
       <div class="pos-tete">
         <select class="sel-cat ${PASTILLES[cat]}" data-pch="${chemin}" data-i="${p.idx}" data-f="type">
           ${CATEGORIES.map(([nom]) => `<option value="${nom}" ${cat === nom ? 'selected' : ''}>${nom}</option>`).join('')}
@@ -6283,9 +6331,15 @@ addEventListener('keydown', e => {
   if (e.key === '?'){ e.preventDefault(); ouvrirInfo('clavier'); }
 });
 
-/* En-tête compact dès qu'on défile : rend l'écran au contenu */
+/* En-tête compact dès qu'on défile, et sa hauteur réelle exposée au CSS pour
+   que les barres collantes se placent exactement dessous, sans espace vide. */
 (function(){
   const h = document.querySelector('header');
+  const mesurer = () => document.documentElement.style.setProperty('--h-entete', h.offsetHeight + 'px');
+  mesurer();
+  addEventListener('resize', mesurer);
+  addEventListener('orientationchange', () => setTimeout(mesurer, 250));
+  if (window.ResizeObserver) new ResizeObserver(mesurer).observe(h);
   let dernier = false;
   addEventListener('scroll', () => {
     const compact = window.scrollY > 40;

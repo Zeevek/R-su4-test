@@ -9,6 +9,12 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v9.6.1 — 19/08/2026
+- **Champs de hauteur inégale.** Dans une grille, le champ de date gardait la hauteur imposée par le système et dépassait ses voisins. Tous les champs d'une grille partagent maintenant une hauteur fixe de 44 px, et le champ de date perd son habillage natif pour s'aligner sur les autres.
+- **Boutons flottants superposés.** La règle du bouton « retour en haut » était déclarée **deux fois** : la seconde, plus loin dans la feuille, annulait le repositionnement fait lors du lot 2. Une seule règle subsiste, avec 12 px d'écart garanti entre les deux boutons.
+- **Espace vide au-dessus de la barre de mois.** Elle se collait à une distance estimée du haut de l'écran, qui ne correspondait pas à la hauteur réelle de l'en-tête — variable selon l'appareil et l'état compact. Cette hauteur est désormais **mesurée** et exposée à la feuille de style, et le fond de la barre déborde latéralement pour masquer le contenu qui défile dessous.
+- **Étiquettes dans le diagramme de flux.** Sous le diagramme, un bandeau liste ce que chaque étiquette (`#voiture`, `#chat`…) a coûté sur le mois, toutes catégories confondues, avec des barres proportionnelles. Il n'apparaît que si des étiquettes sont utilisées.
+
 ## v9.6.0 — lot 8 : finitions et accessibilité — 17/08/2026
 
 ### Écrans annexes
