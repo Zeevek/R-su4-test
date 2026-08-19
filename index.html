@@ -114,14 +114,12 @@ main{max-width:760px;margin:0 auto;padding:14px 12px 24px}
 
 /* ===== Héro : reste du jour ===== */
 .hero{background:var(--entete);color:var(--entete-texte);border-radius:14px;padding:18px 16px 16px;margin-bottom:14px;position:relative;overflow:hidden}
-.hero::after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;
-  border:2px solid rgba(230,200,130,.25);pointer-events:none}
-.hero::before{content:"";position:absolute;right:-25px;top:-25px;width:130px;height:130px;border-radius:50%;
-  border:1px solid rgba(230,200,130,.18);pointer-events:none}
+
+
 .hero .eti{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--laiton-clair)}
 .hero .gros{font-size:44px;font-weight:800;line-height:1.1;margin:2px 0}
-.hero .gros small{font-size:18px;font-weight:600;color:#B7BCCB}
-.hero .sous{font-size:12px;color:#9AA1B4}
+.hero .gros small{font-size:19px;font-weight:600;opacity:.85}
+.hero .sous{font-size:12.5px;color:rgba(255,255,255,.85)}
 .hero .jauge{height:6px;background:rgba(255,255,255,.12);border-radius:3px;margin-top:12px;overflow:hidden}
 .hero .jauge>div{height:100%;background:linear-gradient(90deg,var(--laiton),var(--laiton-clair));border-radius:3px;transition:width .4s ease}
 
@@ -137,19 +135,23 @@ main{max-width:760px;margin:0 auto;padding:14px 12px 24px}
 .ligne:last-child{border-bottom:none}
 .ligne input.lab{flex:1;min-width:0;border:none;background:transparent;padding:4px 2px;font-size:14px}
 .ligne input.mnt{width:88px;border:none;background:transparent;text-align:right;padding:4px 2px;font-size:14px;font-weight:600}
-.ligne input:focus{outline:none;background:#FBF7EC;border-radius:6px}
+.ligne input:focus{background:var(--carte2);border-color:var(--violet);box-shadow:0 0 0 3px var(--violet-sourd)}
 .ligne .pointe{width:26px;height:26px;min-height:26px;border-radius:50%;background:none;
   color:var(--trait);font-size:13px;font-weight:800;flex:none;border:1px solid var(--trait)}
 .ligne .pointe.ok{color:var(--vert);border-color:var(--vert);background:var(--vert-fond)}
-.ligne .sup{color:#C8C4B8;font-size:15px;padding:2px 4px;flex:none}
+.ligne .sup{width:26px;height:26px;min-height:26px;border-radius:var(--r-s);background:transparent;
+  color:var(--encre2);font-size:13px;flex:none;transition:background var(--duree) var(--courbe), color var(--duree) var(--courbe)}
+.ligne .sup:hover{background:var(--corail-sourd);color:var(--corail)}
 .ligne .sup:active{color:var(--rouge)}
-.ajout{width:100%;padding:7px;margin-top:6px;border:1px dashed var(--laiton);border-radius:8px;color:var(--laiton);
-  font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;background:#FDFAF2}
+.ajout{width:100%;padding:11px;border:1px dashed var(--trait);border-radius:var(--r-s);
+  background:transparent;color:var(--encre2);font-weight:700;font-size:13px;margin-top:var(--esp-2);
+  transition:border-color var(--duree) var(--courbe), color var(--duree) var(--courbe), background var(--duree) var(--courbe)}
+.ajout:hover{border-color:var(--violet);color:var(--violet);background:var(--violet-sourd)}
 
 /* ===== Sélecteur de mois ===== */
 
 /* ===== Bilan mensuel bandeau ===== */
-.bilan5 .eti{font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;color:#9AA1B4;display:block}
+
 .bilan5 .val{font-size:13px;font-weight:700;display:block;margin-top:2px}
 .bilan5 .val.or{color:var(--laiton-clair)}
 
@@ -171,10 +173,10 @@ td.px-manuel{background:#EFF6F2}
 td.px-manuel input{color:var(--vert)}
 .legende-prix{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px}
 .legende-prix .lp{font-size:10.5px;padding:3px 9px;border-radius:99px;font-weight:700;letter-spacing:.02em}
-.legende-prix .px-ancien{background:#FDF3E3;color:#8A6D1F}
-.legende-prix .px-manuel{background:#EFF6F2;color:var(--vert)}
-.legende-prix .px-auto{background:#F1F1EC;color:var(--encre2)}
-.legende-prix .px-fige{background:#ECEEF4;color:#4A5570}
+.legende-prix .px-ancien{background:var(--ambre-sourd);color:var(--ambre)}
+.legende-prix .px-manuel{background:var(--menthe-sourd);color:var(--menthe)}
+.legende-prix .px-auto{background:var(--carte2);color:var(--encre2)}
+.legende-prix .px-fige{background:var(--carte2);color:var(--encre2);font-style:italic}
 td.px-fige{background:#F4F5F8}
 td.px-fige input{color:#4A5570;font-style:italic}
 .barre-tri{display:flex;align-items:center;gap:7px;padding:2px 0 8px;font-size:11px;color:var(--encre2)}
@@ -212,8 +214,8 @@ td.px-fige input{color:#4A5570;font-style:italic}
 .grille-jours{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:5px}
 .jour{border:1px solid var(--trait);border-radius:8px;padding:5px 4px;text-align:center;background:var(--carte)}
 .jour.passe{opacity:.38}
-.jour.auj{border-color:var(--laiton);background:#FDF8EC;box-shadow:0 0 0 1px var(--laiton)}
-.jour.auj .n, .jour.auj .v{color:#8A6D1F}
+.jour.auj{background:var(--violet-sourd);border-color:var(--violet)}
+.jour.auj .n, .jour.auj .v{color:var(--violet);font-weight:800}
 .jour .n{font-size:9px;color:var(--encre2);letter-spacing:.06em}
 .jour .v{font-size:12px;font-weight:700}
 
@@ -291,17 +293,16 @@ details.aide summary{cursor:pointer;font-weight:600;color:var(--laiton)}
 .bascule input:checked::after{transform:translateX(18px)}
 .jauge{height:7px;border-radius:99px;background:var(--trait);overflow:hidden}
 .jauge-barre{height:100%;background:linear-gradient(90deg,var(--violet),var(--violet-clair));border-radius:var(--r-rond)}
-.jauge-barre.pleine{background:linear-gradient(90deg,var(--vert),#7FC5A3)}
-.jauge-barre.depasse{background:linear-gradient(90deg,var(--rouge),#E08A78)}
+.jauge-barre.pleine{background:linear-gradient(90deg,var(--menthe),#6FE8BE)}
+.jauge-barre.depasse{background:linear-gradient(90deg,var(--corail),#FF9A8C)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
 .chip{font-size:12.5px;padding:7px 13px;border:1px solid var(--trait);border-radius:var(--r-rond);
   background:var(--carte2);color:var(--encre2);font-weight:600;
   transition:transform .14s var(--courbe), background var(--duree) var(--courbe), color var(--duree) var(--courbe)}
-.chip:active{transform:scale(.95)}
+.chip:active{transform:scale(.95);background:var(--violet-sourd)}
 .chip:hover{background:var(--violet-sourd);color:var(--violet);border-color:var(--violet)}
 .chip:active{background:#FDF8EC;border-color:var(--laiton);color:var(--laiton)}
-.chip .chip-x{display:inline-flex;align-items:center;justify-content:center;margin-left:7px;
-  width:17px;height:17px;border-radius:50%;background:#EAE7DE;color:var(--encre2);font-size:10px;font-weight:800}
+.chip .chip-x{opacity:.5;margin-left:5px;font-weight:800}
 .chip .chip-x:active{background:var(--rouge);color:#fff}
 
 /* ===== Changelog ===== */
@@ -332,6 +333,8 @@ details.aide summary{cursor:pointer;font-weight:600;color:var(--laiton)}
   box-shadow:0 10px 34px rgba(124,92,255,.28)}
 .hero::after{content:'';position:absolute;right:-70px;top:-90px;width:260px;height:260px;border-radius:50%;
   background:radial-gradient(circle,rgba(255,255,255,.18),transparent 62%)}
+.hero::before{content:'';position:absolute;left:-40px;bottom:-70px;width:190px;height:190px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.13),transparent 65%)}
 .hero .eti{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.8);
   display:flex;align-items:center;gap:6px}
 .hero .gros{font-size:clamp(42px,13vw,58px);font-weight:800;letter-spacing:-.03em;line-height:1.02;margin:6px 0 2px}
@@ -554,6 +557,25 @@ header.compact .marque .ver{display:none}
 .sect::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--trait),transparent)}
 .sect:first-of-type{margin-top:var(--esp-2)}
 
+
+/* ===== Accessibilité =====
+   Trois exigences souvent oubliées : savoir où l'on est au clavier, atteindre
+   les cibles au pouce, et rester lisible quand le système grossit le texte. */
+:focus-visible{outline:2px solid var(--violet-clair);outline-offset:2px;border-radius:var(--r-s)}
+button:focus-visible, a:focus-visible{outline-offset:3px}
+/* toute cible tactile fait au moins 40 px : recommandation des guides mobiles */
+button, select, input[type="date"], input[type="checkbox"]{min-height:40px}
+.ligne .sup, .ligne .pointe, .info-btn, nav button, .chip{min-height:34px}
+/* lien d'évitement pour la navigation au clavier */
+.saut{position:absolute;left:-9999px;top:0;background:var(--violet);color:#fff;
+  padding:10px 16px;border-radius:0 0 var(--r-s) 0;z-index:300;font-weight:700}
+.saut:focus{left:0}
+/* le texte ne doit pas être écrasé si le système agrandit la police */
+@media (prefers-contrast:more){
+  :root{--trait:#4A5170; --encre2:#B9BFD4}
+  .carte{border-width:1.5px}
+}
+
 /* ===== Micro-interactions =====
    Le mouvement sert à comprendre : d'où vient un élément, ce qui vient de
    changer, ce qui est en cours. Tout est désactivé si le système demande
@@ -643,11 +665,12 @@ nav button{min-height:48px}
 
 
 /* ===== Recherche globale ===== */
-#voile-recherche{position:fixed;inset:0;background:rgba(30,36,48,.55);z-index:90;display:none;
-  align-items:flex-start;justify-content:center;padding:14px}
+#voile-recherche{position:fixed;inset:0;background:rgba(8,9,14,.62);backdrop-filter:blur(4px);z-index:90;
+  display:none;align-items:flex-start;justify-content:center;padding:var(--esp-4)}
 #voile-recherche.vu{display:flex}
-#panneau-recherche{background:var(--papier);border-radius:14px;max-width:560px;width:100%;
-  max-height:82vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+#panneau-recherche{background:var(--carte);border:1px solid var(--trait);border-radius:var(--r-l);
+  max-width:560px;width:100%;max-height:82vh;display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:var(--ombre-forte);animation:apparait .26s var(--courbe)}
 .rech-tete{display:flex;gap:8px;padding:12px;background:var(--carte);border-bottom:1px solid var(--trait)}
 .rech-tete input{flex:1;border:1px solid var(--trait);border-radius:9px;padding:10px;background:var(--papier);color:var(--encre)}
 .rech-tete button{width:38px;border-radius:9px;background:var(--trait);color:var(--encre)}
@@ -668,11 +691,12 @@ nav button{min-height:48px}
 #haut.vu{opacity:.92;pointer-events:auto}
 
 /* ===== Assistant de premier démarrage ===== */
-#voile-bienvenue{position:fixed;inset:0;background:rgba(30,36,48,.6);z-index:150;display:none;
-  align-items:center;justify-content:center;padding:16px;overflow-y:auto}
+#voile-bienvenue{position:fixed;inset:0;background:rgba(8,9,14,.68);backdrop-filter:blur(4px);z-index:150;
+  display:none;align-items:center;justify-content:center;padding:var(--esp-4);overflow-y:auto}
 #voile-bienvenue.vu{display:flex}
-#panneau-bienvenue{background:var(--carte);border-radius:16px;max-width:460px;width:100%;padding:22px;
-  box-shadow:0 12px 44px rgba(0,0,0,.35);max-height:92vh;overflow-y:auto}
+#panneau-bienvenue{background:var(--carte);border:1px solid var(--trait);border-radius:var(--r-xl);
+  max-width:460px;width:100%;padding:var(--esp-5);box-shadow:var(--ombre-forte);
+  max-height:92vh;overflow-y:auto;animation:apparait .32s var(--courbe)}
 #panneau-bienvenue h2{font-size:20px;margin-bottom:6px;color:var(--encre)}
 #panneau-bienvenue .intro{font-size:13px;color:var(--encre2);line-height:1.5;margin-bottom:16px}
 .bv-champ{display:block;margin-bottom:14px}
@@ -685,9 +709,11 @@ nav button{min-height:48px}
 #bv-comptes .chip.choisi, .chip.choisi{background:var(--laiton);color:#fff;border-color:var(--laiton)}
 
 /* ===== Écran de verrouillage ===== */
-#verrou{position:fixed;inset:0;background:var(--entete);z-index:200;display:none;
-  flex-direction:column;align-items:center;justify-content:center;gap:18px;color:var(--entete-texte);
-  padding:24px;text-align:center}
+#verrou{position:fixed;inset:0;background:var(--papier);z-index:200;display:none;
+  flex-direction:column;align-items:center;justify-content:center;gap:var(--esp-3);padding:var(--esp-5)}
+#verrou.vu{display:flex}
+#verrou::before{content:'';position:absolute;top:-140px;width:340px;height:340px;border-radius:50%;
+  background:radial-gradient(circle,var(--violet-sourd),transparent 65%);pointer-events:none}
 #verrou.vu{display:flex}
 #verrou .logo{font-size:52px}
 #verrou h2{font-size:17px;letter-spacing:.12em;text-transform:uppercase}
@@ -698,11 +724,11 @@ nav button{min-height:48px}
 #verrou input{font-size:24px;letter-spacing:14px;text-align:center;width:190px;padding:10px;
   border-radius:12px;border:none;background:rgba(255,255,255,.12);color:var(--entete-texte)}
 #verrou .lien{color:var(--laiton-clair);font-size:13px;text-decoration:underline;background:none}
-#verrou .err{color:#E07862;font-size:13px;min-height:18px}
+#verrou .err{color:var(--corail);font-size:12.5px;font-weight:700;min-height:18px}
 
 /* ===== Popup de rappel de sauvegarde ===== */
-#voile-rappel{position:fixed;inset:0;background:rgba(30,36,48,.45);z-index:80;display:none;
-  align-items:center;justify-content:center;padding:22px}
+#voile-rappel{position:fixed;inset:0;background:rgba(8,9,14,.62);backdrop-filter:blur(3px);z-index:80;
+  display:none;align-items:center;justify-content:center;padding:var(--esp-5)}
 #voile-rappel.vu{display:flex}
 #panneau-rappel{background:var(--carte);border-radius:16px;max-width:420px;width:100%;padding:20px;
   box-shadow:0 10px 40px rgba(0,0,0,.3);text-align:center}
@@ -717,7 +743,8 @@ nav button{min-height:48px}
 .info-btn{flex:none;width:22px;height:22px;min-height:22px;border-radius:50%;border:1.5px solid var(--laiton);
   color:var(--laiton);font-size:12px;font-weight:800;line-height:1;display:inline-flex;align-items:center;justify-content:center;
   font-style:italic;font-family:Georgia,serif;margin-left:2px}
-#voile-info{position:fixed;inset:0;background:rgba(30,36,48,.45);z-index:60;display:none;align-items:flex-end;justify-content:center}
+#voile-info{position:fixed;inset:0;background:rgba(8,9,14,.6);backdrop-filter:blur(3px);z-index:100;
+  display:none;align-items:center;justify-content:center;padding:var(--esp-4)}
 #voile-info.vu{display:flex}
 #panneau-info{background:var(--carte);border-radius:16px 16px 0 0;max-width:560px;width:100%;padding:18px 18px calc(18px + env(safe-area-inset-bottom));
   box-shadow:0 -6px 30px rgba(0,0,0,.25);animation:monter .22s ease}
@@ -801,6 +828,7 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
 </style>
 </head>
 <body>
+<a href="#page-accueil" class="saut">Aller au contenu</a>
 <header>
   <div class="marque">
     <span class="logo">📒</span>
@@ -815,7 +843,7 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
   <div class="statut" id="statut-sync" title="État de l'enregistrement">—</div>
 </header>
 
-<main>
+<main id="contenu" role="main">
   <!-- ============ ACCUEIL ============ -->
   <section class="page actif" id="page-accueil">
     <div class="hero">
@@ -832,7 +860,7 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
       <div class="corps">
         <div class="ligne" style="border:none;margin-bottom:8px">
           <span style="font-size:12px;color:var(--encre2)">Référence (€)&nbsp;:</span>
-          <input class="mnt" id="est-montant" inputmode="decimal" style="border:1px solid var(--trait);border-radius:8px;background:var(--carte)">
+          <input class="mnt" id="est-montant" aria-label="Montant de référence pour l'estimation" inputmode="decimal" style="border:1px solid var(--trait);border-radius:8px;background:var(--carte)">
           <button class="btn discret" id="est-auto" style="padding:6px 10px;font-size:11px">Auto</button>
         </div>
         <div class="grille-jours" id="est-grille"></div>
@@ -912,11 +940,11 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
       <div class="tete"><h3>⚙️ Paramètres</h3></div>
       <div class="corps">
         <div class="ligne"><input class="lab" value="Enveloppe quotidienne (€/jour)" readonly>
-          <input class="mnt" id="cfg-jour" inputmode="decimal"></div>
+          <input class="mnt" id="cfg-jour" aria-label="Enveloppe quotidienne en euros" inputmode="decimal"></div>
         <div class="ligne"><input class="lab" value="Enveloppe fixe (€/mois — vide = €/jour)" readonly>
           <input class="mnt" id="cfg-fixe" inputmode="decimal" placeholder="—"></div>
         <div class="ligne"><input class="lab" value="Reste initial (avant 1er mois)" readonly>
-          <input class="mnt" id="cfg-reste" inputmode="decimal"></div>
+          <input class="mnt" id="cfg-reste" aria-label="Reste disponible avant le premier mois suivi" inputmode="decimal"></div>
         <button class="ajout" id="btn-chips-reset">♻️ Réafficher les puces de suggestion masquées</button>
         <p class="note">Un changement d'enveloppe ne prend effet qu'<b>à partir du mois suivant</b> : le mois en cours et les mois écoulés conservent leurs valeurs, ce qui permet d'anticiper sans fausser le mois entamé.</p>
       </div>
@@ -1035,8 +1063,8 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
         <button class="btn ligne2 discret" id="btn-export-chiffre">🔒 Exporter chiffré (mot de passe)</button>
         <button class="btn ligne2 discret" id="btn-demo">🎬 Charger un jeu de démonstration</button>
         <button class="btn ligne2 discret" id="btn-export-csv">📊 Exporter les mois (CSV, pour tableur)</button>
-        <input type="file" id="fic-json" accept="application/json" hidden>
-        <input type="file" id="fic-xlsx" accept=".xlsx" hidden>
+        <input type="file" id="fic-json" aria-label="Choisir un fichier de sauvegarde" accept="application/json" hidden>
+        <input type="file" id="fic-xlsx" aria-label="Choisir un classeur Excel" accept=".xlsx" hidden>
         <details class="aide"><summary>Comment ça marche ?</summary>
           Tout est stocké sur cet appareil (IndexedDB), rien ne part sur internet.
           Le JSON sert de sauvegarde ou de transfert vers un autre appareil.
@@ -1060,9 +1088,9 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
         <div class="ligne"><input class="lab" value="Angle d'étude" readonly>
           <select id="ia-etude" style="border:1px solid var(--trait);border-radius:8px;padding:8px;background:var(--carte);font-weight:600"></select></div>
         <div class="ligne"><input class="lab" value="Mois d'historique à inclure" readonly>
-          <input class="mnt" id="ia-mois" inputmode="numeric" value="6"></div>
+          <input class="mnt" id="ia-mois" aria-label="Nombre de mois inclus dans le dossier" inputmode="numeric" value="6"></div>
         <div class="ligne"><input class="lab" value="Anonymiser (totaux seuls, sans libellés)" readonly>
-          <input type="checkbox" id="ia-anonyme" style="width:22px;height:22px;accent-color:var(--laiton)"></div>
+          <input type="checkbox" id="ia-anonyme" aria-label="Anonymiser les montants" style="width:22px;height:22px;accent-color:var(--laiton)"></div>
         <button class="btn or ligne2" id="btn-ia-fichier">📄 Générer le dossier (.md)</button>
         <button class="btn ligne2 discret" id="btn-ia-copier">📋 Copier dans le presse-papier</button>
         <p class="note">Produit un document complet — patrimoine, flux, règle de répartition, portefeuille, projets — suivi d'une
@@ -1103,7 +1131,7 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
   </section>
 </main>
 
-<nav>
+<nav role="navigation" aria-label="Sections de l'application">
   <button data-page="accueil" class="actif"><span class="ico">📒</span>Accueil</button>
   <button data-page="mois"><span class="ico">📅</span>Mois</button>
   <button data-page="livrets"><span class="ico">💰</span>Épargne</button>
@@ -1409,8 +1437,12 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '9.5.0';
+const APP_VERSION = '9.6.0';
 const CHANGELOG = [
+  {v: '9.6.0', d: '17/08/2026', pts: [
+    "Écrans annexes au nouveau thème : verrouillage, assistant de démarrage, rappel de sauvegarde, recherche et bulles d'aide (voiles floutés, panneaux animés).",
+    "Dernières couleurs claires héritées supprimées — elles étaient invisibles ou illisibles sur fond sombre.",
+    "Accessibilité : contour de focus visible au clavier, cibles tactiles d'au moins 40 px, lien d'évitement, repères ARIA, prise en charge du mode contraste élevé, et un libellé sur chaque bouton et chaque champ."]},
   {v: '9.5.0', d: '17/08/2026', pts: [
     "Achat-Vente : formulaire en trois étapes numérotées (sens, compte et position, montant et date) et journal regroupé par mois en flux temporel.",
     "Réglages : les quatorze cartes sont regroupées en cinq sections — Mon budget, Mon patrimoine, Confort et sécurité, Mes données, À propos.",

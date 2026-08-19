@@ -9,6 +9,24 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v9.6.0 — lot 8 : finitions et accessibilité — 17/08/2026
+
+### Écrans annexes
+Le verrouillage, l'assistant de démarrage, le rappel de sauvegarde, la recherche et les bulles d'aide n'avaient pas encore été touchés : voiles d'arrière-plan **floutés** et assombris, panneaux à grand rayon avec ombre portée et **apparition animée**, écran de verrouillage doté d'un halo violet.
+
+### Dernières couleurs héritées
+Une douzaine de règles conservaient des teintes claires de l'ancienne identité (fonds crème, gris chauds, dorés) — invisibles ou illisibles sur fond sombre : puces de jour, jauges pleines ou dépassées, légende de fraîcheur des cours, boutons d'ajout, croix de suppression. Toutes passent aux jetons du thème.
+
+### Accessibilité
+- **Contour de focus visible** au clavier sur tous les éléments interactifs, avec un décalage suffisant pour rester lisible.
+- **Cibles tactiles d'au moins 40 px** pour les boutons et les listes déroulantes, 34 px pour les éléments secondaires.
+- **Lien d'évitement** « Aller au contenu », visible uniquement à la tabulation.
+- **Repères ARIA** sur la navigation et le contenu principal.
+- **Mode contraste élevé** : quand le système le demande, les filets et le texte secondaire s'éclaircissent et les bordures s'épaississent.
+- **Un libellé pour chaque bouton et chaque champ** : les sept derniers champs sans intitulé accessible (référence d'estimation, enveloppe quotidienne, sélecteurs de fichier…) en reçoivent un.
+
+**149 tests** couvrent désormais l'application, calculs et interface confondus.
+
 ## v9.5.0 — lots 6 et 7 : Achat-Vente et Réglages — 17/08/2026
 
 ### Achat-Vente : un formulaire qui pose des questions
