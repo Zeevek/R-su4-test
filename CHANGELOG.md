@@ -9,6 +9,9 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v9.6.2 — 19/08/2026
+- **Étiquettes intégrées au diagramme de flux.** Elles s'affichaient dans un bandeau sous le diagramme, alors que leur place était *dans* le diagramme. Chaque catégorie se prolonge maintenant vers les sujets qu'elle finance — Charges fixes → `#loyer` et `#energie`, Transport → `#voiture` — en réutilisant le mécanisme qui décompose déjà les investissements par compte. Une étiquette portée par plusieurs catégories apparaît sous chacune, avec la part qui en vient : `#voiture` peut ainsi recevoir 180 € du transport et 320 € des dépenses libres, ce qui montre d'où sort réellement l'argent. Quatre étiquettes au maximum par catégorie, pour rester lisible.
+
 ## v9.6.1 — 19/08/2026
 - **Champs de hauteur inégale.** Dans une grille, le champ de date gardait la hauteur imposée par le système et dépassait ses voisins. Tous les champs d'une grille partagent maintenant une hauteur fixe de 44 px, et le champ de date perd son habillage natif pour s'aligner sur les autres.
 - **Boutons flottants superposés.** La règle du bouton « retour en haut » était déclarée **deux fois** : la seconde, plus loin dans la feuille, annulait le repositionnement fait lors du lot 2. Une seule règle subsiste, avec 12 px d'écart garanti entre les deux boutons.

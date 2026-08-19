@@ -579,17 +579,7 @@ button, select, input[type="date"], input[type="checkbox"]{min-height:40px}
 }
 
 
-/* ===== Étiquettes sous le diagramme de flux ===== */
-.flux-tags{margin-top:var(--esp-3);padding-top:var(--esp-3);border-top:1px solid var(--trait)}
-.ft-tete{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
-  color:var(--encre2);margin-bottom:7px}
-.ft-ligne{display:flex;align-items:center;gap:var(--esp-2);padding:4px 0}
-.ft-nom{font-size:12.5px;font-weight:700;color:var(--violet);min-width:88px;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ft-barre{flex:1;height:8px;border-radius:var(--r-rond);background:var(--trait);overflow:hidden;min-width:40px}
-.ft-barre i{display:block;height:100%;border-radius:inherit;
-  background:linear-gradient(90deg,var(--violet),var(--violet-clair));transition:width .6s var(--courbe)}
-.ft-val{font-size:12.5px;font-weight:800;color:var(--encre);white-space:nowrap}
+
 
 /* ===== Micro-interactions =====
    Le mouvement sert à comprendre : d'où vient un élément, ce qui vient de
@@ -1455,8 +1445,11 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '9.6.1';
+const APP_VERSION = '9.6.2';
 const CHANGELOG = [
+  {v: '9.6.2', d: '19/08/2026', pts: [
+    "Les étiquettes s'affichent désormais dans le diagramme lui-même, en bout de flux : chaque catégorie se prolonge vers les sujets qu'elle finance (#loyer, #energie, #voiture…), comme les investissements se décomposent par compte.",
+    "Une étiquette présente dans plusieurs catégories apparaît sous chacune, avec la part qui en provient."]},
   {v: '9.6.1', d: '19/08/2026', pts: [
     "Les champs d'une même grille ont désormais tous la même hauteur — le champ de date, stylé par le système, dépassait les autres.",
     "Le bouton de saisie et celui de retour en haut ne se chevauchent plus : une règle en double annulait le repositionnement.",
@@ -2736,20 +2729,34 @@ function construireFlux(cle){
   ].filter(x => x.v > 0.004);
   if (soldeFlux > 0.004) cats.push({nom: '📊 Épargné (solde)', v: soldeFlux, coul: '#2FD9A0', epargne: true});
 
-  /* Dépenses portant une étiquette (#voiture, #chat…) : elles traversent les
-     catégories, on les montre à part pour voir ce qu'un sujet coûte ce mois-ci. */
-  const parTag = {};
-  for (const cat of Object.keys(LIBELLES_CATS))
-    for (const it of (m[cat] || [])){
-      const v = -(+it.montant || 0);
-      if (v <= 0.004) continue;
-      for (const t of etiquettesDe(it.label)) parTag[t] = (parTag[t] || 0) + v;
-    }
-  const tags = Object.entries(parTag).map(([t, v]) => ({nom: '#' + t, v: +v.toFixed(2)}))
-    .sort((a, b) => b.v - a.v).slice(0, 5);
+  /* Étiquettes (#loyer, #voiture…) : elles prolongent le flux d'une catégorie
+     vers le sujet concerné, comme les investissements se décomposent par compte.
+     Une même étiquette peut recevoir de plusieurs catégories : chaque part est
+     rattachée à la catégorie d'où elle vient. */
+  const CHAMPS_CAT = {
+    '🏠 Charges fixes': ['chargesFixes'], '📱 Abos obligatoires': ['aboObligatoires'],
+    '🎮 Abos loisirs': ['aboLoisirs'], '💳 Échelonnés': ['echelonnes'],
+    '🚗 Transport': ['transport'], '🛒 Dépenses libres': ['depensesLibres'],
+    '🏖️ Vacances': ['vacHotel', 'vacTransport', 'vacAlim', 'vacLoisirs', 'vacAutres'],
+  };
+  let nbTags = 0;
+  for (const cat of cats){
+    const champs = CHAMPS_CAT[cat.nom];
+    if (!champs || cat.detail) continue;
+    const par = {};
+    for (const champ of champs)
+      for (const it of (m[champ] || [])){
+        const v = -(+it.montant || 0);
+        if (v <= 0.004) continue;
+        for (const t of etiquettesDe(it.label)) par['#' + t] = (par['#' + t] || 0) + v;
+      }
+    const liste = Object.entries(par).map(([nom, v]) => ({nom, v: +v.toFixed(2)}))
+      .filter(d => d.v > 0.004).sort((a, b) => b.v - a.v).slice(0, 4);
+    if (liste.length){ cat.detail = liste; nbTags += liste.length; }
+  }
 
   const totalIn = sources.reduce((s, x) => s + x.v, 0);
-  return {sources, cats, totalIn, soldeFlux, tags};
+  return {sources, cats, totalIn, soldeFlux, nbTags};
 }
 function fluxSVG(cle){
   const F = construireFlux(cle);
@@ -2815,21 +2822,10 @@ function fluxSVG(cle){
     out += `<rect x="${X.cat}" y="${cat.y}" width="${NW}" height="${cat.h}" rx="3" fill="${cat.coul}"/>
       <text x="${X.cat + NW + 6}" y="${cat.y + cat.h / 2 + 4}" font-size="12" fill="var(--encre)">${echap(cat.nom)} · ${fmt(cat.v)}</text>`;
   }
-  const svg = `<svg viewBox="0 0 ${L} ${Math.ceil(Math.max(H, HAUT * 2 + 60))}" role="img" aria-label="Flux du mois">${out}</svg>`;
-  if (!F.tags || !F.tags.length) return svg;
-  // Les étiquettes traversent les catégories : elles se lisent à part
-  const maxTag = Math.max(...F.tags.map(t => t.v));
-  return svg + `<div class="flux-tags">
-    <div class="ft-tete">🏷️ Étiquettes du mois</div>
-    ${F.tags.map(t => `<div class="ft-ligne">
-      <span class="ft-nom">${echap(t.nom)}</span>
-      <span class="ft-barre"><i style="width:${(t.v / maxTag * 100).toFixed(1)}%"></i></span>
-      <span class="ft-val">${fmt(t.v)}</span>
-    </div>`).join('')}
-    <p class="note" style="margin:6px 0 0">Total de ce que chaque sujet a coûté ce mois-ci, toutes catégories confondues.</p>
-  </div>`;
+  return `<svg viewBox="0 0 ${L} ${Math.ceil(Math.max(H, HAUT * 2 + 60))}" role="img" aria-label="Flux du mois">${out}</svg>`
+    + (F.nbTags ? `<p class="note" style="margin-top:8px">🏷️ Les libellés précédés de <b>#</b> apparaissent en bout de flux :
+       ils montrent ce qu'un sujet coûte à l'intérieur de sa catégorie.</p>` : '');
 }
-
 
 /* ================= COURS DE BOURSE (mise à jour à la demande) ================= */
 function estISIN(s){ return /^[A-Z]{2}[A-Z0-9]{9}[0-9]$/.test(String(s || '').trim().toUpperCase()); }
