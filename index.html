@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#1E2430">
+<meta name="theme-color" content="#0F1117">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -183,9 +183,13 @@ td.px-fige input{color:#4A5570;font-style:italic}
 .barre-tri .cpt{margin-left:auto;white-space:nowrap}
 .sel-cat{border:none;border-radius:99px;padding:3px 8px;font-size:10px;font-weight:700;letter-spacing:.04em;
   width:auto;max-width:100%;-webkit-appearance:none;appearance:none;text-align:left}
-/* fonds pastel clairs → encre foncée assortie, identique sur tous les thèmes */
-.p-actions{background:#C6EFCE;color:#14532D}.p-etfs{background:#BDD7EE;color:#1E3A5F}.p-pe{background:#E2D5F1;color:#4C2A6E}
-.p-cryptos{background:#FFE699;color:#6B4E00}.p-metaux{background:#F8CBAD;color:#7A3E12}.p-obligations{background:#DCDCE4;color:#3A3F52}
+/* Pastilles de catégorie : fond sourd et texte coloré, lisible sur les deux thèmes */
+.p-actions{background:rgba(124,92,255,.16);color:#A78BFF}
+.p-etfs{background:rgba(77,163,255,.16);color:#7DBEFF}
+.p-metaux{background:rgba(255,184,77,.16);color:#FFC97A}
+.p-pe{background:rgba(199,125,255,.16);color:#D9A6FF}
+.p-obligations{background:rgba(107,115,148,.2);color:#A2A9C4}
+.p-cryptos{background:rgba(255,159,67,.16);color:#FFBB7A}
 
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px 18px;
   border-radius:var(--r-s);background:var(--carte2);color:var(--encre);font-weight:700;font-size:14px;
@@ -299,7 +303,7 @@ details.aide summary{cursor:pointer;font-weight:600;color:var(--laiton)}
 .bascule input:checked{background:var(--laiton)}
 .bascule input:checked::after{transform:translateX(18px)}
 .jauge{height:7px;border-radius:99px;background:var(--trait);overflow:hidden}
-.jauge-barre{height:100%;background:linear-gradient(90deg,var(--laiton),var(--laiton-clair));border-radius:99px}
+.jauge-barre{height:100%;background:linear-gradient(90deg,var(--violet),var(--violet-clair));border-radius:var(--r-rond)}
 .jauge-barre.pleine{background:linear-gradient(90deg,var(--vert),#7FC5A3)}
 .jauge-barre.depasse{background:linear-gradient(90deg,var(--rouge),#E08A78)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
@@ -484,6 +488,42 @@ header.compact .marque .ver{display:none}
 .cpt-solde{font-size:22px;font-weight:800;letter-spacing:-.02em;color:var(--encre)}
 .cpt-sous{font-size:12px;color:var(--encre2);line-height:1.45;margin-top:2px}
 .cpt-taux{font-size:11px;color:var(--encre2);opacity:.8;margin-top:3px}
+
+
+/* ===== Positions du portefeuille =====
+   Une carte par ligne : sur un téléphone, un tableau à huit colonnes impose un
+   défilement horizontal et rend la lecture pénible. */
+.positions{display:flex;flex-direction:column;gap:var(--esp-2)}
+.pos{background:var(--carte2);border:1px solid var(--trait);border-radius:var(--r-m);padding:11px var(--esp-3);
+  transition:border-color var(--duree) var(--courbe), transform var(--duree) var(--courbe)}
+.pos:hover{border-color:var(--violet);transform:translateY(-1px)}
+.pos-tete{display:flex;align-items:center;gap:var(--esp-2);margin-bottom:9px}
+.pos-nom{flex:1;min-width:0;font-weight:700;font-size:14px;background:transparent;border-color:transparent;padding:5px 6px}
+.pos-nom:focus{background:var(--carte);border-color:var(--violet)}
+.pos-chiffres{display:grid;grid-template-columns:1fr 1fr;gap:var(--esp-2);margin-bottom:9px}
+.pos-chiffres>div{display:flex;flex-direction:column;gap:1px}
+.pos-chiffres span{font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--encre2)}
+.pos-chiffres b{font-size:15px;font-weight:800;letter-spacing:-.01em}
+.pos-val b{color:var(--encre)}
+.pos-champs{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.pos-champs label{display:flex;flex-direction:column;gap:2px;border-radius:var(--r-s);padding:3px 5px}
+.pos-champs label>span{font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--encre2)}
+.pos-champs input{background:var(--carte);border-color:var(--trait);padding:7px 9px;font-size:13.5px;width:100%}
+.pos-champs input.petit{font-size:11.5px;color:var(--encre2)}
+.pos-champs label.px-ancien{background:var(--ambre-sourd)}
+.pos-champs label.px-ancien input{color:var(--ambre);font-weight:700}
+.pos-champs label.px-manuel{background:var(--menthe-sourd)}
+.pos-champs label.px-fige input{color:var(--encre2);font-style:italic}
+.pos-total{display:flex;align-items:baseline;gap:var(--esp-3);flex-wrap:wrap;margin-top:var(--esp-3);
+  padding-top:var(--esp-3);border-top:2px solid var(--trait);font-size:12px;color:var(--encre2);font-weight:700}
+.pos-total .pt-val{margin-left:auto;font-size:16px;font-weight:800;color:var(--encre)}
+.pos-total .pt-perf{font-size:14px;font-weight:800}
+@media (min-width:700px){
+  .pos-chiffres{grid-template-columns:repeat(2,minmax(0,220px))}
+  .pos-champs{grid-template-columns:repeat(4,1fr)}
+}
+/* pastilles de catégorie : rendu compact dans l'en-tête de position */
+.pos .sel-cat{flex:none;max-width:132px}
 
 /* ===== Micro-interactions =====
    Le mouvement sert à comprendre : d'où vient un élément, ce qui vient de
@@ -820,10 +860,10 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
       <div class="corps">
         <svg class="graph" id="inv-graph" viewBox="0 0 720 300" role="img" aria-label="Évolution des performances"></svg>
         <div class="legende">
-          <span style="--c:#B08D3E">Trade Republic</span>
-          <span style="--c:#2E7D5B">PEA</span>
-          <span style="--c:#5A6072">PERin</span>
-          <span style="--c:#1E2430">Total</span>
+          <span style="--c:#7C5CFF">Trade Republic</span>
+          <span style="--c:#2FD9A0">PEA</span>
+          <span style="--c:#4DA3FF">PERin</span>
+          <span style="--c:#FFB84D">Total</span>
         </div>
         <div id="inv-hist-table"></div>
       </div>
@@ -1161,7 +1201,7 @@ function appliquerTheme(choix){
   else document.documentElement.setAttribute('data-theme', 'clair');
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute('content',
-    getComputedStyle(document.documentElement).getPropertyValue('--entete').trim() || '#1E2430');
+    getComputedStyle(document.documentElement).getPropertyValue('--entete').trim() || '#0F1117');
   try{ localStorage.setItem('bv4-theme', choix || 'auto'); }catch(e){}
 }
 appliquerTheme((() => { try{ return localStorage.getItem('bv4-theme'); }catch(e){ return 'auto'; } })());
@@ -1335,8 +1375,12 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '9.3.0-mvp4';
+const APP_VERSION = '9.4.0-mvp5';
 const CHANGELOG = [
+  {v: '9.4.0 (lot 5)', d: '17/08/2026', pts: [
+    "Positions en cartes plutôt qu'en tableau : valeur et performance en tête, champs étiquetés dessous, plus aucun défilement horizontal sur mobile.",
+    "Palette des catégories et des graphiques alignée sur la charte : violet pour les actions, bleu pour les ETF, ambre pour les métaux, orange pour les cryptos.",
+    "Toutes les couleurs héritées de l'ancienne identité ont disparu du code."]},
   {v: '9.3.0 (lot 4)', d: '17/08/2026', pts: [
     "Page Épargne : chaque compte affiche un anneau de progression vers son plafond, avec le solde, la place restante et les intérêts annuels estimés.",
     "Transfert : liserés colorés selon le sens, flèche animée, bouton d'inversion qui pivote.",
@@ -2586,18 +2630,18 @@ function construireFlux(cle){
   if (soldeFlux < -0.004) sources.push({nom: '⚠️ Déficit du mois', v: -soldeFlux, deficit: true});
   // Catégories (argent qui sort, + épargne si solde positif)
   const cats = [
-    {nom: '🏠 Charges fixes', v: -c.tCharges, coul: '#1E2430'},
-    {nom: '📱 Abos obligatoires', v: -c.tAboO, coul: '#5A6072'},
-    {nom: '🎮 Abos loisirs', v: -c.tLoisirs, coul: '#B08D3E'},
-    {nom: '📈 Investissements', v: -c.totInv, coul: '#2E7D5B', detail: [
+    {nom: '🏠 Charges fixes', v: -c.tCharges, coul: '#8B5CF6'},
+    {nom: '📱 Abos obligatoires', v: -c.tAboO, coul: '#0EA5E9'},
+    {nom: '🎮 Abos loisirs', v: -c.tLoisirs, coul: '#0EA5E9'},
+    {nom: '📈 Investissements', v: -c.totInv, coul: '#2FD9A0', detail: [
       {nom: '🏦 Trade Republic', v: -c.totTR}, {nom: '📈 PEA', v: -(+m.invPEA || 0)}, {nom: '🛡️ PER', v: -(+m.invPER || 0)},
     ].filter(d => d.v > 0.004)},
     {nom: '💳 Échelonnés', v: -c.tEch, coul: '#7FA98C'},
     {nom: '🚗 Transport', v: -c.tTrans, coul: '#4E79A7'},
-    {nom: '🛒 Dépenses libres', v: -c.tLibres, coul: '#C0392B'},
+    {nom: '🛒 Dépenses libres', v: -c.tLibres, coul: '#FF6B5A'},
     {nom: '🏖️ Vacances', v: -c.tVac, coul: '#E0A93F'},
   ].filter(x => x.v > 0.004);
-  if (soldeFlux > 0.004) cats.push({nom: '📊 Épargné (solde)', v: soldeFlux, coul: '#2E7D5B', epargne: true});
+  if (soldeFlux > 0.004) cats.push({nom: '📊 Épargné (solde)', v: soldeFlux, coul: '#2FD9A0', epargne: true});
   const totalIn = sources.reduce((s, x) => s + x.v, 0);
   return {sources, cats, totalIn, soldeFlux};
 }
@@ -2633,7 +2677,7 @@ function fluxSVG(cle){
   let out = '', yIn = budY, yOut = budY;
   // rubans sources → budget
   for (const s of S){
-    out += ruban(X.src + NW, s.y, s.h, X.bud, yIn, s.h, s.deficit ? '#C0392B' : '#8B93B8', 0.42);
+    out += ruban(X.src + NW, s.y, s.h, X.bud, yIn, s.h, s.deficit ? '#FF6B5A' : '#8B93B8', 0.42);
     yIn += s.h;
   }
   // rubans budget → catégories (l'ordre des sorties suit la colonne de droite)
@@ -2656,10 +2700,10 @@ function fluxSVG(cle){
   }
   // nœuds + étiquettes
   for (const s of S){
-    out += `<rect x="${X.src}" y="${s.y}" width="${NW}" height="${s.h}" rx="3" fill="${s.deficit ? '#C0392B' : '#5A6072'}"/>
+    out += `<rect x="${X.src}" y="${s.y}" width="${NW}" height="${s.h}" rx="3" fill="${s.deficit ? '#FF6B5A' : '#6B7394'}"/>
       <text x="${X.src - 6}" y="${s.y + s.h / 2 + 4}" font-size="12" fill="var(--encre)" text-anchor="end">${echap(s.nom)} · ${fmt(s.v)}</text>`;
   }
-  out += `<rect x="${X.bud}" y="${budY}" width="${NW}" height="${Math.max(3, budH)}" rx="3" fill="#B08D3E"/>
+  out += `<rect x="${X.bud}" y="${budY}" width="${NW}" height="${Math.max(3, budH)}" rx="3" fill="var(--violet)"/>
     <text x="${X.bud + NW / 2}" y="${budY - 8}" font-size="12.5" font-weight="700" fill="var(--encre)" text-anchor="middle">Budget · ${fmt(F.totalIn)}</text>`;
   for (const cat of C){
     out += `<rect x="${X.cat}" y="${cat.y}" width="${NW}" height="${cat.h}" rx="3" fill="${cat.coul}"/>
@@ -2985,7 +3029,7 @@ function carteRetraite(){
   const s = simulationRetraite();
   if (!s) return '';
   const r = etat.config.retraite || {};
-  return `<div class="carte"><div class="tete"><h3>🌴 Indépendance financière</h3>${infoBtn('retraite')}
+  return `<div class="carte" data-fam="epargne"><div class="tete"><h3>🌴 Indépendance financière</h3>${infoBtn('retraite')}
     <div class="tot">${s.couverture.toFixed(0)} %</div></div>
     <div class="corps">
       <div class="champs">
@@ -3028,7 +3072,7 @@ function carteDividendes(){
   const maxM = Math.max(1, ...parMois);
   const moisNoms = ['J','F','M','A','M','J','J','A','S','O','N','D'];
   const moisActuel = new Date().getMonth();
-  return `<div class="carte"><div class="tete"><h3>💸 Dividendes perçus</h3>${infoBtn('dividendes')}
+  return `<div class="carte" data-fam="entrees"><div class="tete"><h3>💸 Dividendes perçus</h3>${infoBtn('dividendes')}
     <div class="tot pos">${fmt(c.net)}</div></div>
     <div class="corps">
       ${c.nb ? `
@@ -3134,7 +3178,7 @@ function blocBenchmark(){
 function cartePerformanceReelle(){
   const p = performanceReelle();
   if (p.points < 2){
-    return `<div class="carte"><div class="tete"><h3>📐 Performance réelle</h3>${infoBtn('perfreelle')}</div>
+    return `<div class="carte" data-fam="invest"><div class="tete"><h3>📐 Performance réelle</h3>${infoBtn('perfreelle')}</div>
       <div class="corps"><p class="note">Il faut au moins deux mois enregistrés dans l'historique pour calculer un rendement.
       ${p.points === 1 ? 'Un mois est enregistré : reviens le mois prochain après avoir appuyé sur « Enregistrer ».'
                        : 'Appuie sur « Enregistrer » ci-dessus à la fin de chaque mois.'}</p>
@@ -3171,22 +3215,22 @@ function projectionSVG(series, mc, annees){
   // faisceau P10–P90
   const hautP = mc.map(x => `${X(x.annee)},${Y(x.p90)}`).join(' ');
   const basP = [...mc].reverse().map(x => `${X(x.annee)},${Y(x.p10)}`).join(' ');
-  out += `<polygon points="${X(0)},${Y(series.pess[0])} ${hautP} ${basP}" fill="#B08D3E" opacity="0.16"/>`;
+  out += `<polygon points="${X(0)},${Y(series.pess[0])} ${hautP} ${basP}" fill="var(--violet)" opacity="0.18"/>`;
   const ligne = (pts, coul, larg, tirets) =>
     `<polyline points="${pts}" fill="none" stroke="${coul}" stroke-width="${larg}" stroke-linejoin="round"
       ${tirets ? `stroke-dasharray="${tirets}"` : ''}/>`;
   const parAn = serie => serie.filter((_, i) => i % 12 === 0).map((v, an) => `${X(an)},${Y(v)}`).join(' ');
-  out += ligne(parAn(series.opti), '#2E7D5B', 1.6, '5 4');
-  out += ligne(parAn(series.pess), '#C0392B', 1.6, '5 4');
-  out += ligne([`${X(0)},${Y(series.neutre[0])}`, ...mc.map(x => `${X(x.annee)},${Y(x.p50)}`)].join(' '), '#B08D3E', 1.4, '2 3');
-  out += ligne(parAn(series.neutre), '#1E2430', 2.6);
+  out += ligne(parAn(series.opti), '#2FD9A0', 1.6, '5 4');
+  out += ligne(parAn(series.pess), '#FF6B5A', 1.6, '5 4');
+  out += ligne([`${X(0)},${Y(series.neutre[0])}`, ...mc.map(x => `${X(x.annee)},${Y(x.p50)}`)].join(' '), '#7C5CFF', 1.4, '2 3');
+  out += ligne(parAn(series.neutre), '#7C5CFF', 2.6);
   for (let an = 0; an <= annees; an += Math.max(1, Math.round(annees / 5)))
     out += `<text x="${X(an)}" y="${H - 8}" text-anchor="middle" font-size="10" fill="var(--encre2)">${an ? an + ' an' + (an > 1 ? 's' : '') : 'auj.'}</text>`;
   return `<svg viewBox="0 0 ${L} ${H}" role="img" aria-label="Projection du patrimoine">${out}</svg>`;
 }
 function carteProjection(){
   const tp = tauxPortefeuille();
-  if (!tp) return `<div class="carte"><div class="tete"><h3>🔮 Projection du patrimoine</h3>${infoBtn('projection')}</div>
+  if (!tp) return `<div class="carte" data-fam="epargne"><div class="tete"><h3>🔮 Projection du patrimoine</h3>${infoBtn('projection')}</div>
     <div class="corps"><p class="note">Renseigne les quantités et les prix de tes positions pour obtenir une projection.</p></div></div>`;
   const perf = performanceReelle();
   const nMois = perf.points >= 2 ? perf.points - 1 : 0;
@@ -3223,8 +3267,8 @@ function carteProjection(){
       </div>
       ${projectionSVG(series, mc, annees)}
       <div class="legende">
-        <span style="--c:#1E2430">Scénario neutre</span><span style="--c:#2E7D5B">Optimiste</span>
-        <span style="--c:#C0392B">Pessimiste</span><span style="--c:#B08D3E">Zone probable (8 cas sur 10)</span>
+        <span style="--c:#7C5CFF">Scénario neutre</span><span style="--c:#2FD9A0">Optimiste</span>
+        <span style="--c:#FF6B5A">Pessimiste</span><span style="--c:#7C5CFF">Zone probable (8 cas sur 10)</span>
       </div>
       <div style="overflow-x:auto;margin-top:8px">
         <table><thead><tr><th>Horizon</th><th>Versé</th><th>Pessimiste</th><th>Neutre</th><th>Optimiste</th><th>Zone probable</th></tr></thead>
@@ -4073,12 +4117,12 @@ function carteProjets(){
 
 /* Catégories de positions : libellé + couleur de pastille + couleur graphique */
 const CATEGORIES = [
-  ['Actions',        'p-actions',     '#2E7D5B'],
-  ['ETFs',           'p-etfs',        '#4E79A7'],
-  ['Métaux / ETC',   'p-metaux',      '#B08D3E'],
-  ['Private Equity', 'p-pe',          '#7B5EA7'],
-  ['Obligations',    'p-obligations', '#5A6072'],
-  ['Cryptos',        'p-cryptos',     '#E0A93F'],
+  ['Actions',        'p-actions',     '#7C5CFF'],
+  ['ETFs',           'p-etfs',        '#4DA3FF'],
+  ['Métaux / ETC',   'p-metaux',      '#FFB84D'],
+  ['Private Equity', 'p-pe',          '#C77DFF'],
+  ['Obligations',    'p-obligations', '#6B7394'],
+  ['Cryptos',        'p-cryptos',     '#FF9F43'],
 ];
 const PASTILLES = Object.fromEntries(CATEGORIES.map(([nom, cl]) => [nom, cl]));
 const COUL_CAT = Object.fromEntries(CATEGORIES.map(([nom, , coul]) => [nom, coul]));
@@ -4122,27 +4166,38 @@ function trierLignes(lignes, tri){
 }
 function tablePositions(titre, chemin, calc, totalCompte){
   const tri = (etat.config.triPositions || {})[chemin] || 'manuel';
-  const lig = trierLignes(calc.lignes, tri).map(p => {
+  const lignes = trierLignes(calc.lignes, tri);
+  const champ = (p, f, val, opts = {}) =>
+    `<input value="${val ?? ''}" data-pch="${chemin}" data-i="${p.idx}" data-f="${f}"
+      inputmode="${opts.texte ? 'text' : 'text'}" placeholder="${opts.ph || ''}"
+      class="${opts.cl || ''}" ${opts.style ? `style="${opts.style}"` : ''}>`;
+
+  /* Vue en cartes : lisible au pouce, sans défilement horizontal */
+  const cartes = lignes.map(p => {
     const cat = categorieNormale(p.type);
-    return `<tr>
-      <td>
+    const etatPrix = statutPrix(p, etat.config.derniereMajCours);
+    return `<div class="pos">
+      <div class="pos-tete">
         <select class="sel-cat ${PASTILLES[cat]}" data-pch="${chemin}" data-i="${p.idx}" data-f="type">
           ${CATEGORIES.map(([nom]) => `<option value="${nom}" ${cat === nom ? 'selected' : ''}>${nom}</option>`).join('')}
         </select>
-        <input value="${echap(p.label)}" data-pch="${chemin}" data-i="${p.idx}" data-f="label" placeholder="Intitulé" style="text-align:left;font-weight:600;margin-top:3px">
-      </td>
-      <td><input value="${fmtNb(p.nb)}" data-pch="${chemin}" data-i="${p.idx}" data-f="nb" inputmode="text" style="min-width:82px"></td>
-      <td><input value="${p.pru ?? ''}" data-pch="${chemin}" data-i="${p.idx}" data-f="pru" inputmode="text"></td>
-      <td class="px-${statutPrix(p, etat.config.derniereMajCours)}">
-        <input value="${p.prix ?? ''}" data-pch="${chemin}" data-i="${p.idx}" data-f="prix" inputmode="text"
-               title="${LEGENDE_PRIX[statutPrix(p, etat.config.derniereMajCours)]}"></td>
-      <td><input value="${echap(p.symbole || '')}" data-pch="${chemin}" data-i="${p.idx}" data-f="symbole" placeholder="ISIN / ticker" style="min-width:96px;text-align:left;color:var(--encre2)"></td>
-      <td class="${cls(p.perfP)}">${p.perfP.toFixed(1)} %</td>
-      <td class="${cls(p.perfE)}">${fmtS(p.perfE)}</td>
-      <td><button class="sup" data-psupch="${chemin}" data-i="${p.idx}">✕</button></td>
-    </tr>`;
+        <input class="pos-nom" value="${echap(p.label)}" data-pch="${chemin}" data-i="${p.idx}" data-f="label" placeholder="Intitulé">
+        <button class="sup" data-psupch="${chemin}" data-i="${p.idx}" aria-label="Supprimer">✕</button>
+      </div>
+      <div class="pos-chiffres">
+        <div class="pos-val"><span>Valeur</span><b>${fmt(p.valeur)}</b></div>
+        <div class="pos-perf ${cls(p.perfE)}"><span>Performance</span><b>${fmtS(p.perfE)} · ${p.perfP.toFixed(1)} %</b></div>
+      </div>
+      <div class="pos-champs">
+        <label><span>Quantité</span>${champ(p, 'nb', fmtNb(p.nb))}</label>
+        <label><span>PRU</span>${champ(p, 'pru', p.pru)}</label>
+        <label class="px-${etatPrix}"><span>Cours</span>${champ(p, 'prix', p.prix, {ph: '0'})}</label>
+        <label><span>ISIN / ticker</span>${champ(p, 'symbole', echap(p.symbole || ''), {ph: 'auto', cl: 'petit'})}</label>
+      </div>
+    </div>`;
   }).join('');
-  return `<div class="carte">
+
+  return `<div class="carte" data-fam="invest">
     <div class="tete"><h3>${titre}</h3><div class="tot">${fmt(totalCompte)}</div></div>
     <div class="corps">
       <div class="barre-tri">
@@ -4152,24 +4207,22 @@ function tablePositions(titre, chemin, calc, totalCompte){
         </select>
         <span class="cpt">${calc.lignes.length} position${calc.lignes.length > 1 ? 's' : ''}</span>
       </div>
-      <div style="overflow-x:auto">
-      <table><thead><tr><th>Position</th><th>Nb</th><th>PRU</th><th>Prix</th><th>🔗 ISIN / Ticker</th><th>Perf %</th><th>Perf</th><th></th></tr></thead>
-      <tbody>${lig}
-        <tr class="total"><td>TOTAL · perf. latente</td><td colspan="4">valeur ${fmt(calc.valeur)}</td>
-          <td class="${cls(calc.perfP)}">${calc.perfP.toFixed(1)} %</td><td class="${cls(calc.perfE)}">${fmtS(calc.perfE)}</td><td></td></tr>
-      </tbody></table>
+      <div class="positions">${cartes || '<p class="note">Aucune position pour l\u2019instant.</p>'}</div>
+      <div class="pos-total">
+        <span>Total · ${lignes.length} ligne${lignes.length > 1 ? 's' : ''}</span>
+        <span class="pt-val">${fmt(calc.valeur)}</span>
+        <span class="pt-perf ${cls(calc.perfE)}">${fmtS(calc.perfE)} · ${calc.perfP.toFixed(1)} %</span>
       </div>
       <button class="ajout" data-paddch="${chemin}">＋ Ajouter une position</button>
     </div></div>`;
-}
-function rendreInvest(){
+}function rendreInvest(){
   const v = calculerInvest();
   document.getElementById('inv-kpis').innerHTML = [
     ['📊 Total investi', fmt(v.total)], ['🏦 Trade Republic', fmt(v.totTR)],
     ['📈 PEA Bourse Direct', fmt(v.totPEA)], ['🛡️ PERin BoursoBank', fmt(v.totPER)],
   ].map(([e, x]) => `<div class="tuile"><span class="eti">${e}</span><div class="val">${x}</div></div>`).join('');
   document.getElementById('inv-blocs').innerHTML =
-    `<div class="carte"><div class="tete"><h3>🔄 Cours de bourse</h3>${infoBtn('cours')}${infoBtn('fraicheur')}</div>
+    `<div class="carte" data-fam="invest"><div class="tete"><h3>🔄 Cours de bourse</h3>${infoBtn('cours')}${infoBtn('fraicheur')}</div>
       <div class="corps">
         <button class="btn or ligne2" id="btn-cours" style="margin-top:0">🔄 Mettre à jour les cours</button>
         ${(() => {
@@ -4235,7 +4288,7 @@ function rendreInvest(){
 function rendreGraph(){
   const svg = document.getElementById('inv-graph'), H = etat.historique;
   if (H.length < 1){ svg.innerHTML = '<text x="360" y="150" text-anchor="middle" fill="var(--encre2)" font-size="14">Aucune donnée — enregistre un premier mois.</text>'; return; }
-  const series = [['tr', '#B08D3E'], ['pea', '#2E7D5B'], ['per', '#5A6072'], ['total', '#1E2430']];
+  const series = [['tr', '#7C5CFF'], ['pea', '#2FD9A0'], ['per', '#4DA3FF'], ['total', '#FFB84D']];
   const tous = H.flatMap(h => series.map(([k]) => +h[k] || 0));
   const mx = Math.max(...tous, 1), mn = Math.min(...tous, 0);
   const L = 60, R = 700, T = 16, B = 262;
@@ -4276,7 +4329,7 @@ function rendreAV(){
     .map(p => `<option value="${echap(p.label)}">${echap(p.label)}${p.prix ? ` — ${fmt(p.prix)}` : ''}</option>`).join('');
   const compteChoisi = etat.config.dernierCompteOp || 'txTR';
   const carteSaisie = `
-    <div class="carte"><div class="tete"><h3>➕ Enregistrer une opération</h3>${infoBtn('operation')}</div>
+    <div class="carte" data-fam="invest"><div class="tete"><h3>➕ Enregistrer une opération</h3>${infoBtn('operation')}</div>
       <div class="corps">
         <div class="op-grille">
           <div class="op-sens">
@@ -4306,7 +4359,7 @@ function rendreAV(){
   // --- Journal chronologique, lisible sur mobile ---
   const jrn = journalOperations();
   const carteJournal = `
-    <div class="carte"><div class="tete"><h3>📜 Journal des opérations</h3>
+    <div class="carte" data-fam="invest"><div class="tete"><h3>📜 Journal des opérations</h3>
       <div class="tot" style="font-size:12px;color:var(--encre2)">${jrn.length} dernière${jrn.length > 1 ? 's' : ''}</div></div>
       <div class="corps">
         ${jrn.length ? jrn.map(t => `
@@ -4324,7 +4377,7 @@ function rendreAV(){
 
   // --- Une seule carte pour les disponibles, avec le détail de leur composition ---
   const carteDispo = `
-    <div class="carte"><div class="tete"><h3>💰 D'où vient l'argent disponible</h3>${infoBtn('av')}${infoBtn('cashcomptes')}
+    <div class="carte" data-fam="epargne"><div class="tete"><h3>💰 D'où vient l'argent disponible</h3>${infoBtn('av')}${infoBtn('cashcomptes')}
       <div class="tot">${fmt(a.totalDispo)}</div></div>
       <div class="corps">
         <div class="ligne"><input class="lab" value="Montant avant ${libelleMois(clesMois()[0]) || 'départ'}" readonly>
@@ -5230,10 +5283,10 @@ document.getElementById('cfg-reste').addEventListener('change', e => {
 
 /* ================= COMPTE RENDU A4 (impression / PDF) ================= */
 const CAT_COULEURS = [
-  ['Charges fixes', 'tCharges', '#1E2430'], ['Abo. obligatoires', 'tAboO', '#5A6072'],
-  ['Abo. loisirs', 'tLoisirs', '#B08D3E'], ['Investissements', 'totInv', '#2E7D5B'],
+  ['Charges fixes', 'tCharges', '#8B5CF6'], ['Abo. obligatoires', 'tAboO', '#0EA5E9'],
+  ['Abo. loisirs', 'tLoisirs', '#0EA5E9'], ['Investissements', 'totInv', '#2FD9A0'],
   ['Paiements échelonnés', 'tEch', '#7FA98C'], ['Transport', 'tTrans', '#4E79A7'],
-  ['Dépenses libres', 'tLibres', '#C0392B'], ['Vacances', 'tVac', '#E0A93F'],
+  ['Dépenses libres', 'tLibres', '#FF6B5A'], ['Vacances', 'tVac', '#E0A93F'],
 ];
 function donutSVG(parts, total){
   // parts: [{label, valeur, couleur}] — valeurs positives
@@ -5249,7 +5302,7 @@ function donutSVG(parts, total){
     const grand = (a1 - a0) > Math.PI ? 1 : 0;
     const [x0e, y0e] = pol(r, a0), [x1e, y1e] = pol(r, a1);
     const [x0i, y0i] = pol(ri, a1), [x1i, y1i] = pol(ri, a0);
-    out += `<path d="M ${x0e} ${y0e} A ${r} ${r} 0 ${grand} 1 ${x1e} ${y1e} L ${x0i} ${y0i} A ${ri} ${ri} 0 ${grand} 0 ${x1i} ${y1i} Z" fill="${p.couleur}" stroke="#fff" stroke-width="1"/>`;
+    out += `<path d="M ${x0e} ${y0e} A ${r} ${r} 0 ${grand} 1 ${x1e} ${y1e} L ${x0i} ${y0i} A ${ri} ${ri} 0 ${grand} 0 ${x1i} ${y1i} Z" fill="${p.couleur}" stroke="var(--carte)" stroke-width="1.5"/>`;
     a0 = a1;
   }
   out += `<text x="${cx}" y="${cy-2}" text-anchor="middle" font-size="15" font-weight="800" fill="var(--encre)">${Math.round(total).toLocaleString('fr-FR')} €</text>
@@ -5270,7 +5323,7 @@ function pageRapport(cle){
   const topLibres = [...m.depensesLibres].filter(x => (x.montant || 0) < 0)
     .sort((a, b) => a.montant - b.montant).slice(0, 6)
     .map(x => `<tr><td>${echap(x.label)}</td><td class="neg">${fmt(x.montant)}</td></tr>`).join('')
-    || '<tr><td colspan="2" style="color:#5A6072">Aucune dépense libre saisie.</td></tr>';
+    || '<tr><td colspan="2" style="color:var(--encre2)">Aucune dépense libre saisie.</td></tr>';
   const entrees = [
       {label: 'Reste du mois précédent', montant: c.resteM1Entree},
       ...m.entrees, ...m.remboursements.map(x => ({...x, label: x.label + ' (remb.)'}))]
@@ -5348,7 +5401,7 @@ function pageReleve(){
     <table>
       <tr><td><b>Position</b></td><td><b>Nb</b></td><td><b>PRU</b></td><td><b>Cours</b></td><td><b>Valeur</b></td><td><b>Perf.</b></td></tr>
       ${calc.lignes.map(p => `<tr>
-        <td><span class="puce" style="background:${COUL_CAT[categorieNormale(p.type)] || '#5A6072'}"></span>${echap(p.label)}</td>
+        <td><span class="puce" style="background:${COUL_CAT[categorieNormale(p.type)] || '#6B7394'}"></span>${echap(p.label)}</td>
         <td>${fmtNb(p.nb)}</td>
         <td>${fmt(p.pru)}</td><td>${fmt(p.prix)}</td>
         <td>${fmt((+p.nb || 0) * (+p.prix || 0))}</td>

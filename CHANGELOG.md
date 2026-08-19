@@ -9,6 +9,17 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v9.4.0 — lot 5 : page Investissements — 17/08/2026
+
+### Positions en cartes
+Un tableau à huit colonnes sur un écran de téléphone impose un défilement horizontal et rend la lecture pénible. Chaque position devient une **carte** : catégorie et intitulé en tête, **valeur et performance mises en avant** juste dessous, puis quantité, prix de revient, cours et identifiant en champs étiquetés. Le code couleur de fraîcheur des cours (ambre à revoir, menthe saisi à la main, gris pour les prix manuels) s'applique désormais au champ entier. Sur grand écran, les champs se répartissent sur quatre colonnes. Un pied de carte récapitule le nombre de lignes, la valeur totale et la performance.
+
+### Palette des graphiques
+Les catégories reprennent les couleurs de la charte — **violet** pour les actions, **bleu** pour les ETF, **ambre** pour les métaux, **violet clair** pour le private equity, **ardoise** pour les obligations, **orange** pour les cryptos — avec des pastilles à fond sourd, lisibles sur les deux thèmes. Courbes d'évolution, diagramme de flux, camemberts et faisceau de projection suivent la même palette.
+
+### Nettoyage
+Les dernières couleurs de l'ancienne identité (laiton `#B08D3E`, encre `#1E2430`, vert `#2E7D5B`…) ont été remplacées partout, y compris dans la couleur de barre d'état du navigateur.
+
 ## v9.3.0 — lot 4 : page Épargne — 17/08/2026
 
 ### Comptes en anneaux
