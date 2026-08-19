@@ -9,6 +9,17 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v9.3.0 — lot 4 : page Épargne — 17/08/2026
+
+### Comptes en anneaux
+Chaque compte s'ouvre sur un **anneau de progression** vers son plafond, avec le pourcentage en son centre — plus lisible qu'une barre, et il laisse la place au solde en gros à côté. L'anneau passe au vert quand le plafond est atteint, et le message explique alors que les versements partent vers le compte de repli. En dessous : la place restante avant le plafond et les **intérêts annuels estimés** au taux saisi. Un compte sans plafond affiche un symbole d'infini plutôt qu'un anneau vide.
+
+### Transfert
+Les blocs source et destination portent un **liseré coloré** (corail pour ce qui part, menthe pour ce qui arrive) au lieu d'une bordure épaisse, la flèche centrale respire doucement pour marquer le sens, et le bouton d'inversion **pivote** quand on l'active. L'aperçu des soldes avant/après reprend les fonds sourds de la charte.
+
+### Harmonisation
+Les indicateurs des pages Épargne, Investissements et Achat-Vente adoptent le composant **tuile** introduit sur l'Accueil : même rayon, même ombre, même soulèvement au survol. Les cartes de ces pages reçoivent aussi leur famille de couleur.
+
 ## v9.2.0 — lot 3 : page Mois — 17/08/2026
 
 ### Accueil allégé

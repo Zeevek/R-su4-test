@@ -260,23 +260,31 @@ details.aide summary{cursor:pointer;font-weight:600;color:var(--laiton)}
 .op-mt{font-weight:700;font-size:13.5px;white-space:nowrap}
 .separateur{height:1px;background:var(--trait);margin:8px 0}
 .transfert{display:grid;grid-template-columns:1fr;gap:2px}
-.tr-bloc{border:1px solid var(--trait);border-radius:11px;padding:8px 10px;background:var(--carte)}
-.tr-bloc.sortant{border-left:4px solid var(--rouge)}
-.tr-bloc.entrant{border-left:4px solid var(--vert)}
+.tr-bloc{border:1px solid var(--trait);border-radius:var(--r-m);padding:11px var(--esp-3);
+  background:var(--carte2);position:relative;overflow:hidden;
+  transition:border-color var(--duree) var(--courbe)}
+.tr-bloc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+.tr-bloc.sortant::before{background:var(--corail)}
+.tr-bloc.entrant::before{background:var(--menthe)}
 .tr-eti{display:block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;
   color:var(--encre2);margin-bottom:4px}
-.tr-bloc.sortant .tr-eti{color:var(--rouge)}
-.tr-bloc.entrant .tr-eti{color:var(--vert)}
+.tr-bloc.sortant .tr-eti{color:var(--corail)}
+.tr-bloc.entrant .tr-eti{color:var(--menthe)}
 .transfert select{border:none;background:none;font-weight:700;font-size:14px;width:100%;color:var(--encre);padding:2px 0}
-.tr-milieu{display:flex;align-items:center;gap:10px;padding:3px 12px}
-.tr-fleche{color:var(--laiton);font-size:17px;font-weight:800;line-height:1}
-#tr-inverser{font-size:11px;font-weight:700;color:var(--laiton);background:none;padding:4px 8px;
-  border:1px solid var(--laiton);border-radius:99px;min-height:0}
+.tr-milieu{display:flex;align-items:center;justify-content:center;gap:var(--esp-3);padding:5px 0}
+.tr-fleche{width:30px;height:30px;border-radius:50%;background:var(--violet-sourd);color:var(--violet);
+  display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;
+  animation:respire 2.4s ease-in-out infinite}
+@keyframes respire{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
+#tr-inverser{font-size:11.5px;font-weight:700;color:var(--violet);background:var(--violet-sourd);
+  padding:6px 12px;border:none;border-radius:var(--r-rond);min-height:0;
+  transition:transform .14s var(--courbe)}
+#tr-inverser:active{transform:scale(.94) rotate(180deg)}
 .tr-apercu{margin-top:8px}
-.tr-ligne{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:6px 10px;
-  border-radius:8px;font-size:13px;margin-bottom:4px}
-.tr-ligne.sortant{background:var(--rouge-fond)}
-.tr-ligne.entrant{background:var(--vert-fond)}
+.tr-ligne{display:flex;justify-content:space-between;align-items:center;gap:var(--esp-3);
+  padding:9px var(--esp-3);border-radius:var(--r-s);font-size:13px;margin-bottom:5px}
+.tr-ligne.sortant{background:var(--corail-sourd)}
+.tr-ligne.entrant{background:var(--menthe-sourd)}
 .tr-ligne .tr-nom{font-weight:600;color:var(--encre)}
 .tr-ligne .tr-val{font-weight:700;white-space:nowrap;color:var(--encre2)}
 .tr-ligne .tr-hors{font-size:11px;color:var(--encre2);font-style:italic}
@@ -465,6 +473,17 @@ header.compact .marque .ver{display:none}
 .carte[data-fam="invest"]{--fam:var(--menthe)}
 .carte[data-fam="epargne"]{--fam:var(--violet)}
 .carte[data-fam]>.tete h3{color:var(--fam,var(--encre2))}
+
+/* ===== Comptes d'épargne ===== */
+.cpt-haut{display:flex;align-items:center;gap:var(--esp-4);margin-bottom:var(--esp-3)}
+.anneau{width:64px;height:64px;flex:none}
+.anneau circle{transition:stroke-dashoffset .8s var(--courbe), stroke var(--duree) var(--courbe)}
+.cpt-libre{width:64px;height:64px;flex:none;border-radius:50%;border:6px solid var(--trait);
+  display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--encre2)}
+.cpt-txt{flex:1;min-width:0}
+.cpt-solde{font-size:22px;font-weight:800;letter-spacing:-.02em;color:var(--encre)}
+.cpt-sous{font-size:12px;color:var(--encre2);line-height:1.45;margin-top:2px}
+.cpt-taux{font-size:11px;color:var(--encre2);opacity:.8;margin-top:3px}
 
 /* ===== Micro-interactions =====
    Le mouvement sert à comprendre : d'où vient un élément, ce qui vient de
@@ -1316,8 +1335,12 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '9.2.0-mvp3';
+const APP_VERSION = '9.3.0-mvp4';
 const CHANGELOG = [
+  {v: '9.3.0 (lot 4)', d: '17/08/2026', pts: [
+    "Page Épargne : chaque compte affiche un anneau de progression vers son plafond, avec le solde, la place restante et les intérêts annuels estimés.",
+    "Transfert : liserés colorés selon le sens, flèche animée, bouton d'inversion qui pivote.",
+    "Les indicateurs des pages Épargne, Investissements et Achat-Vente adoptent les tuiles de la nouvelle charte."]},
   {v: '9.2.0 (lot 3)', d: '17/08/2026', pts: [
     "La carte de saisie de l'Accueil disparaît : le bouton flottant la remplace avantageusement depuis toutes les pages.",
     "Page Mois : barre de mois collante rappelant le solde, bilan en six tuiles colorées selon le signe.",
@@ -3431,6 +3454,21 @@ function signaler(el){
   el.classList.add('maj');
 }
 
+/* Anneau de progression : plus lisible qu'une barre pour un plafond, et il
+   laisse la place au montant en son centre. */
+function anneau(pct, plein){
+  const r = 26, c = 2 * Math.PI * r;
+  const rempli = Math.max(0, Math.min(100, pct));
+  return `<svg class="anneau" viewBox="0 0 64 64" role="img" aria-label="${rempli.toFixed(0)} % du plafond">
+    <circle cx="32" cy="32" r="${r}" fill="none" stroke="var(--trait)" stroke-width="6"/>
+    <circle cx="32" cy="32" r="${r}" fill="none" stroke="${plein ? 'var(--menthe)' : 'var(--violet)'}"
+      stroke-width="6" stroke-linecap="round" transform="rotate(-90 32 32)"
+      stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${(c * (1 - rempli / 100)).toFixed(1)}"/>
+    <text x="32" y="36" text-anchor="middle" font-size="15" font-weight="800"
+      fill="${plein ? 'var(--menthe)' : 'var(--encre)'}">${rempli.toFixed(0)}%</text>
+  </svg>`;
+}
+
 /* ===== Cartes repliables (mémorisé d'une session à l'autre) =====
    L'état est retenu par titre de carte : les cartes sont recréées à chaque
    rendu, un identifiant stable est donc nécessaire. */
@@ -3812,25 +3850,33 @@ function rendreLivrets(){
       const avecPlafond = cc.lignes.filter(c => c.plafond != null);
       return avecPlafond.length ? fmt(avecPlafond.reduce((s, c) => s + Math.max(0, c.reste), 0)) : '—';
     })()],
-  ].map(([e, v]) => `<div class="kpi"><span class="eti">${e}</span><div class="val">${v}</div></div>`).join('');
+  ].map(([e, v]) => `<div class="tuile"><span class="eti">${e}</span><div class="val">${v}</div></div>`).join('');
 
-  const bloc = c => `
-    <div class="carte"><div class="tete"><h3>${echap(c.nom)}</h3>${infoBtn('livrets')}
+  const bloc = c => {
+    const pct = c.plafond != null ? Math.min(100, c.pct) : null;
+    return `
+    <div class="carte" data-fam="epargne"><div class="tete"><h3>${echap(c.nom)}</h3>${infoBtn('livrets')}
       <div class="tot">${fmt(c.solde)}</div></div>
       <div class="corps">
-        ${c.plafond != null ? `
-          <div class="jauge" title="${fmt(c.solde)} sur ${fmt(c.plafond)}">
-            <div class="jauge-barre ${c.plein ? 'pleine' : ''}" style="width:${c.pct.toFixed(1)}%"></div>
+        <div class="cpt-haut">
+          ${pct != null ? anneau(pct, c.plein) : `<div class="cpt-libre">∞</div>`}
+          <div class="cpt-txt">
+            <div class="cpt-solde">${fmt(c.solde)}</div>
+            ${c.plafond != null
+              ? `<div class="cpt-sous">${c.plein
+                  ? `🔒 <b>Plafond atteint</b> — les versements partent vers le compte de repli`
+                  : `il reste <b>${fmt(c.reste)}</b> avant le plafond de ${fmt(c.plafond)}`}</div>`
+              : `<div class="cpt-sous">Aucun plafond sur ce compte</div>`}
+            ${Number(c.taux) > 0 ? `<div class="cpt-taux">${c.taux} %/an · environ ${fmt(c.solde * Number(c.taux) / 100)} d'intérêts par an</div>` : ''}
           </div>
-          <p class="note" style="margin-top:4px">${c.plein
-            ? `🔒 <b>Plafond atteint</b> (${fmt(c.plafond)}) — les versements suivants sont redirigés automatiquement.`
-            : `${c.pct.toFixed(0)} % du plafond · il reste <b>${fmt(c.reste)}</b> de place${c.taux ? ` · ${c.taux} %/an` : ''}`}</p>` : ''}
-        <div class="ligne"><input class="lab" value="Montant avant ${libelleMois(clesMois()[0]) || 'départ'}" readonly>
+        </div>
+        <div class="ligne"><input class="lab" value="Solde de départ" readonly>
           <input class="mnt" value="${c.initial}" data-cinit="${echap(c.id)}" inputmode="text"></div>
-        <div class="ligne"><input class="lab" value="Total cumulé au fil des mois (auto)" readonly><span class="mnt pos">${fmt(c.cumul)}</span></div>
+        <div class="ligne"><input class="lab" value="Versé par la répartition (auto)" readonly><span class="mnt pos">${fmt(c.cumul)}</span></div>
         ${composeur('comptes.' + c.id + '.mouvements', '+', 'Mouvement (ex. Versement)')}
         ${(c.mouvements || []).map((it, i) => ligneEditable('comptes.' + c.id + '.mouvements', it, i)).join('')}
       </div></div>`;
+  };
 
   // poches de suivi (hors comptes, hors cash PEA/PER)
   const idsComptes = new Set(cc.lignes.map(c => c.id));
@@ -3845,7 +3891,7 @@ function rendreLivrets(){
     ...Object.entries(nomsFiges).map(([id, nom]) => ({nom: nom + ' (archivée)', cum: cr.parPoche[id] || 0})),
   ].filter(x => Math.abs(x.cum) > 0.004 || pochesSuivi.some(p => p.nom === x.nom));
   const carteSuivi = lignesSuivi.length ? `
-    <div class="carte"><div class="tete"><h3>🧺 Poches d'épargne (suivi)</h3>${infoBtn('poches')}<div class="tot">${fmt(lignesSuivi.reduce((s, x) => s + x.cum, 0))}</div></div>
+    <div class="carte" data-fam="epargne"><div class="tete"><h3>🧺 Poches d'épargne (suivi)</h3>${infoBtn('poches')}<div class="tot">${fmt(lignesSuivi.reduce((s, x) => s + x.cum, 0))}</div></div>
       <div class="corps">${lignesSuivi.map(x => `<div class="ligne"><input class="lab" value="${echap(x.nom)}" readonly><span class="mnt ${cls(x.cum)}">${fmt(x.cum)}</span></div>`).join('')}
       <p class="note">Cumul depuis le premier mois — se remplit via les poches de répartition « → Suivi ».</p></div></div>` : '';
 
@@ -3856,7 +3902,7 @@ function rendreLivrets(){
   }).join('');
   const secondId = dests[1] ? dests[1].id : dests[0].id;
   const carteTransfert = `
-    <div class="carte"><div class="tete"><h3>🔄 Transférer de l'argent</h3>${infoBtn('transfert')}</div>
+    <div class="carte" data-fam="epargne"><div class="tete"><h3>🔄 Transférer de l'argent</h3>${infoBtn('transfert')}</div>
       <div class="corps">
         <div class="transfert">
           <div class="tr-bloc sortant">
@@ -3963,7 +4009,7 @@ function cartePassifs(){
   const li = etat.passifs || [];
   if (!li.length) return '';
   const total = totalPassifs();
-  return `<div class="carte"><div class="tete"><h3>🏦 Emprunts en cours</h3>${infoBtn('passifs')}
+  return `<div class="carte" data-fam="fixe"><div class="tete"><h3>🏦 Emprunts en cours</h3>${infoBtn('passifs')}
     <div class="tot neg">${fmt(-total)}</div></div>
     <div class="corps">
       ${li.map(p => { const s = situationPassif(p);
@@ -4121,7 +4167,7 @@ function rendreInvest(){
   document.getElementById('inv-kpis').innerHTML = [
     ['📊 Total investi', fmt(v.total)], ['🏦 Trade Republic', fmt(v.totTR)],
     ['📈 PEA Bourse Direct', fmt(v.totPEA)], ['🛡️ PERin BoursoBank', fmt(v.totPER)],
-  ].map(([e, x]) => `<div class="kpi"><span class="eti">${e}</span><div class="val">${x}</div></div>`).join('');
+  ].map(([e, x]) => `<div class="tuile"><span class="eti">${e}</span><div class="val">${x}</div></div>`).join('');
   document.getElementById('inv-blocs').innerHTML =
     `<div class="carte"><div class="tete"><h3>🔄 Cours de bourse</h3>${infoBtn('cours')}${infoBtn('fraicheur')}</div>
       <div class="corps">
@@ -4223,7 +4269,7 @@ function rendreAV(){
   document.getElementById('av-kpis').innerHTML = [
     ['💵 Dispo Trade Republic', fmt(a.dispo)], ['📈 Cash PEA', fmt(a.dispoPEA)],
     ['🛡️ Cash PER', fmt(a.dispoPER)], ['🧮 Total disponible', fmt(a.totalDispo)],
-  ].map(([e, v]) => `<div class="kpi"><span class="eti">${e}</span><div class="val">${v}</div></div>`).join('');
+  ].map(([e, v]) => `<div class="tuile"><span class="eti">${e}</span><div class="val">${v}</div></div>`).join('');
 
   // --- Formulaire unique : une opération, quel que soit le compte ---
   const optsPos = compte => positionsDe(compte)
