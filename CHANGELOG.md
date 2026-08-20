@@ -9,6 +9,11 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v9.9.0 — 20/08/2026
+- **Saisie rapide recentrée.** Le bouton ＋ ne propose plus que la dépense ou l'entrée : un dividende demande une date de perception, un choix net ou brut et un taux, ce qui alourdissait une feuille conçue pour saisir en trois secondes. Il se saisit dans sa carte, où ces éléments ont leur contexte.
+- **Diagramme « Rythme des dividendes ».** Les encaissements mois par mois, positionnés à leur **date réelle de perception** et non au mois de rattachement comptable. Quand une année précédente existe, ses montants apparaissent en barre claire derrière, et la note compare les cumuls **à la même date** — comparer un mois d'août partiel à une année complète n'aurait aucun sens. Les dividendes étant très saisonniers, cette lecture est plus parlante qu'un total annuel. Un sélecteur permet de revenir sur les années précédentes.
+- **Correctif : boucle sans fin.** Enregistrer un dividende daté d'avant le premier mois suivi déclenchait `while (!etat.months[cle]) creerMoisSuivant()` — or les mois ne se créent que vers l'avant : la condition ne pouvait jamais devenir vraie et **l'application se figeait**. Quatre boucles de ce type existaient (dividendes, saisie rapide, raccourci URL, étalement). Toutes passent par une fonction unique qui borne les créations et retourne un échec propre, avec un message indiquant le premier mois disponible.
+
 ## v9.8.1 — 20/08/2026
 ### Taux d'épargne faux
 Il valait `(reste de fin de mois + investi) / entrées`, ce qui pose deux problèmes : le reste de fin de mois contient déjà une part de l'enveloppe non dépensée, donc l'addition **compte deux fois** une partie de la somme ; et les entrées incluent le **report du mois précédent**, qui n'est pas un revenu du mois. Sur août, cela donnait 69 % au lieu de 62 %.

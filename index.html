@@ -605,6 +605,24 @@ button, select, input[type="date"], input[type="checkbox"]{min-height:40px}
 .div-meta{font-size:10.5px;color:var(--encre2)}
 .div-mt{font-weight:800;font-size:14px;white-space:nowrap}
 
+
+/* ===== Rythme des dividendes : deux années superposées ===== */
+.ryt{display:flex;align-items:flex-end;gap:3px;height:110px;margin-bottom:var(--esp-2)}
+.ryt-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;min-width:0}
+.ryt-zone{flex:1;width:100%;position:relative;display:flex;align-items:flex-end;justify-content:center}
+.ryt-b{position:absolute;bottom:0;border-radius:4px 4px 2px 2px;transition:height .6s var(--courbe);min-height:2px}
+.ryt-b.avant{width:82%;background:var(--trait)}
+.ryt-b.cette{width:52%;background:linear-gradient(180deg,var(--menthe),#1FB98A)}
+.ryt-col.courant .ryt-b.cette{background:linear-gradient(180deg,var(--violet),var(--violet-clair))}
+.ryt-m{font-size:9px;color:var(--encre2);font-weight:700;text-transform:uppercase}
+.ryt-col.courant .ryt-m{color:var(--violet)}
+.ryt-legende{display:flex;gap:var(--esp-4);font-size:11px;color:var(--encre2);font-weight:700;
+  padding-bottom:var(--esp-2);flex-wrap:wrap}
+.ryt-legende span{display:flex;align-items:center;gap:5px}
+.ryt-legende i{width:10px;height:10px;border-radius:3px;display:block}
+.ryt-legende i.cette{background:var(--menthe)}
+.ryt-legende i.avant{background:var(--trait)}
+
 /* ===== Micro-interactions =====
    Le mouvement sert à comprendre : d'où vient un élément, ce qui vient de
    changer, ce qui est en cours. Tout est désactivé si le système demande
@@ -1218,35 +1236,16 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
 <button id="haut" aria-label="Revenir en haut">↑</button>
 <div id="voile-saisie"><div id="panneau-saisie">
   <div class="ps-poignee"></div>
-  <div class="op-sens" style="margin-bottom:var(--esp-3)">
-    <button class="op-choix actif" data-psnature="depense">🛒 Dépense ou entrée</button>
-    <button class="op-choix" data-psnature="dividende">💸 Dividende perçu</button>
-  </div>
   <div class="champs">
     <label class="ch"><span>Intitulé</span>
       <input id="ps-label" placeholder="ex. Boulangerie" autocomplete="off"></label>
     <label class="ch"><span>Montant</span>
       <span class="unite"><input id="ps-montant" inputmode="text" placeholder="0"><span class="u" id="ps-devise">€</span></span></label>
   </div>
-  <div id="ps-bloc-depense">
-    <label class="ch" style="margin-top:9px"><span>Destination</span>
-      <select id="ps-cat" name="destination"></select></label>
-    <select id="ps-vac" name="sous-destination" style="display:none;margin-top:8px"></select>
-    <div class="chips" id="ps-chips"></div>
-  </div>
-  <div id="ps-bloc-dividende" style="display:none">
-    <div class="champs" style="margin-top:9px">
-      <label class="ch"><span>Date de perception</span>
-        <input id="ps-div-date" name="date-dividende" type="date"></label>
-      <label class="ch" id="ps-div-champ-taux" style="display:none"><span>Prélèvements</span>
-        <span class="unite"><input id="ps-div-taux" name="taux" inputmode="decimal" value="30"><span class="u">%</span></span></label>
-    </div>
-    <div class="op-sens" style="margin-top:9px">
-      <button class="op-choix actif" data-psdivtype="net">💶 Montant reçu</button>
-      <button class="op-choix" data-psdivtype="brut">🧾 Avant prélèvements</button>
-    </div>
-    <p class="note" id="ps-div-note" style="margin-top:8px"></p>
-  </div>
+  <label class="ch" style="margin-top:9px"><span>Destination</span>
+    <select id="ps-cat" name="destination"></select></label>
+  <select id="ps-vac" name="sous-destination" style="display:none;margin-top:8px"></select>
+  <div class="chips" id="ps-chips"></div>
   <div class="ps-actions">
     <button class="btn or" id="ps-valider">Enregistrer</button>
     <button class="btn" id="ps-fermer">Annuler</button>
@@ -1450,6 +1449,7 @@ const INFOS = {
   projection: ['Projection', "Trois scénarios construits à partir de ton allocation réelle par catégorie, à laquelle sont appliqués des taux annuels conventionnels (actions 2/6/9 %, obligations 1/3/4 %, crypto −50/+10/+40 %…). Le faisceau montre la zone probable plutôt qu'un trait illusoire : 10 % des trajectoires finissent sous la borne basse, 10 % au-dessus de la haute. À mesure que ton historique s'allonge, ton rendement réellement observé remplace progressivement la théorie. Ce sont des conventions de place, pas des prévisions."],
   retraite: ['Indépendance financière', "Le capital nécessaire est calculé en divisant tes dépenses annuelles par le taux de retrait choisi : 24 000 € de dépenses à 4 % donnent 600 000 €. Les dépenses sont pré-remplies à partir de tes six derniers mois, tout est modifiable. L'application estime ensuite la durée pour l'atteindre à ton rythme d'épargne actuel, puis combien de temps le capital tiendrait avec des retraits indexés sur l'inflation. La règle des 4 % vient d'une étude américaine sur données historiques : c'est un repère de discussion, pas une garantie, et rien ici ne constitue un conseil en investissement."],
   benchmark: ['Indice de référence', "Ton rendement comparé à celui d'un indice large sur la même période. La valeur de l'indice est relevée automatiquement à chaque enregistrement mensuel (connexion requise à ce moment). L'écart se lit en points de pourcentage annualisés. Deux précautions : sur quelques mois l'écart n'a aucune valeur statistique, et un portefeuille plus risqué qu'un indice peut le battre en période favorable sans être meilleur pour autant."],
+  rythmeDiv: ['Rythme des dividendes', "Les encaissements mois par mois, positionnés à leur <b>date réelle de perception</b> et non au mois de rattachement comptable : c'est le rythme des versements qu'on veut lire. Quand une année précédente est disponible, ses montants apparaissent en barre claire derrière, et la note compare les cumuls <b>à la même date</b> — comparer un mois d'août partiel à une année complète n'aurait aucun sens. Les dividendes étant très saisonniers (beaucoup d'entreprises versent au printemps), cette lecture mois par mois est plus parlante qu'un total annuel."],
   dividendes: ['Dividendes perçus', "Saisis la source, la date réelle de perception (le jour même par défaut) et le montant. Le dividende est ajouté aux entrées du <b>mois suivant</b> : perçu en juillet, il compte en août — la convention des relevés bancaires, et celle que tu utilisais déjà à la main. La case « brut » applique les prélèvements (30 % par défaut en France : 12,8 % d'impôt et 17,2 % de prélèvements sociaux, taux modifiable) et enregistre le net réellement encaissé, en gardant le brut en mémoire. Le cumul annuel affiché en haut sert de repère pour la déclaration ; les sources connues du portefeuille sont proposées à la saisie."],
   operation: ['Enregistrer une opération', "Choisis le sens (achat ou vente), le compte, puis une position de ton portefeuille. Le montant est prélevé sur le disponible du compte, et la position est mise à jour : le nombre de parts évolue et le prix de revient moyen est recalculé au prorata — un achat de 100 € à 25 € l'unité ajoute 4 parts et ajuste le PRU. Le prix unitaire est facultatif : sans lui, le dernier cours connu est utilisé. Un intitulé libre reste possible pour une opération sans position associée."],
   cashcomptes: ['Cash dédié PEA / PER', "Une poche « → Cash PEA » ou « → Cash PER » met de l'argent de côté pour ces comptes, en plus de tes versements mensuels programmés (qui restent prélevés sur le budget du mois). Le cash PEA est consommé par tes achats directs PEA ; le cash PER par les versements exceptionnels que tu saisis ici. Si un achat PEA dépasse le cash dédié, le complément est pris sur le disponible général."],
@@ -1488,8 +1488,12 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '9.8.1';
+const APP_VERSION = '9.9.0';
 const CHANGELOG = [
+  {v: '9.9.0', d: '20/08/2026', pts: [
+    "Le bouton ＋ revient à la seule saisie de dépense : les dividendes se saisissent dans leur carte, où le contexte est plus clair.",
+    "Nouveau diagramme « Rythme des dividendes » : les encaissements mois par mois, avec l'année précédente en arrière-plan et la comparaison des cumuls à la même date.",
+    "Correctif : enregistrer un dividende daté d'avant le premier mois suivi provoquait une boucle sans fin qui figeait l'application. La création de mois est bornée et le cas est refusé avec un message clair."]},
   {v: '9.8.1', d: '20/08/2026', pts: [
     "Correction du taux d'épargne : il additionnait deux montants qui se recouvrent et comptait le report du mois précédent comme un revenu. Il se calcule désormais comme la part des revenus du mois qui n'est pas consommée.",
     "Dividendes : les styles de la carte avaient disparu lors d'un nettoyage, d'où l'affichage en texte brut. Rétablis, et la frise des douze mois — illisible — est retirée.",
@@ -2339,6 +2343,16 @@ function mensualitesPassifs(){
    Note : le prélèvement forfaitaire unique français est de 30 % (12,8 % d'impôt
    + 17,2 % de prélèvements sociaux) ; le taux reste modifiable. */
 const PFU_DEFAUT = 30;
+/* Garantit l'existence d'un mois. Les mois se créent uniquement vers l'avant :
+   une date antérieure au premier mois suivi ne peut pas être atteinte, et
+   boucler à l'infini figerait l'application. */
+function assurerMois(cle, maxCreations = 240){
+  if (etat.months[cle]) return true;
+  const cles = clesMois();
+  if (!cles.length || cle < cles[0]) return false;      // trop ancien : impossible
+  for (let i = 0; i < maxCreations && !etat.months[cle]; i++) creerMoisSuivant();
+  return !!etat.months[cle];
+}
 function moisSuivantDe(dateISO){
   const [a, m] = String(dateISO).slice(0, 7).split('-').map(Number);
   const d = new Date(a, m, 1);   // m (1-12) donne le mois suivant en base 0
@@ -2353,7 +2367,8 @@ function enregistrerDividende({source, date, montant, brut, taux}){
   const t = brut ? Math.min(100, Math.max(0, Number(taux ?? PFU_DEFAUT))) : 0;
   const net = +(v * (1 - t / 100)).toFixed(2);
   const cle = moisSuivantDe(jour);
-  while (!etat.months[cle]) creerMoisSuivant();
+  if (!assurerMois(cle))
+    return {ok: false, msg: `Le mois ${libelleMois(cle)} est antérieur à ton premier mois suivi (${libelleMois(clesMois()[0])})`};
   const [aa, mm, jj] = jour.split('-');
   etat.months[cle].entrees.push({
     label: `Dividende ${src} (${jj}/${mm}/${aa})`, montant: net,
@@ -2369,6 +2384,20 @@ function journalDividendes(max = 60){
     for (const [i, e] of (etat.months[cle].entrees || []).entries())
       if (e.div) out.push({...e, cleMois: cle, i});
   return out.sort((a, b) => String(b.dateDiv || '').localeCompare(String(a.dateDiv || ''))).slice(0, max);
+}
+/* Encaissements mois par mois d'une année, indexés sur la date réelle de
+   perception (et non le mois de rattachement) : c'est le rythme des versements
+   qu'on veut lire, pas leur imputation comptable. */
+function dividendesParMois(annee){
+  const t = Array(12).fill(0);
+  for (const d of journalDividendes(9999))
+    if (String(d.dateDiv || '').startsWith(String(annee)))
+      t[+d.dateDiv.slice(5, 7) - 1] += +d.montant || 0;
+  return t.map(v => +v.toFixed(2));
+}
+function anneesDividendes(){
+  return [...new Set(journalDividendes(9999).map(d => String(d.dateDiv || '').slice(0, 4)).filter(Boolean))]
+    .sort().reverse();
 }
 function cumulDividendes(annee){
   const j = journalDividendes(9999).filter(d => !annee || String(d.dateDiv || '').startsWith(String(annee)));
@@ -2459,7 +2488,7 @@ function ecrireMouvement(id, montant, libelle){
     // Le compte courant alimente le budget : l'opération apparaît dans les
     // remboursements du mois en cours (positif = argent reçu sur le courant).
     const cle = cleAujourdhui();
-    while (!etat.months[cle]) creerMoisSuivant();
+    if (!assurerMois(cle)) return;
     // montant tel quel : positif quand l'argent arrive sur le courant (entrée du
     // budget), négatif quand il en part vers l'épargne.
     etat.months[cle].remboursements.push({label: libelle, montant: +montant.toFixed(2)});
@@ -3228,6 +3257,46 @@ function carteRetraite(){
       pas une garantie. Aucun de ces chiffres n'est une prévision, et rien ici ne remplace un conseil professionnel.</p>
     </div></div>`;
 }
+function carteRythmeDividendes(){
+  const annees = anneesDividendes();
+  if (!annees.length) return '';
+  const an = etat.config.anneeDiv && annees.includes(etat.config.anneeDiv) ? etat.config.anneeDiv : annees[0];
+  const prec = String(+an - 1);
+  const cette = dividendesParMois(an), avant = dividendesParMois(prec);
+  const totalC = cette.reduce((s, v) => s + v, 0), totalA = avant.reduce((s, v) => s + v, 0);
+  const compare = totalA > 0.004;
+  const max = Math.max(0.01, ...cette, ...(compare ? avant : []));
+  const MOIS = ['jan', 'fév', 'mar', 'avr', 'mai', 'juin', 'juil', 'août', 'sep', 'oct', 'nov', 'déc'];
+  const moisCourant = an === String(new Date().getFullYear()) ? new Date().getMonth() : 11;
+  // cumul glissant pour situer l'année en cours par rapport à la précédente
+  const cumC = cette.slice(0, moisCourant + 1).reduce((s, v) => s + v, 0);
+  const cumA = avant.slice(0, moisCourant + 1).reduce((s, v) => s + v, 0);
+  const ecart = cumA > 0.004 ? (cumC / cumA - 1) * 100 : null;
+  return `<div class="carte" data-fam="entrees"><div class="tete"><h3>📊 Rythme des dividendes</h3>${infoBtn('rythmeDiv')}
+    <div class="tot pos">${fmt(totalC)}</div></div>
+    <div class="corps">
+      ${annees.length > 1 ? `<div class="chips" style="margin-bottom:10px">${annees.map(a =>
+        `<button class="chip ${a === an ? 'choisi' : ''}" data-andiv="${a}">${a}</button>`).join('')}</div>` : ''}
+      <div class="ryt">
+        ${cette.map((v, m) => `
+          <div class="ryt-col ${m === moisCourant && an === String(new Date().getFullYear()) ? 'courant' : ''}"
+               title="${MOIS[m]} ${an} : ${fmt(v)}${compare ? ` · ${prec} : ${fmt(avant[m])}` : ''}">
+            <div class="ryt-zone">
+              ${compare ? `<span class="ryt-b avant" style="height:${(avant[m] / max * 100).toFixed(1)}%"></span>` : ''}
+              <span class="ryt-b cette" style="height:${(v / max * 100).toFixed(1)}%"></span>
+            </div>
+            <span class="ryt-m">${MOIS[m]}</span>
+          </div>`).join('')}
+      </div>
+      <div class="ryt-legende">
+        <span><i class="cette"></i>${an} · ${fmt(totalC)}</span>
+        ${compare ? `<span><i class="avant"></i>${prec} · ${fmt(totalA)}</span>` : ''}
+      </div>
+      ${compare && ecart != null ? `<p class="note">À la même date l'an dernier : ${fmt(cumA)} encaissés, contre
+        <b>${fmt(cumC)}</b> cette année — <b class="${cls(ecart)}">${ecart >= 0 ? '+' : ''}${ecart.toFixed(0)} %</b>.</p>`
+      : `<p class="note">Une deuxième année de relevés permettra la comparaison avec l'année précédente.</p>`}
+    </div></div>`;
+}
 function carteDividendes(){
   const j = journalDividendes(3);
   const an = String(new Date().getFullYear());
@@ -3921,11 +3990,11 @@ function rendreAccueil(){
       }).join('')}`
     : `<p class="note">Rien à comparer pour l\u2019instant : il faut au moins un mois complet d\u2019historique.</p>`}`;
 
-  document.getElementById('acc-dividendes').innerHTML = carteDividendes();
+  document.getElementById('acc-dividendes').innerHTML = carteDividendes() + carteRythmeDividendes();
   majApercuDividende();
 
 
-  document.getElementById('acc-dividendes').innerHTML = carteDividendes();
+  document.getElementById('acc-dividendes').innerHTML = carteDividendes() + carteRythmeDividendes();
   majApercuDividende();
 
   const brut = brutAcc;   // même base que la tuile : valeur de marché
@@ -5046,6 +5115,9 @@ document.querySelector('main').addEventListener('click', e => {
   } else if (el.dataset.tendref){
     etat.config.tendanceRef = +el.dataset.tendref;
     sauver(); rendreAccueil(); appliquerReplis();
+  } else if (el.dataset.andiv){
+    etat.config.anneeDiv = el.dataset.andiv;
+    sauver(); rendreAccueil(); appliquerReplis();
   } else if (el.dataset.annee){
     etat.config.anneeBilan = el.dataset.annee;
     sauver(); rendreAccueil(); appliquerReplis();
@@ -5185,7 +5257,10 @@ function etalerPaiement(cleDepart, cat, label, total, n){
   const derniere = +(totalAbs - mensualite * (n - 1)).toFixed(2);
   let cible = cleDepart, crees = 0;
   for (let i = 1; i <= n; i++){
-    while (!etat.months[cible]){ creerMoisSuivant(); crees++; }
+    if (!etat.months[cible]){
+      if (!assurerMois(cible)) break;      // sécurité : jamais de boucle sans fin
+      crees++;
+    }
     const montant = -(i === n ? derniere : mensualite);
     const cibleLabel = `${label} (${i}/${n})`;
     const liste = etat.months[cible][cat];
@@ -6422,26 +6497,6 @@ addEventListener('keydown', e => {
    revenir à l'Accueil. Une feuille monte depuis le bas, quelle que soit la page. */
 /* Nature de la saisie : une dépense (ou une entrée) sur le mois en cours, ou un
    dividende, qui suit sa propre règle — compté au mois suivant, net ou brut. */
-function natureSaisie(){
-  const b = document.querySelector('[data-psnature].actif');
-  return b ? b.dataset.psnature : 'depense';
-}
-function majFeuilleSaisie(){
-  const div = natureSaisie() === 'dividende';
-  document.getElementById('ps-bloc-depense').style.display = div ? 'none' : '';
-  document.getElementById('ps-bloc-dividende').style.display = div ? '' : 'none';
-  document.querySelector('label[for="ps-label"], #ps-label').previousElementSibling;
-  const etiq = document.querySelector('#panneau-saisie .champs .ch span');
-  if (etiq) etiq.textContent = div ? 'Source' : 'Intitulé';
-  document.getElementById('ps-label').placeholder = div ? 'ex. TotalEnergies' : 'ex. Boulangerie';
-  if (div){
-    const brut = (document.querySelector('[data-psdivtype].actif') || {dataset: {}}).dataset.psdivtype === 'brut';
-    document.getElementById('ps-div-champ-taux').style.display = brut ? '' : 'none';
-    const d = document.getElementById('ps-div-date').value || jourISO();
-    document.getElementById('ps-div-note').innerHTML =
-      `Sera compté dans les entrées de <b>${libelleMois(moisSuivantDe(d))}</b>, comme sur ton relevé.`;
-  }
-}
 function ouvrirSaisie(){
   const sel = document.getElementById('ps-cat');
   if (!sel.options.length)
@@ -6457,30 +6512,12 @@ function ouvrirSaisie(){
     ? puces.map(f => `<button class="chip" data-pschip="${echap(f.label)}" data-psmnt="${Math.abs(f.montant)}">${echap(f.label)} · ${fmt(Math.abs(f.montant))}</button>`).join('')
     : `<p class="note" style="margin:0">Les libellés que tu saisis souvent apparaîtront ici en raccourci.${
         (etat.config.chipsMasquees || []).length ? ` (${etat.config.chipsMasquees.length} masqué${etat.config.chipsMasquees.length > 1 ? 's' : ''} — réaffichables dans Réglages.)` : ''}</p>`;
-  document.getElementById('ps-div-date').value = jourISO();
-  // la dépense est le cas de loin le plus fréquent : on y revient à chaque ouverture
-  document.querySelectorAll('[data-psnature]').forEach(b =>
-    b.classList.toggle('actif', b.dataset.psnature === 'depense'));
-  majFeuilleSaisie();
   document.getElementById('voile-saisie').classList.add('vu');
   setTimeout(() => document.getElementById('ps-label').focus(), 120);
 }
 function fermerSaisie(){ document.getElementById('voile-saisie').classList.remove('vu'); }
 function validerSaisie(){
   const label = document.getElementById('ps-label').value.trim();
-  if (natureSaisie() === 'dividende'){
-    const brut = (document.querySelector('[data-psdivtype].actif') || {dataset: {}}).dataset.psdivtype === 'brut';
-    const r = enregistrerDividende({
-      source: label,
-      date: document.getElementById('ps-div-date').value,
-      montant: evalMontant(document.getElementById('ps-montant').value),
-      brut, taux: Number(document.getElementById('ps-div-taux').value),
-    });
-    if (!r.ok) return toast('⚠️ ' + r.msg);
-    memoriserPourAnnuler('saisie du dividende');
-    sauver(); fermerSaisie(); rafraichirPage();
-    return toast(`💸 ${fmt(r.net)} net compté en ${libelleMois(r.cle)}${r.prelev > 0.004 ? ` (${fmt(r.prelev)} de prélèvements)` : ''}`, true);
-  }
   if (!label) return toast('Indique un intitulé');
   const brut = evalMontant(document.getElementById('ps-montant').value);
   if (isNaN(brut) || Math.abs(brut) < 0.005) return toast('Montant invalide');
@@ -6489,7 +6526,7 @@ function validerSaisie(){
   const signe = signeCategorie(cat);
   const montant = +((signe === '-' ? (brut > 0 ? -brut : brut) : (brut < 0 ? -brut : brut))).toFixed(2);
   const cle = cleAujourdhui();
-  while (!etat.months[cle]) creerMoisSuivant();
+  if (!assurerMois(cle)) return toast('Impossible de créer le mois en cours');
   const liste = etat.months[cle][cat];
   if (doublonProbable(liste, label, montant)
       && !confirm(`« ${label} » ${fmt(montant)} figure déjà dans cette liste.\n\nL'ajouter une seconde fois ?`)) return;
@@ -6509,20 +6546,6 @@ document.getElementById('ps-valider').onclick = validerSaisie;
 document.getElementById('voile-saisie').addEventListener('click', e => {
   if (e.target.id === 'voile-saisie') fermerSaisie();
 });
-document.getElementById('panneau-saisie').addEventListener('click', e => {
-  const n = e.target.closest('[data-psnature]');
-  if (n){
-    document.querySelectorAll('[data-psnature]').forEach(b => b.classList.toggle('actif', b === n));
-    majFeuilleSaisie();
-    return;
-  }
-  const d = e.target.closest('[data-psdivtype]');
-  if (d){
-    document.querySelectorAll('[data-psdivtype]').forEach(b => b.classList.toggle('actif', b === d));
-    majFeuilleSaisie();
-  }
-});
-document.getElementById('ps-div-date').addEventListener('change', majFeuilleSaisie);
 document.getElementById('ps-cat').addEventListener('change', e => {
   document.getElementById('ps-vac').style.display = e.target.value === 'vac' ? '' : 'none';
 });
@@ -6670,7 +6693,7 @@ function traiterAjoutURL(){
   const signe = signeCategorie(cat);
   const montant = +((signe === '-' ? (brut > 0 ? -brut : brut) : (brut < 0 ? -brut : brut))).toFixed(2);
   const cle = cleAujourdhui();
-  while (!etat.months[cle]) creerMoisSuivant();
+  if (!assurerMois(cle)) return toast('Impossible de créer le mois en cours');
   etat.months[cle][cat].push({label, montant});
   sauver();
   history.replaceState(null, '', location.pathname);   // évite un doublon si la page est rechargée
