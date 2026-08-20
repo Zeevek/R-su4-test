@@ -9,6 +9,11 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v9.7.1 — 20/08/2026
+- **Listes déroulantes nommées.** Le correctif précédent n'avait couvert que les champs de texte : les 48 recommandations restantes venaient des `<select>` générés (catégorie d'une position, règle de calcul et destination d'une poche, tri, comptes de transfert). Ils portent désormais un nom. Mon propre contrôle avait le même angle mort — il ne vérifiait que les `<input>` — et couvre maintenant listes et zones de texte.
+
+**Bilan de la console du navigateur** : de 6 erreurs et 111 recommandations à **zéro de chaque**.
+
 ## v9.7.0 — 20/08/2026 — *corrections issues de la console du navigateur*
 
 ### Le mode hors ligne ne fonctionnait pas

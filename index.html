@@ -1452,8 +1452,10 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '9.7.0';
+const APP_VERSION = '9.7.1';
 const CHANGELOG = [
+  {v: '9.7.1', d: '20/08/2026', pts: [
+    "Les listes déroulantes générées (catégorie d'une position, règle et destination d'une poche, tri, comptes de transfert) portent maintenant un nom : plus aucune recommandation d'accessibilité dans la console du navigateur."]},
   {v: '9.7.0', d: '20/08/2026', pts: [
     "Correctif important : la mise en cache hors ligne échouait entièrement si un seul fichier manquait sur le serveur. Elle se fait désormais fichier par fichier, et le statut signale un cache incomplet au lieu d'annoncer « prêt ».",
     "Les intitulés des listes étaient de faux champs de saisie en lecture seule : ils deviennent du texte, ce qui supprime 63 avertissements du navigateur et allège la page.",
@@ -4076,7 +4078,7 @@ function rendreLivrets(){
         <div class="transfert">
           <div class="tr-bloc sortant">
             <span class="tr-eti">➖ L'argent part de</span>
-            <select id="tr-de" aria-label="Compte source">${opts()}</select>
+            <select id="tr-de" name="transfert-source" aria-label="Compte source">${opts()}</select>
           </div>
           <div class="tr-milieu">
             <span class="tr-fleche">↓</span>
@@ -4084,7 +4086,7 @@ function rendreLivrets(){
           </div>
           <div class="tr-bloc entrant">
             <span class="tr-eti">➕ et arrive sur</span>
-            <select id="tr-vers" aria-label="Compte destinataire">${opts(secondId)}</select>
+            <select id="tr-vers" name="transfert-destination" aria-label="Compte destinataire">${opts(secondId)}</select>
           </div>
         </div>
         <div class="saisie-rapide" style="margin-top:10px">
@@ -4303,7 +4305,7 @@ function tablePositions(titre, chemin, calc, totalCompte){
     const etatPrix = statutPrix(p, etat.config.derniereMajCours);
     return `<div class="pos-carte">
       <div class="pos-tete">
-        <select class="sel-cat ${PASTILLES[cat]}" data-pch="${chemin}" data-i="${p.idx}" data-f="type">
+        <select class="sel-cat ${PASTILLES[cat]}" name="categorie" data-pch="${chemin}" data-i="${p.idx}" data-f="type">
           ${CATEGORIES.map(([nom]) => `<option value="${nom}" ${cat === nom ? 'selected' : ''}>${nom}</option>`).join('')}
         </select>
         <input class="pos-nom" value="${echap(p.label)}" data-pch="${chemin}" data-i="${p.idx}" data-f="label" placeholder="Intitulé" name="label">
@@ -4327,7 +4329,7 @@ function tablePositions(titre, chemin, calc, totalCompte){
     <div class="corps">
       <div class="barre-tri">
         <label for="tri-${chemin}">Trier par</label>
-        <select id="tri-${chemin}" data-tri="${chemin}">
+        <select id="tri-${chemin}" name="tri" data-tri="${chemin}">
           ${TRIS.map(([v, l]) => `<option value="${v}" ${tri === v ? 'selected' : ''}>${l}</option>`).join('')}
         </select>
         <span class="cpt">${calc.lignes.length} position${calc.lignes.length > 1 ? 's' : ''}</span>
@@ -4705,14 +4707,14 @@ function rendreReglages(){
         <label class="ch"><span>Nom de la poche</span>
           <input value="${echap(p.nom)}" data-poche="${i}" data-pf="nom" placeholder="ex. Livret A" name="nom"></label>
         <label class="ch"><span>Règle de calcul</span>
-          <select data-poche="${i}" data-pf="mode">${MODES.map(([v, l]) =>
+          <select name="regle" data-poche="${i}" data-pf="mode">${MODES.map(([v, l]) =>
             `<option value="${v}" ${p.mode === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
         <label class="ch"><span>${p.mode === 'pct' ? 'Part du non attribué' : p.mode === 'fixe' ? 'Montant fixe' : 'Valeur (non requise)'}</span>
           <span class="unite"><input value="${fige ? '' : (p.valeur ?? '')}" data-poche="${i}" data-pf="valeur"
             inputmode="decimal" placeholder="${fige ? '—' : '0'}" ${fige ? 'disabled' : ''} name="valeur">
             ${unite ? `<span class="u">${unite}</span>` : ''}</span></label>
         <label class="ch"><span>Destination de l'argent</span>
-          <select data-poche="${i}" data-pf="cible">${CIBLES.map(([v, l]) =>
+          <select name="destination" data-poche="${i}" data-pf="cible">${CIBLES.map(([v, l]) =>
             `<option value="${v}" ${p.cible === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
       </div>
     </div>`;
