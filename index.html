@@ -131,7 +131,10 @@ main{max-width:760px;margin:0 auto;padding:14px 12px 24px}
 .ligne{display:flex;align-items:center;gap:var(--esp-2);padding:9px 0;border-bottom:1px solid var(--trait)}
 .ligne:last-child{border-bottom:none}
 .ligne:last-child{border-bottom:none}
-.ligne input.lab{flex:1;min-width:0;border:none;background:transparent;padding:4px 2px;font-size:14px}
+.ligne input.lab, .ligne span.lab{flex:1;min-width:0;border:none;background:transparent;
+  padding:4px 2px;font-size:14px;color:var(--encre)}
+/* un intitulé n'est pas un champ : il s'affiche en texte, aligné comme les autres */
+.ligne span.lab{display:flex;align-items:center;min-height:34px;line-height:1.35}
 .ligne input.mnt{width:88px;border:none;background:transparent;text-align:right;padding:4px 2px;font-size:14px;font-weight:600}
 .ligne input:focus{background:var(--carte2);border-color:var(--violet);box-shadow:0 0 0 3px var(--violet-sourd)}
 .ligne .pointe{width:26px;height:26px;min-height:26px;border-radius:50%;background:none;
@@ -178,7 +181,10 @@ td.px-manuel input{color:var(--vert)}
 td.px-fige{background:#F4F5F8}
 td.px-fige input{color:#4A5570;font-style:italic}
 .barre-tri{display:flex;align-items:center;gap:7px;padding:2px 0 8px;font-size:11px;color:var(--encre2)}
-.barre-tri label{letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.barre-tri label, .eti-groupe{letter-spacing:.08em;text-transform:uppercase;font-weight:700;font-size:11px;color:var(--encre2)}
+.ind-aide{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;
+  border-radius:50%;border:1px solid var(--violet);color:var(--violet);font-size:9.5px;font-weight:800;
+  vertical-align:1px;margin-left:5px}
 .barre-tri select{border:1px solid var(--trait);border-radius:8px;padding:6px 8px;background:var(--carte);font-size:12px;font-weight:600;flex:1;min-width:0}
 .barre-tri .cpt{margin-left:auto;white-space:nowrap}
 .sel-cat{border:none;border-radius:99px;padding:3px 8px;font-size:10px;font-weight:700;letter-spacing:.04em;
@@ -369,7 +375,7 @@ select{-webkit-appearance:none;appearance:none;cursor:pointer;padding-right:32px
 input[type="date"]{min-height:44px}
 input[type="checkbox"]{accent-color:var(--violet)}
 /* les champs de ligne (listes) restent discrets : ce sont des cellules, pas des formulaires */
-.ligne input.lab, .ligne input.mnt, td input{background:transparent;border-color:transparent;
+.ligne input.lab, .ligne .lab, .ligne input.mnt, td input{background:transparent;border-color:transparent;
   border-radius:var(--r-s);padding:7px var(--esp-2)}
 .ligne input.lab:focus, .ligne input.mnt:focus, td input:focus{background:var(--carte2);border-color:var(--violet)}
 
@@ -947,11 +953,11 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
     <div class="carte">
       <div class="tete"><h3>⚙️ Paramètres</h3></div>
       <div class="corps">
-        <div class="ligne"><input class="lab" value="Enveloppe quotidienne (€/jour)" readonly>
+        <div class="ligne"><span class="lab">Enveloppe quotidienne (€/jour)</span>
           <input class="mnt" id="cfg-jour" aria-label="Enveloppe quotidienne en euros" inputmode="decimal"></div>
-        <div class="ligne"><input class="lab" value="Enveloppe fixe (€/mois — vide = €/jour)" readonly>
+        <div class="ligne"><span class="lab">Enveloppe fixe (€/mois — vide = €/jour)</span>
           <input class="mnt" id="cfg-fixe" inputmode="decimal" placeholder="—"></div>
-        <div class="ligne"><input class="lab" value="Reste initial (avant 1er mois)" readonly>
+        <div class="ligne"><span class="lab">Reste initial (avant 1er mois)</span>
           <input class="mnt" id="cfg-reste" aria-label="Reste disponible avant le premier mois suivi" inputmode="decimal"></div>
         <button class="ajout" id="btn-chips-reset">♻️ Réafficher les puces de suggestion masquées</button>
         <p class="note">Un changement d'enveloppe ne prend effet qu'<b>à partir du mois suivant</b> : le mois en cours et les mois écoulés conservent leurs valeurs, ce qui permet d'anticiper sans fausser le mois entamé.</p>
@@ -990,7 +996,7 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
           <select id="cpt-modele" class="sl" style="border:1px solid var(--trait);border-radius:9px;padding:9px;background:var(--carte)"></select>
           <button class="btn or" id="cpt-ajouter">＋</button>
         </div>
-        <div class="ligne" style="margin-top:8px"><input class="lab" value="Si un plafond est atteint, verser sur" readonly>
+        <div class="ligne" style="margin-top:8px"><span class="lab">Si un plafond est atteint, verser sur</span>
           <select id="cfg-debordement" style="border:1px solid var(--trait);border-radius:8px;padding:8px;background:var(--carte);font-weight:600"></select></div>
         <p class="note">Laisse le plafond vide pour un compte sans limite.
         Ajoute les comptes que tu possèdes (Livret A, LDDS, LEP, Livret Jeune, PEL, CEL, compte à terme…).
@@ -1019,19 +1025,19 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
     <div class="carte">
       <div class="tete"><h3>🎨 Apparence</h3></div>
       <div class="corps">
-        <div class="ligne"><input class="lab" value="Thème" readonly>
+        <div class="ligne"><span class="lab">Thème</span>
           <select id="cfg-theme" style="border:1px solid var(--trait);border-radius:8px;padding:8px;background:var(--carte);font-weight:600">
             <option value="auto">🌗 Automatique (réglage du téléphone)</option>
             <option value="sombre">🌙 Sombre</option>
             <option value="clair">☀️ Clair</option>
           </select></div>
-        <div class="ligne"><input class="lab" value="Densité d'affichage" readonly>
+        <div class="ligne"><span class="lab">Densité d'affichage</span>
           <select id="cfg-densite" style="border:1px solid var(--trait);border-radius:8px;padding:8px;background:var(--carte);font-weight:600">
             <option value="compact">Compact (plus de lignes à l'écran)</option>
             <option value="normal">Normal</option>
             <option value="confort">Confort (texte et boutons agrandis)</option>
           </select></div>
-        <div class="ligne"><input class="lab" value="Devise" readonly>
+        <div class="ligne"><span class="lab">Devise</span>
           <select id="cfg-devise" style="border:1px solid var(--trait);border-radius:8px;padding:8px;background:var(--carte);font-weight:600"></select></div>
         <p class="note">« Automatique » suit le mode clair/sombre du téléphone. Le compte rendu PDF reste toujours clair.
         Changer de devise ne convertit pas les montants : cela change le symbole et le format d'affichage.</p>
@@ -1093,11 +1099,11 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
     <div class="carte">
       <div class="tete"><h3>🤖 Analyse par une IA</h3><button class="info-btn" data-infocle="dossierIA" aria-label="Informations">i</button></div>
       <div class="corps">
-        <div class="ligne"><input class="lab" value="Angle d'étude" readonly>
+        <div class="ligne"><span class="lab">Angle d'étude</span>
           <select id="ia-etude" style="border:1px solid var(--trait);border-radius:8px;padding:8px;background:var(--carte);font-weight:600"></select></div>
-        <div class="ligne"><input class="lab" value="Mois d'historique à inclure" readonly>
+        <div class="ligne"><span class="lab">Mois d'historique à inclure</span>
           <input class="mnt" id="ia-mois" aria-label="Nombre de mois inclus dans le dossier" inputmode="numeric" value="6"></div>
-        <div class="ligne"><input class="lab" value="Anonymiser (totaux seuls, sans libellés)" readonly>
+        <div class="ligne"><span class="lab">Anonymiser (totaux seuls, sans libellés)</span>
           <input type="checkbox" id="ia-anonyme" aria-label="Anonymiser les montants" style="width:22px;height:22px;accent-color:var(--laiton)"></div>
         <button class="btn or ligne2" id="btn-ia-fichier">📄 Générer le dossier (.md)</button>
         <button class="btn ligne2 discret" id="btn-ia-copier">📋 Copier dans le presse-papier</button>
@@ -1113,7 +1119,8 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
         Sur iPhone : app <b>Raccourcis</b> → ＋ → <i>Demander une entrée</i> (texte : l'intitulé), puis une seconde
         <i>Demander une entrée</i> (nombre : le montant), puis <i>Ouvrir l'URL</i> avec l'adresse ci-dessous où tu insères
         les deux réponses. Ajoute-le à l'écran d'accueil ou demande-le à Siri.</p>
-        <div class="ligne"><input class="lab" id="raccourci-url" readonly value=""></div>
+        <div class="ligne"><input class="lab" name="adresse-raccourci" id="raccourci-url" readonly
+          aria-label="Adresse du raccourci" style="font-size:12px;color:var(--encre2)"></div>
         <button class="btn ligne2 discret" id="btn-raccourci-copier">📋 Copier le modèle d'adresse</button>
         <p class="note">Catégories acceptées via <code>&cat=</code> : depensesLibres (par défaut), transport, chargesFixes,
         aboLoisirs, entrees, remboursements, vacAlim…</p>
@@ -1445,8 +1452,12 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '9.6.2';
+const APP_VERSION = '9.7.0';
 const CHANGELOG = [
+  {v: '9.7.0', d: '20/08/2026', pts: [
+    "Correctif important : la mise en cache hors ligne échouait entièrement si un seul fichier manquait sur le serveur. Elle se fait désormais fichier par fichier, et le statut signale un cache incomplet au lieu d'annoncer « prêt ».",
+    "Les intitulés des listes étaient de faux champs de saisie en lecture seule : ils deviennent du texte, ce qui supprime 63 avertissements du navigateur et allège la page.",
+    "Tous les champs portent un nom, aucun élément interactif ne subsiste dans un titre dépliant, et plus aucune étiquette n'est orpheline."]},
   {v: '9.6.2', d: '19/08/2026', pts: [
     "Les étiquettes s'affichent désormais dans le diagramme lui-même, en bout de flux : chaque catégorie se prolonge vers les sujets qu'elle finance (#loyer, #energie, #voiture…), comme les investissements se décomposent par compte.",
     "Une étiquette présente dans plusieurs catégories apparaît sous chacune, avec la part qui en provient."]},
@@ -3148,16 +3159,16 @@ function carteRetraite(){
     <div class="corps">
       <div class="champs">
         <label class="ch"><span>Dépenses annuelles</span>
-          <span class="unite"><input value="${r.depenses ?? Math.round(s.depenses)}" data-retraite="depenses" inputmode="text"><span class="u">${devise().sym}</span></span></label>
+          <span class="unite"><input value="${r.depenses ?? Math.round(s.depenses)}" data-retraite="depenses" inputmode="text" name="retraite"><span class="u">${devise().sym}</span></span></label>
         <label class="ch"><span>Taux de retrait</span>
-          <span class="unite"><input value="${r.retrait ?? 4}" data-retraite="retrait" inputmode="decimal"><span class="u">%</span></span></label>
+          <span class="unite"><input value="${r.retrait ?? 4}" data-retraite="retrait" inputmode="decimal" name="retraite"><span class="u">%</span></span></label>
         <label class="ch"><span>Inflation</span>
-          <span class="unite"><input value="${r.inflation ?? 2}" data-retraite="inflation" inputmode="decimal"><span class="u">%</span></span></label>
+          <span class="unite"><input value="${r.inflation ?? 2}" data-retraite="inflation" inputmode="decimal" name="retraite"><span class="u">%</span></span></label>
       </div>
       <div class="jauge" style="margin:10px 0 4px"><div class="jauge-barre ${s.couverture >= 100 ? 'pleine' : ''}" style="width:${s.couverture.toFixed(1)}%"></div></div>
-      <div class="ligne"><input class="lab" value="Capital nécessaire" readonly><span class="mnt"><b>${fmt(s.cible)}</b></span></div>
-      <div class="ligne"><input class="lab" value="Patrimoine net actuel" readonly><span class="mnt ${cls(s.capitalActuel)}">${fmt(s.capitalActuel)}</span></div>
-      <div class="ligne"><input class="lab" value="Effort d'épargne pris en compte" readonly><span class="mnt">${fmt(s.apports)} / mois</span></div>
+      <div class="ligne"><span class="lab">Capital nécessaire</span><span class="mnt"><b>${fmt(s.cible)}</b></span></div>
+      <div class="ligne"><span class="lab">Patrimoine net actuel</span><span class="mnt ${cls(s.capitalActuel)}">${fmt(s.capitalActuel)}</span></div>
+      <div class="ligne"><span class="lab">Effort d'épargne pris en compte</span><span class="mnt">${fmt(s.apports)} / mois</span></div>
       <p class="note">${s.couverture >= 100
         ? `🎉 Le capital nécessaire est atteint : ${fmt(s.depenses)} par an représentent ${s.retrait} % de ton patrimoine net.`
         : s.atteint
@@ -3276,12 +3287,12 @@ function blocBenchmark(){
     (${(etat.historique || []).length} relevé${(etat.historique || []).length > 1 ? 's' : ''}), sans attendre les mois à venir.
     Connexion requise. Ensuite, chaque « ✅ Enregistrer » mensuel relèvera l'indice automatiquement.</p>`;
   return `<div class="separateur"></div><div class="champs">${sel}</div>
-    <div class="ligne"><input class="lab" value="Ton portefeuille (TWR)" readonly>
+    <div class="ligne"><span class="lab">Ton portefeuille (TWR)</span>
       <span class="mnt ${cls(b.twr)}">${b.twr != null ? (b.twr * 100).toFixed(1) + ' %/an' : '—'}</span></div>
-    <div class="ligne"><input class="lab" value="${echap(b.nom)}" readonly>
+    <div class="ligne"><span class="lab">${echap(b.nom)}</span>
       <span class="mnt ${cls(b.indiceAnnualise)}">${(b.indiceAnnualise * 100).toFixed(1)} %/an</span></div>
     <button class="btn ligne2 discret" id="btn-indice-hist" style="margin-top:6px">🔄 Actualiser l'historique de l'indice</button>
-    ${b.ecart != null ? `<div class="ligne"><input class="lab" value="Écart" readonly>
+    ${b.ecart != null ? `<div class="ligne"><span class="lab">Écart</span>
       <span class="mnt ${cls(b.ecart)}"><b>${b.ecart >= 0 ? '+' : ''}${(b.ecart * 100).toFixed(1)} pt</b></span></div>` : ''}
     <p class="note">Comparaison sur ${b.mois} mois (${b.debut} → ${b.fin}), à partir des relevés de la carte
     « 📝 Enregistrer le mois dans l'historique » ci-dessus.
@@ -3375,7 +3386,7 @@ function carteProjection(){
     <div class="tete"><h3>🔮 Projection du patrimoine</h3>${infoBtn('projection')}<div class="tot">${fmt(V0)} aujourd'hui</div></div>
     <div class="corps">
       <div class="barre-tri">
-        <label>Horizon</label>
+        <span class="eti-groupe">Horizon</span>
         ${[5, 10, 20, 30].map(a => `<button class="btn ${a === annees ? 'or' : 'discret'}" data-horizon="${a}"
           style="padding:6px 12px;font-size:12px">${a} ans</button>`).join('')}
       </div>
@@ -3658,8 +3669,8 @@ document.addEventListener('click', e => {
 let moisActif = null;
 function ligneEditable(chemin, item, i){
   return `<div class="ligne">
-    <input class="lab" value="${echap(item.label)}" data-ch="${chemin}" data-i="${i}" data-f="label" placeholder="Intitulé">
-    <input class="mnt ${cls(item.montant)}" value="${item.montant ?? ''}" data-ch="${chemin}" data-i="${i}" data-f="montant" inputmode="text" placeholder="0">
+    <input class="lab" value="${echap(item.label)}" data-ch="${chemin}" data-i="${i}" data-f="label" placeholder="Intitulé" name="label">
+    <input class="mnt ${cls(item.montant)}" value="${item.montant ?? ''}" data-ch="${chemin}" data-i="${i}" data-f="montant" inputmode="text" placeholder="0" name="montant">
     <button class="pointe ${item.pointe ? 'ok' : ''}" data-pointe="${chemin}" data-i="${i}"
       aria-label="${item.pointe ? 'Vérifié sur le relevé' : 'Marquer comme vérifié'}" title="Pointer sur le relevé bancaire">${item.pointe ? '✓' : '○'}</button>
     <button class="sup" data-supch="${chemin}" data-i="${i}" aria-label="Supprimer">✕</button>
@@ -3681,8 +3692,8 @@ function carteListe(titre, chemin, liste, opts = {}){
    intitulé + montant + ＋, touche Entrée, signe automatique. */
 function composeur(chemin, signe, exemple){
   return `<div class="saisie-rapide" data-comp="${chemin}" data-signe="${signe}">
-    <input class="sl" data-cl placeholder="＋ ${exemple || 'Intitulé'}" autocomplete="off">
-    <input class="sm" data-cm inputmode="text" placeholder="€" autocomplete="off">
+    <input class="sl" name="libelle" data-cl placeholder="＋ ${exemple || 'Intitulé'}" autocomplete="off">
+    <input class="sm" name="montant" data-cm inputmode="text" placeholder="€" autocomplete="off">
     <button class="btn or" data-cgo aria-label="Ajouter">＋</button>
   </div>`;
 }
@@ -3724,12 +3735,12 @@ function ajouterViaComposeur(zone){
   }, 30);
 }
 function formEtaler(cat){
-  return `<details class="etaler"><summary>🧮 Étaler un paiement ${infoBtn('etaler')}</summary>
+  return `<details class="etaler"><summary>🧮 Étaler un paiement <span class="ind-aide" title="Répartir un achat sur plusieurs mois">?</span></summary>
     <div class="corps-eta" data-eta="${cat}">
-      <input class="eta-lab" placeholder="Intitulé (ex. Canapé, Assurance annuelle)" autocomplete="off">
+      <input class="eta-lab" name="libelle" placeholder="Intitulé (ex. Canapé, Assurance annuelle)" autocomplete="off">
       <div class="l1">
-        <input class="eta-total" inputmode="text" placeholder="Total €">
-        <input class="eta-n" inputmode="numeric" placeholder="Mois">
+        <input class="eta-total" name="total" inputmode="text" placeholder="Total €">
+        <input class="eta-n" name="nb-mois" inputmode="numeric" placeholder="Mois">
         <button class="btn or eta-go" style="flex:1;justify-content:center">Étaler</button>
       </div>
     </div></details>`;
@@ -3807,14 +3818,14 @@ function rendreAccueil(){
     ? '<p class="note">Aucun mois enregistré pour l\u2019instant.</p>'
     : `${annees.length > 1 ? `<div class="chips" style="margin-bottom:8px">${annees.map(a =>
         `<button class="chip ${a === anSel ? 'choisi' : ''}" data-annee="${a}">${a}</button>`).join('')}</div>` : ''}
-      <div class="ligne"><input class="lab" value="💵 Entrées" readonly><span class="mnt pos">${fmt(ba.entrees)}${comparer(ba.entrees, baPrec && baPrec.entrees)}</span></div>
-      <div class="ligne"><input class="lab" value="🏠 Charges fixes" readonly><span class="mnt neg">${fmt(-ba.charges)}</span></div>
-      <div class="ligne"><input class="lab" value="📱 Abonnements" readonly><span class="mnt neg">${fmt(-ba.abos)}</span></div>
-      <div class="ligne"><input class="lab" value="🛒 Vie courante et transport" readonly><span class="mnt neg">${fmt(-ba.viePratique)}</span></div>
-      ${ba.vacances > 0.004 ? `<div class="ligne"><input class="lab" value="🏖️ Vacances" readonly><span class="mnt neg">${fmt(-ba.vacances)}</span></div>` : ''}
+      <div class="ligne"><span class="lab">💵 Entrées</span><span class="mnt pos">${fmt(ba.entrees)}${comparer(ba.entrees, baPrec && baPrec.entrees)}</span></div>
+      <div class="ligne"><span class="lab">🏠 Charges fixes</span><span class="mnt neg">${fmt(-ba.charges)}</span></div>
+      <div class="ligne"><span class="lab">📱 Abonnements</span><span class="mnt neg">${fmt(-ba.abos)}</span></div>
+      <div class="ligne"><span class="lab">🛒 Vie courante et transport</span><span class="mnt neg">${fmt(-ba.viePratique)}</span></div>
+      ${ba.vacances > 0.004 ? `<div class="ligne"><span class="lab">🏖️ Vacances</span><span class="mnt neg">${fmt(-ba.vacances)}</span></div>` : ''}
       <div class="separateur"></div>
-      <div class="ligne"><input class="lab" value="📈 Investi" readonly><span class="mnt pos">${fmt(ba.investi)}</span></div>
-      <div class="ligne"><input class="lab" value="💰 Épargné au total" readonly><span class="mnt ${cls(ba.epargne)}"><b>${fmt(ba.epargne)}</b>${comparer(ba.epargne, baPrec && baPrec.epargne)}</span></div>
+      <div class="ligne"><span class="lab">📈 Investi</span><span class="mnt pos">${fmt(ba.investi)}</span></div>
+      <div class="ligne"><span class="lab">💰 Épargné au total</span><span class="mnt ${cls(ba.epargne)}"><b>${fmt(ba.epargne)}</b>${comparer(ba.epargne, baPrec && baPrec.epargne)}</span></div>
       <div class="jauge" style="margin:6px 0 3px"><div class="jauge-barre" style="width:${Math.min(100, Math.max(0, ba.tauxEpargne * 100)).toFixed(1)}%"></div></div>
       <p class="note">Taux d'épargne : <b>${(ba.tauxEpargne * 100).toFixed(1)} %</b> des entrées.
       Moyenne mensuelle : ${fmt(ba.moyEntrees)} d'entrées, ${fmt(ba.moyDepenses)} de dépenses.</p>`;
@@ -3859,26 +3870,26 @@ function rendreAccueil(){
   const dettes = totalPassifs();
   document.getElementById('patri-total').textContent = fmt(brut - dettes);
   document.getElementById('patri-detail').innerHTML = `
-    <div class="ligne"><input class="lab" value="💰 Livrets (A + LDDS)" readonly><span class="mnt" style="width:auto">${fmt(liv.total)}</span></div>
-    <div class="ligne"><input class="lab" value="📈 Investissements (TR + PEA + PERin)" readonly><span class="mnt" style="width:auto">${fmt(inv.total)}</span></div>
-    <div class="ligne"><input class="lab" value="💵 Disponible à l'investissement (TR)" readonly><span class="mnt ${cls(avc.dispo)}" style="width:auto">${fmt(avc.dispo)}</span></div>
-    ${avc.dispoPEA > 0.004 ? `<div class="ligne"><input class="lab" value="📈 Cash dédié PEA" readonly><span class="mnt pos" style="width:auto">${fmt(avc.dispoPEA)}</span></div>` : ''}
-    ${avc.dispoPER > 0.004 ? `<div class="ligne"><input class="lab" value="🛡️ Cash dédié PER" readonly><span class="mnt pos" style="width:auto">${fmt(avc.dispoPER)}</span></div>` : ''}
+    <div class="ligne"><span class="lab">💰 Livrets (A + LDDS)</span><span class="mnt" style="width:auto">${fmt(liv.total)}</span></div>
+    <div class="ligne"><span class="lab">📈 Investissements (TR + PEA + PERin)</span><span class="mnt" style="width:auto">${fmt(inv.total)}</span></div>
+    <div class="ligne"><span class="lab">💵 Disponible à l'investissement (TR)</span><span class="mnt ${cls(avc.dispo)}" style="width:auto">${fmt(avc.dispo)}</span></div>
+    ${avc.dispoPEA > 0.004 ? `<div class="ligne"><span class="lab">📈 Cash dédié PEA</span><span class="mnt pos" style="width:auto">${fmt(avc.dispoPEA)}</span></div>` : ''}
+    ${avc.dispoPER > 0.004 ? `<div class="ligne"><span class="lab">🛡️ Cash dédié PER</span><span class="mnt pos" style="width:auto">${fmt(avc.dispoPER)}</span></div>` : ''}
     ${(etat.passifs || []).length ? `<div class="separateur"></div>
       ${etat.passifs.map(p => { const s = situationPassif(p);
-        return `<div class="ligne"><input class="lab" value="${echap(p.nom)} — capital restant" readonly>
+        return `<div class="ligne"><span class="lab">${echap(p.nom)} — capital restant</span>
           <span class="mnt neg" style="width:auto">${fmt(-s.reste)}</span></div>`; }).join('')}
-      <div class="ligne"><input class="lab" value="🧾 Patrimoine brut" readonly><span class="mnt" style="width:auto">${fmt(brut)}</span></div>
-      <div class="ligne"><input class="lab" value="🧮 Patrimoine net (après dettes)" readonly><span class="mnt ${cls(brut - dettes)}" style="width:auto"><b>${fmt(brut - dettes)}</b></span></div>
+      <div class="ligne"><span class="lab">🧾 Patrimoine brut</span><span class="mnt" style="width:auto">${fmt(brut)}</span></div>
+      <div class="ligne"><span class="lab">🧮 Patrimoine net (après dettes)</span><span class="mnt ${cls(brut - dettes)}" style="width:auto"><b>${fmt(brut - dettes)}</b></span></div>
       <p class="note">Mensualités d'emprunt en cours : ${fmt(mensualitesPassifs())}/mois.</p>` : ''}
     ${dettes > 0.004 ? `<div class="separateur"></div>
-      <div class="ligne"><input class="lab" value="📊 Patrimoine brut" readonly><span class="mnt" style="width:auto">${fmt(brut)}</span></div>
+      <div class="ligne"><span class="lab">📊 Patrimoine brut</span><span class="mnt" style="width:auto">${fmt(brut)}</span></div>
       ${(etat.passifs || []).map(p => { const s = situationPassif(p);
-        return s.reste > 0.004 ? `<div class="ligne"><input class="lab" value="🏦 ${echap(p.nom)} (capital restant)" readonly>
+        return s.reste > 0.004 ? `<div class="ligne"><span class="lab">🏦 ${echap(p.nom)} (capital restant)</span>
           <span class="mnt neg" style="width:auto">−${fmt(s.reste).replace('-', '')}</span></div>` : ''; }).join('')}
-      <div class="ligne"><input class="lab" value="= 🧭 Patrimoine net" readonly><span class="mnt ${cls(brut - dettes)}" style="width:auto"><b>${fmt(brut - dettes)}</b></span></div>
+      <div class="ligne"><span class="lab">= 🧭 Patrimoine net</span><span class="mnt ${cls(brut - dettes)}" style="width:auto"><b>${fmt(brut - dettes)}</b></span></div>
       <p class="note">Mensualités d'emprunt en cours : ${fmt(mensualitesPassifs())}/mois.</p>` : ''}
-    <div class="ligne"><input class="lab" value="📊 Perf. latente globale" readonly><span class="mnt ${cls(inv.perfTotale)}" style="width:auto">${fmtS(inv.perfTotale)}</span></div>`;
+    <div class="ligne"><span class="lab">📊 Perf. latente globale</span><span class="mnt ${cls(inv.perfTotale)}" style="width:auto">${fmtS(inv.perfTotale)}</span></div>`;
 }
 
 function rendreMois(){
@@ -3914,9 +3925,9 @@ function rendreMois(){
       <div class="corps flux-defile">${fluxSVG(moisActif)}</div></div>
     <div class="carte" data-fam="epargne"><div class="tete"><h3>💰 Répartition épargne</h3>${infoBtn('repartition')}<div class="tot">${fmt(c.nonAttribue)}</div></div>
       <div class="corps">
-        <div class="ligne"><input class="lab" value="Somme pour le mois ${etiquetteEnv}" readonly>${infoBtn('enveloppe')}<span class="mnt">${fmt(c.sommeMois)}</span></div>
-        <div class="ligne"><input class="lab" value="Reste du mois précédent (auto)" readonly><span class="mnt">${fmt(c.resteM1Entree)}</span></div>
-        ${c.repartition.map(p => `<div class="ligne"><input class="lab" value="${echap(p.nom)}${p.mode ? ' (' + MODES_TXT[p.mode] + ')' : ''}" readonly><span class="mnt ${cls(p.montant)}">${fmt(p.montant)}</span></div>`).join('')}
+        <div class="ligne"><span class="lab">Somme pour le mois ${etiquetteEnv}</span>${infoBtn('enveloppe')}<span class="mnt">${fmt(c.sommeMois)}</span></div>
+        <div class="ligne"><span class="lab">Reste du mois précédent (auto)</span><span class="mnt">${fmt(c.resteM1Entree)}</span></div>
+        ${c.repartition.map(p => `<div class="ligne"><span class="lab">${echap(p.nom)}${p.mode ? ' (' + MODES_TXT[p.mode] + ')' : ''}</span><span class="mnt ${cls(p.montant)}">${fmt(p.montant)}</span></div>`).join('')}
         ${m.repartitionFigee ? '<p class="note">🔒 Répartition figée pour ce mois (protégée lors d\u2019un changement de poches).</p>'
           : m.repartitionOverride ? '<p class="note">⚠️ Répartition figée manuellement pour ce mois (valeurs du classeur d\u2019origine).</p>'
           : '<p class="note">Poches modifiables dans Réglages → 🪙 Poches de répartition.</p>'}
@@ -3926,11 +3937,11 @@ function rendreMois(){
     ${carteListe('📱 Abo. obligatoires', P + 'aboObligatoires', m.aboObligatoires, {info: 'recurrents', etaler: true, fam: 'abo'})}
     <div class="carte"><div class="tete"><h3>📈 Investissements</h3><div class="tot neg">${fmt(c.totInv)}</div></div>
       <div class="corps">
-        <div class="ligne"><input class="lab" value="🏦 Trade Republic (détail ci-dessous)" readonly><span class="mnt neg">${fmt(detTR)}</span></div>
-        <div class="ligne"><input class="lab" value="📈 PEA" readonly>
-          <input class="mnt neg" value="${m.invPEA}" data-direct="invPEA" inputmode="text"></div>
-        <div class="ligne"><input class="lab" value="🛡️ PER" readonly>
-          <input class="mnt neg" value="${m.invPER}" data-direct="invPER" inputmode="text"></div>
+        <div class="ligne"><span class="lab">🏦 Trade Republic (détail ci-dessous)</span><span class="mnt neg">${fmt(detTR)}</span></div>
+        <div class="ligne"><span class="lab">📈 PEA</span>
+          <input class="mnt neg" name="invest-pea" value="${m.invPEA}" data-direct="invPEA" inputmode="text"></div>
+        <div class="ligne"><span class="lab">🛡️ PER</span>
+          <input class="mnt neg" name="invest-per" value="${m.invPER}" data-direct="invPER" inputmode="text"></div>
       </div></div>
     ${carteListe('🎮 Abo. loisirs', P + 'aboLoisirs', m.aboLoisirs, {info: 'recurrents', etaler: true, fam: 'abo'})}
     ${carteListe('💳 Paiements échelonnés', P + 'echelonnes', m.echelonnes, {etaler: true, fam: 'fixe'})}
@@ -3977,7 +3988,7 @@ function rendreMois(){
         <div class="tot" style="font-size:12px;color:var(--encre2)">${b.filter(x => x.depasse).length} dépassé(s)</div></div>
         <div class="corps">${b.map(x => `
           <div class="ligne" style="border:none;padding-bottom:2px">
-            <input class="lab" value="${echap(x.nom)}" readonly>
+            <span class="lab">${echap(x.nom)}</span>
             <span class="mnt ${x.depasse ? 'neg' : (x.risque ? '' : 'pos')}">${fmt(x.depense)} / ${fmt(x.plafond)}</span>
           </div>
           <div class="jauge" style="margin-bottom:3px"><div class="jauge-barre ${x.depasse ? 'depasse' : ''}"
@@ -3993,7 +4004,7 @@ function rendreMois(){
         ['Charges fixes', c.tCharges], ['Abo. obligatoires', c.tAboO], ['Abo. loisirs', c.tLoisirs],
         ['Investissements', c.totInv], ['Paiements échelonnés', c.tEch], ['Transport', c.tTrans],
         ['Dépenses libres', c.tLibres], ['Remboursements', c.tRemb], ['Vacances', c.tVac],
-      ].map(([l, v]) => `<div class="ligne"><input class="lab" value="${l}" readonly><span class="mnt ${cls(v)}">${fmt(v)}</span></div>`).join('')}
+      ].map(([l, v]) => `<div class="ligne"><span class="lab">${l}</span><span class="mnt ${cls(v)}">${fmt(v)}</span></div>`).join('')}
       </div></div>`;
 }
 
@@ -4028,9 +4039,9 @@ function rendreLivrets(){
             ${Number(c.taux) > 0 ? `<div class="cpt-taux">${c.taux} %/an · environ ${fmt(c.solde * Number(c.taux) / 100)} d'intérêts par an</div>` : ''}
           </div>
         </div>
-        <div class="ligne"><input class="lab" value="Solde de départ" readonly>
-          <input class="mnt" value="${c.initial}" data-cinit="${echap(c.id)}" inputmode="text"></div>
-        <div class="ligne"><input class="lab" value="Versé par la répartition (auto)" readonly><span class="mnt pos">${fmt(c.cumul)}</span></div>
+        <div class="ligne"><span class="lab">Solde de départ</span>
+          <input class="mnt" name="solde-initial" value="${c.initial}" data-cinit="${echap(c.id)}" inputmode="text"></div>
+        <div class="ligne"><span class="lab">Versé par la répartition (auto)</span><span class="mnt pos">${fmt(c.cumul)}</span></div>
         ${composeur('comptes.' + c.id + '.mouvements', '+', 'Mouvement (ex. Versement)')}
         ${(c.mouvements || []).map((it, i) => ligneEditable('comptes.' + c.id + '.mouvements', it, i)).join('')}
       </div></div>`;
@@ -4050,7 +4061,7 @@ function rendreLivrets(){
   ].filter(x => Math.abs(x.cum) > 0.004 || pochesSuivi.some(p => p.nom === x.nom));
   const carteSuivi = lignesSuivi.length ? `
     <div class="carte" data-fam="epargne"><div class="tete"><h3>🧺 Poches d'épargne (suivi)</h3>${infoBtn('poches')}<div class="tot">${fmt(lignesSuivi.reduce((s, x) => s + x.cum, 0))}</div></div>
-      <div class="corps">${lignesSuivi.map(x => `<div class="ligne"><input class="lab" value="${echap(x.nom)}" readonly><span class="mnt ${cls(x.cum)}">${fmt(x.cum)}</span></div>`).join('')}
+      <div class="corps">${lignesSuivi.map(x => `<div class="ligne"><span class="lab">${echap(x.nom)}</span><span class="mnt ${cls(x.cum)}">${fmt(x.cum)}</span></div>`).join('')}
       <p class="note">Cumul depuis le premier mois — se remplit via les poches de répartition « → Suivi ».</p></div></div>` : '';
 
   const dests = destinationsTransfert();
@@ -4216,12 +4227,12 @@ function carteProjets(){
         ${s.objectif ? `<div class="jauge"><div class="jauge-barre" style="width:${s.pct.toFixed(1)}%"></div></div>
         <p class="note" style="margin-top:4px">${s.pct.toFixed(0)} % de l'objectif (${fmt(s.objectif)})${
           s.moisRestants ? ` · atteint dans ~${s.moisRestants} mois au rythme actuel` : ''}</p>` : ''}
-        <div class="ligne"><input class="lab" value="Apport constitué" readonly><span class="mnt pos">${fmt(s.apport)}</span></div>
+        <div class="ligne"><span class="lab">Apport constitué</span><span class="mnt pos">${fmt(s.apport)}</span></div>
         ${p.type === 'immo' ? `
-        <div class="ligne"><input class="lab" value="Prix du bien" readonly><span class="mnt">${fmt(Number(p.prix) || 0)}</span></div>
-        <div class="ligne"><input class="lab" value="Frais (notaire, garantie, agence)" readonly><span class="mnt">${fmt(Number(p.frais) || 0)}</span></div>
-        <div class="ligne"><input class="lab" value="Emprunt nécessaire" readonly><span class="mnt neg">${fmt(emprunt)}</span></div>
-        <div class="ligne"><input class="lab" value="Mensualité estimée (${p.duree || 0} ans à ${p.taux || 0} %)" readonly><span class="mnt"><b>${fmt(mens)}</b></span></div>
+        <div class="ligne"><span class="lab">Prix du bien</span><span class="mnt">${fmt(Number(p.prix) || 0)}</span></div>
+        <div class="ligne"><span class="lab">Frais (notaire, garantie, agence)</span><span class="mnt">${fmt(Number(p.frais) || 0)}</span></div>
+        <div class="ligne"><span class="lab">Emprunt nécessaire</span><span class="mnt neg">${fmt(emprunt)}</span></div>
+        <div class="ligne"><span class="lab">Mensualité estimée (${p.duree || 0} ans à ${p.taux || 0} %)</span><span class="mnt"><b>${fmt(mens)}</b></span></div>
         <p class="note">Hors assurance emprunteur (compter environ 0,10 à 0,40 %/an du capital selon l'âge et le profil).
         Estimation indicative : le taux réel dépend de ta banque et de ton dossier.</p>` : ''}
         <button class="ajout" data-projsup="${echap(p.id)}">✕ Retirer ce projet</button>
@@ -4282,7 +4293,7 @@ function tablePositions(titre, chemin, calc, totalCompte){
   const tri = (etat.config.triPositions || {})[chemin] || 'manuel';
   const lignes = trierLignes(calc.lignes, tri);
   const champ = (p, f, val, opts = {}) =>
-    `<input value="${val ?? ''}" data-pch="${chemin}" data-i="${p.idx}" data-f="${f}"
+    `<input name="${f}" value="${val ?? ''}" data-pch="${chemin}" data-i="${p.idx}" data-f="${f}"
       inputmode="${opts.texte ? 'text' : 'text'}" placeholder="${opts.ph || ''}"
       class="${opts.cl || ''}" ${opts.style ? `style="${opts.style}"` : ''}>`;
 
@@ -4295,7 +4306,7 @@ function tablePositions(titre, chemin, calc, totalCompte){
         <select class="sel-cat ${PASTILLES[cat]}" data-pch="${chemin}" data-i="${p.idx}" data-f="type">
           ${CATEGORIES.map(([nom]) => `<option value="${nom}" ${cat === nom ? 'selected' : ''}>${nom}</option>`).join('')}
         </select>
-        <input class="pos-nom" value="${echap(p.label)}" data-pch="${chemin}" data-i="${p.idx}" data-f="label" placeholder="Intitulé">
+        <input class="pos-nom" value="${echap(p.label)}" data-pch="${chemin}" data-i="${p.idx}" data-f="label" placeholder="Intitulé" name="label">
         <button class="sup" data-psupch="${chemin}" data-i="${p.idx}" aria-label="Supprimer">✕</button>
       </div>
       <div class="pos-chiffres">
@@ -4533,19 +4544,19 @@ function rendreAV(){
     <div class="carte" data-fam="epargne"><div class="tete"><h3>💰 D'où vient l'argent disponible</h3>${infoBtn('av')}${infoBtn('cashcomptes')}
       <div class="tot">${fmt(a.totalDispo)}</div></div>
       <div class="corps">
-        <div class="ligne"><input class="lab" value="Montant avant ${libelleMois(clesMois()[0]) || 'départ'}" readonly>
-          <input class="mnt" value="${av.initial}" data-init="avInitial" inputmode="text"></div>
-        <div class="ligne"><input class="lab" value="Épargne dirigée vers l'investissement (auto)" readonly><span class="mnt pos">${fmt(a.cumulEpargne)}</span></div>
-        <div class="ligne"><input class="lab" value="− achats directs Trade Republic" readonly><span class="mnt ${cls(-a.netTR)}">${fmt(-a.netTR)}</span></div>
-        <div class="ligne"><input class="lab" value="= 💵 Disponible Trade Republic" readonly><span class="mnt ${cls(a.dispo)}"><b>${fmt(a.dispo)}</b></span></div>
+        <div class="ligne"><span class="lab">Montant avant ${libelleMois(clesMois()[0]) || 'départ'}</span>
+          <input class="mnt" name="dispo-initial" value="${av.initial}" data-init="avInitial" inputmode="text"></div>
+        <div class="ligne"><span class="lab">Épargne dirigée vers l'investissement (auto)</span><span class="mnt pos">${fmt(a.cumulEpargne)}</span></div>
+        <div class="ligne"><span class="lab">− achats directs Trade Republic</span><span class="mnt ${cls(-a.netTR)}">${fmt(-a.netTR)}</span></div>
+        <div class="ligne"><span class="lab">= 💵 Disponible Trade Republic</span><span class="mnt ${cls(a.dispo)}"><b>${fmt(a.dispo)}</b></span></div>
         <div class="separateur"></div>
-        <div class="ligne"><input class="lab" value="📈 Cash PEA mis de côté (poches)" readonly><span class="mnt pos">${fmt(a.cashPEA)}</span></div>
-        <div class="ligne"><input class="lab" value="− achats directs PEA" readonly><span class="mnt ${cls(-a.netPEA)}">${fmt(-a.netPEA)}</span></div>
-        <div class="ligne"><input class="lab" value="= 📈 Cash PEA restant" readonly><span class="mnt ${cls(a.dispoPEA)}"><b>${fmt(a.dispoPEA)}</b></span></div>
+        <div class="ligne"><span class="lab">📈 Cash PEA mis de côté (poches)</span><span class="mnt pos">${fmt(a.cashPEA)}</span></div>
+        <div class="ligne"><span class="lab">− achats directs PEA</span><span class="mnt ${cls(-a.netPEA)}">${fmt(-a.netPEA)}</span></div>
+        <div class="ligne"><span class="lab">= 📈 Cash PEA restant</span><span class="mnt ${cls(a.dispoPEA)}"><b>${fmt(a.dispoPEA)}</b></span></div>
         <div class="separateur"></div>
-        <div class="ligne"><input class="lab" value="🛡️ Cash PER mis de côté (poches)" readonly><span class="mnt pos">${fmt(a.cashPER)}</span></div>
-        <div class="ligne"><input class="lab" value="− versements exceptionnels" readonly><span class="mnt ${cls(a.versPER)}">${fmt(a.versPER)}</span></div>
-        <div class="ligne"><input class="lab" value="= 🛡️ Cash PER restant" readonly><span class="mnt ${cls(a.dispoPER)}"><b>${fmt(a.dispoPER)}</b></span></div>
+        <div class="ligne"><span class="lab">🛡️ Cash PER mis de côté (poches)</span><span class="mnt pos">${fmt(a.cashPER)}</span></div>
+        <div class="ligne"><span class="lab">− versements exceptionnels</span><span class="mnt ${cls(a.versPER)}">${fmt(a.versPER)}</span></div>
+        <div class="ligne"><span class="lab">= 🛡️ Cash PER restant</span><span class="mnt ${cls(a.dispoPER)}"><b>${fmt(a.dispoPER)}</b></span></div>
         <p class="note">Les versements mensuels programmés (${fmt(-(Number(etat.months[moisCourantCle()] && etat.months[moisCourantCle()].invPEA) || 0))} PEA,
         ${fmt(-(Number(etat.months[moisCourantCle()] && etat.months[moisCourantCle()].invPER) || 0))} PER ce mois-ci) sont prélevés sur le budget du mois, pas sur ce cash.</p>
       </div></div>`;
@@ -4614,16 +4625,16 @@ function rendreReglages(){
       </div>
       <div class="champs">
         <label class="ch"><span>Nom du compte</span>
-          <input value="${echap(c.nom)}" data-cpt="${echap(c.id)}" data-cf="nom" placeholder="ex. Livret A"></label>
+          <input value="${echap(c.nom)}" data-cpt="${echap(c.id)}" data-cf="nom" placeholder="ex. Livret A" name="nom"></label>
         <label class="ch"><span>Plafond légal</span>
           <span class="unite"><input value="${c.plafond ?? ''}" data-cpt="${echap(c.id)}" data-cf="plafond"
-            inputmode="decimal" placeholder="aucun"><span class="u">${devise().sym}</span></span></label>
+            inputmode="decimal" placeholder="aucun" name="plafond"><span class="u">${devise().sym}</span></span></label>
         <label class="ch"><span>Taux annuel</span>
           <span class="unite"><input value="${c.taux ?? ''}" data-cpt="${echap(c.id)}" data-cf="taux"
-            inputmode="decimal" placeholder="0"><span class="u">%/an</span></span></label>
+            inputmode="decimal" placeholder="0" name="taux"><span class="u">%/an</span></span></label>
         <label class="ch"><span>Solde de départ</span>
           <span class="unite"><input value="${c.initial ?? 0}" data-cpt="${echap(c.id)}" data-cf="initial"
-            inputmode="decimal" placeholder="0"><span class="u">${devise().sym}</span></span></label>
+            inputmode="decimal" placeholder="0" name="initial"><span class="u">${devise().sym}</span></span></label>
       </div>
       <div class="bilan-bloc">
         ${fmt(c.initial || 0)} au départ + ${fmt(l.cumul)} versés par la répartition
@@ -4645,7 +4656,7 @@ function rendreReglages(){
   const bl = document.getElementById('budgets-liste');
   if (bl) bl.innerHTML = POSTES_BUDGET.map(([k, nom]) => `
     <label class="ch" style="margin-bottom:7px"><span>${nom}</span>
-      <span class="unite"><input value="${(etat.config.budgets || {})[k] ?? ''}" data-budget="${k}"
+      <span class="unite"><input name="budget-${k}" value="${(etat.config.budgets || {})[k] ?? ''}" data-budget="${k}"
         inputmode="decimal" placeholder="aucun plafond"><span class="u">${devise().sym}</span></span></label>`).join('');
 
   // ----- Profils -----
@@ -4654,8 +4665,7 @@ function rendreReglages(){
     const actif = profilActif();
     pl.innerHTML = listeProfils().map(p => `
       <div class="ligne">
-        <input class="lab" value="${echap(p.nom)}${p.id === actif ? '  ·  actif' : ''}" readonly
-          style="${p.id === actif ? 'font-weight:700;color:var(--laiton)' : ''}">
+        <span class="lab" style="${p.id === actif ? 'font-weight:700;color:var(--laiton)' : ''}">${echap(p.nom)}${p.id === actif ? '  ·  actif' : ''}</span>
         ${p.id === actif ? '' : `<button class="btn discret" data-profil="${echap(p.id)}" style="padding:5px 11px;font-size:12px">Ouvrir</button>`}
         ${p.id === 'principal' ? '' : `<button class="sup" data-profilsup="${echap(p.id)}" aria-label="Supprimer">✕</button>`}
       </div>`).join('');
@@ -4693,13 +4703,13 @@ function rendreReglages(){
       </div>
       <div class="champs">
         <label class="ch"><span>Nom de la poche</span>
-          <input value="${echap(p.nom)}" data-poche="${i}" data-pf="nom" placeholder="ex. Livret A"></label>
+          <input value="${echap(p.nom)}" data-poche="${i}" data-pf="nom" placeholder="ex. Livret A" name="nom"></label>
         <label class="ch"><span>Règle de calcul</span>
           <select data-poche="${i}" data-pf="mode">${MODES.map(([v, l]) =>
             `<option value="${v}" ${p.mode === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
         <label class="ch"><span>${p.mode === 'pct' ? 'Part du non attribué' : p.mode === 'fixe' ? 'Montant fixe' : 'Valeur (non requise)'}</span>
           <span class="unite"><input value="${fige ? '' : (p.valeur ?? '')}" data-poche="${i}" data-pf="valeur"
-            inputmode="decimal" placeholder="${fige ? '—' : '0'}" ${fige ? 'disabled' : ''}>
+            inputmode="decimal" placeholder="${fige ? '—' : '0'}" ${fige ? 'disabled' : ''} name="valeur">
             ${unite ? `<span class="u">${unite}</span>` : ''}</span></label>
         <label class="ch"><span>Destination de l'argent</span>
           <select data-poche="${i}" data-pf="cible">${CIBLES.map(([v, l]) =>
@@ -6585,6 +6595,14 @@ function traiterAjoutURL(){
   if ('serviceWorker' in navigator){
     try{
       const reg = await navigator.serviceWorker.register('sw.js');
+      // n'annoncer « hors-ligne prêt » que si le cache est réellement constitué
+      if (window.caches){
+        const noms = await caches.keys();
+        const cle = noms.find(n => n.startsWith('budget-v4-'));
+        const pret = cle && await (await caches.open(cle)).match('./index.html');
+        const el = document.getElementById('statut-sync');
+        if (el && !pret){ el.className = 'statut ko'; el.innerHTML = '<span class="pt"></span>cache incomplet'; }
+      }
       // Une version plus récente est en attente : on prévient au lieu de laisser
       // l'utilisateur avec une ancienne version en cache sans le savoir.
       reg.addEventListener('updatefound', () => {

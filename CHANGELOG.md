@@ -9,6 +9,19 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v9.7.0 — 20/08/2026 — *corrections issues de la console du navigateur*
+
+### Le mode hors ligne ne fonctionnait pas
+Le service worker mettait ses fichiers en cache avec `addAll`, qui **échoue en bloc dès qu'un seul fichier est absent**. Sur le dépôt de test, le manifeste et les icônes n'étant pas publiés, l'installation échouait entièrement : **rien n'était mis en cache**, alors que l'en-tête affichait « hors-ligne prêt ». La mise en cache distingue maintenant l'indispensable (la page elle-même) de l'accessoire (manifeste, icônes), tenté fichier par fichier sans bloquer le reste. L'application vérifie ensuite que le cache existe réellement et affiche « cache incomplet » le cas échéant, plutôt qu'une promesse fausse. Une navigation hors ligne vers une adresse inconnue retombe sur la page principale.
+
+### Faux champs de saisie
+Les intitulés des listes (« Enveloppe quotidienne », « Total cumulé »…) étaient des `<input readonly>` — un détournement qui expliquait à lui seul **110 avertissements** du navigateur et alourdissait la page de 63 éléments de formulaire inutiles. Ce sont désormais de simples textes.
+
+### Divers signalements
+- Un bouton d'aide se trouvait **à l'intérieur d'un titre dépliant**, ce qui perturbe la navigation au clavier et les lecteurs d'écran : il devient un indicateur non interactif.
+- Une étiquette « Horizon » ne désignait aucun champ : c'était un intitulé de groupe, elle est traitée comme telle.
+- Tous les champs de saisie portent un **nom**, ce que recommandent les audits (remplissage automatique, restauration de session).
+
 ## v9.6.2 — 19/08/2026
 - **Étiquettes intégrées au diagramme de flux.** Elles s'affichaient dans un bandeau sous le diagramme, alors que leur place était *dans* le diagramme. Chaque catégorie se prolonge maintenant vers les sujets qu'elle finance — Charges fixes → `#loyer` et `#energie`, Transport → `#voiture` — en réutilisant le mécanisme qui décompose déjà les investissements par compte. Une étiquette portée par plusieurs catégories apparaît sous chacune, avec la part qui en vient : `#voiture` peut ainsi recevoir 180 € du transport et 320 € des dépenses libres, ce qui montre d'où sort réellement l'argent. Quatre étiquettes au maximum par catégorie, pour rester lisible.
 
