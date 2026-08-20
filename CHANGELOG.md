@@ -9,6 +9,20 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v9.8.1 — 20/08/2026
+### Taux d'épargne faux
+Il valait `(reste de fin de mois + investi) / entrées`, ce qui pose deux problèmes : le reste de fin de mois contient déjà une part de l'enveloppe non dépensée, donc l'addition **compte deux fois** une partie de la somme ; et les entrées incluent le **report du mois précédent**, qui n'est pas un revenu du mois. Sur août, cela donnait 69 % au lieu de 62 %.
+
+La formule devient celle qui fait consensus : la part des revenus qui n'est pas consommée.
+- Revenus du mois = entrées − report du mois précédent → **3 473,02 €**
+- Consommation = charges + abonnements + échelonnés + transport + dépenses libres + vacances → **1 314,15 €**
+- Épargne = 3 473,02 − 1 314,15 = **2 158,87 €** → **62 %**
+
+La tuile affiche désormais le détail (« 2 158,87 € non consommés sur 3 473,02 € de revenus ») pour que le chiffre soit vérifiable d'un coup d'œil.
+
+### Carte des dividendes
+Les styles de la carte avaient été emportés par un nettoyage de feuille de style : le résumé, la frise et le journal s'affichaient en texte brut empilé. Ils sont rétablis. La **frise des douze mois est supprimée** : sur une année à cinq versements, douze barres presque vides n'apprenaient rien. Et le journal se limite aux **trois derniers versements**, avec un rappel du total annuel et un renvoi vers la recherche pour retrouver les autres — au-delà, la carte devenait un mur.
+
 ## v9.8.0 — 20/08/2026 — *pertinence des indicateurs*
 
 ### Une incohérence de chiffres

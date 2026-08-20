@@ -588,6 +588,23 @@ button, select, input[type="date"], input[type="checkbox"]{min-height:40px}
 
 
 
+
+/* ===== Dividendes : résumé, saisie et derniers versements ===== */
+.div-resume{display:grid;grid-template-columns:repeat(auto-fit,minmax(108px,1fr));gap:var(--esp-2);
+  margin-bottom:var(--esp-3)}
+.div-resume>div{background:var(--carte2);border-radius:var(--r-m);padding:9px 11px;
+  display:flex;flex-direction:column;gap:2px}
+.div-resume .e{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--encre2);font-weight:800}
+.div-resume b{font-size:14.5px;color:var(--encre);font-weight:800}
+.div-saisie{background:var(--carte2);border-radius:var(--r-m);padding:12px}
+.div-item{display:flex;align-items:center;gap:var(--esp-2);padding:8px 2px;border-bottom:1px dashed var(--trait)}
+.div-item:last-of-type{border-bottom:none}
+.div-src{flex:1;min-width:0}
+.div-nom{display:block;font-weight:700;font-size:13.5px;color:var(--encre);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.div-meta{font-size:10.5px;color:var(--encre2)}
+.div-mt{font-weight:800;font-size:14px;white-space:nowrap}
+
 /* ===== Micro-interactions =====
    Le mouvement sert à comprendre : d'où vient un élément, ce qui vient de
    changer, ce qui est en cours. Tout est désactivé si le système demande
@@ -1471,8 +1488,12 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '9.8.0';
+const APP_VERSION = '9.8.1';
 const CHANGELOG = [
+  {v: '9.8.1', d: '20/08/2026', pts: [
+    "Correction du taux d'épargne : il additionnait deux montants qui se recouvrent et comptait le report du mois précédent comme un revenu. Il se calcule désormais comme la part des revenus du mois qui n'est pas consommée.",
+    "Dividendes : les styles de la carte avaient disparu lors d'un nettoyage, d'où l'affichage en texte brut. Rétablis, et la frise des douze mois — illisible — est retirée.",
+    "Seuls les trois derniers versements sont listés, avec un rappel du total de l'année."]},
   {v: '9.8.0', d: '20/08/2026', pts: [
     "Correction : la tuile « Investissements » comptait la valeur de marché tandis que la carte Patrimoine comptait le prix de revient — deux chiffres différents pour la même chose. Tout est aligné sur la valeur de marché.",
     "Tuiles de l'Accueil repensées : reste de fin de mois, taux d'épargne, patrimoine net, performance. « Solde du mois » disparaît (redondant avec le reste de fin de mois).",
@@ -3208,7 +3229,7 @@ function carteRetraite(){
     </div></div>`;
 }
 function carteDividendes(){
-  const j = journalDividendes(6);
+  const j = journalDividendes(3);
   const an = String(new Date().getFullYear());
   const c = cumulDividendes(an);
   const cAvant = cumulDividendes(String(+an - 1));
@@ -3216,12 +3237,6 @@ function carteDividendes(){
     ...['positionsTR', 'positionsPEA', 'positionsPER'].flatMap(k => (etat.investissements[k] || []).map(p => p.label)),
     ...journalDividendes(9999).map(d => d.source),
   ])].filter(Boolean).sort((a, b) => a.localeCompare(b, 'fr'));
-  // cumul mois par mois de l'année, pour la frise
-  const parMois = Array(12).fill(0);
-  for (const d of journalDividendes(9999))
-    if (String(d.dateDiv || '').startsWith(an)) parMois[+d.dateDiv.slice(5, 7) - 1] += +d.montant || 0;
-  const maxM = Math.max(1, ...parMois);
-  const moisNoms = ['J','F','M','A','M','J','J','A','S','O','N','D'];
   const moisActuel = new Date().getMonth();
   return `<div class="carte" data-fam="entrees"><div class="tete"><h3>💸 Dividendes perçus</h3>${infoBtn('dividendes')}
     <div class="tot pos">${fmt(c.net)}</div></div>
@@ -3234,11 +3249,7 @@ function carteDividendes(){
           ${cAvant.nb ? `<div><span class="e">vs ${+an - 1}</span><b class="${cls(c.net - cAvant.net)}">${
             c.net >= cAvant.net ? '+' : ''}${((c.net / Math.max(0.01, cAvant.net) - 1) * 100).toFixed(0)} %</b></div>` : ''}
         </div>
-        <div class="div-frise">${parMois.map((v, m) => `
-          <div class="dfm ${m === moisActuel ? 'actuel' : ''}" title="${moisNoms[m]} : ${fmt(v)}">
-            <div class="dfm-zone"><div class="dfm-barre" style="height:${(v / maxM * 100).toFixed(1)}%"></div></div>
-            <span>${moisNoms[m]}</span></div>`).join('')}</div>
-        <p class="note" style="margin:2px 0 12px">Répartition des encaissements sur l'année.</p>
+
       ` : ''}
       <div class="div-saisie">
         <div class="champs">
@@ -3269,7 +3280,9 @@ function carteDividendes(){
           </div>
           <span class="div-mt pos">${fmt(d.montant)}</span>
           <button class="sup" data-divsup="${d.cleMois}|${d.i}" aria-label="Supprimer">✕</button>
-        </div>`).join('')}`
+        </div>`).join('')}
+        ${c.nb > j.length ? `<p class="note" style="margin-top:6px">3 derniers sur ${c.nb} versements cette année —
+          cherche une source avec 🔍 pour retrouver les autres.</p>` : ''}`
       : `<p class="note">Aucun dividende enregistré pour l'instant. Un dividende perçu ce mois-ci sera compté
          dans les entrées du <b>mois suivant</b>, comme sur ton relevé bancaire.</p>`}
     </div></div>`;
@@ -3807,15 +3820,23 @@ function rendreAccueil(){
   // en vendant aujourd'hui, et cela reste cohérent avec la carte Patrimoine.
   const brutAcc = liv.total + inv.total + inv.perfTotale + avc.totalDispo;
   const netAcc = brutAcc - totalPassifs();
-  // Part des entrées du mois qui n'est pas dépensée : l'indicateur le plus
-  // prédictif du patrimoine à long terme, bien plus que le choix des placements.
-  const tauxEp = c.totalEntrees > 0 ? (c.resteFin + Math.abs(c.totInv)) / c.totalEntrees : 0;
+  /* Taux d'épargne = part des revenus du mois qui n'est pas consommée.
+     Deux précautions : le report du mois précédent n'est pas un revenu (il
+     gonflerait numérateur et dénominateur), et l'épargne se déduit des dépenses
+     de consommation plutôt que de s'additionner à partir de postes qui se
+     recouvrent (le reste de fin de mois contient déjà une part de l'enveloppe
+     non dépensée). */
+  const revenusMois = c.totalEntrees - (c.resteM1Entree || 0);
+  const consommation = Math.abs(c.tCharges) + Math.abs(c.tAboO) + Math.abs(c.tLoisirs)
+                     + Math.abs(c.tEch) + Math.abs(c.tTrans) + Math.abs(c.tLibres) + Math.abs(c.tVac);
+  const epargneMois = revenusMois - consommation;
+  const tauxEp = revenusMois > 0 ? epargneMois / revenusMois : 0;
   const perfPct = inv.total > 0 ? inv.perfTotale / inv.total * 100 : 0;
   const tuiles = [
     ['📅 Reste fin de mois', fmt(c.resteFin), c.resteFin >= 0 ? 'entree' : 'sortie',
      `après charges, épargne et investissements`],
     ['🎯 Taux d\u2019épargne', (tauxEp * 100).toFixed(0) + ' %', tauxEp >= 0.15 ? 'entree' : '',
-     `${fmt(c.resteFin + Math.abs(c.totInv))} mis de côté ce mois-ci`],
+     `${fmt(epargneMois)} non consommés sur ${fmt(revenusMois)} de revenus`],
     ['🧭 Patrimoine net', fmt(netAcc), '',
      `${fmt(liv.total)} d'épargne · ${fmt(inv.total + inv.perfTotale)} investis`],
     ['📈 Performance', `${perfPct >= 0 ? '+' : ''}${perfPct.toFixed(1)} %`,
