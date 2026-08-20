@@ -455,14 +455,15 @@ header.compact .marque .ver{display:none}
 .sm-solde{font-size:10.5px;font-weight:700;letter-spacing:.04em;color:var(--encre2)}
 
 /* ===== Bandeau de bilan du mois ===== */
-.bilan5{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--esp-2);margin-bottom:var(--esp-3)}
+.bilan5{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--esp-2);margin-bottom:var(--esp-3)}
+@media (min-width:700px){ .bilan5{grid-template-columns:repeat(4,1fr)} }
 .bilan5>div{background:var(--carte);border:1px solid var(--trait);border-radius:var(--r-m);
   padding:11px var(--esp-3);display:flex;flex-direction:column;gap:3px;
   transition:transform var(--duree) var(--courbe)}
 .bilan5>div:hover{transform:translateY(-1px)}
 .bilan5 .e{font-size:9.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--encre2)}
 .bilan5 .v{font-size:16px;font-weight:800;letter-spacing:-.01em}
-@media (max-width:520px){ .bilan5{grid-template-columns:repeat(2,1fr)} }
+.bilan5 .s{font-size:10.5px;color:var(--encre2);line-height:1.35}
 
 /* ===== Cartes de catégorie : une couleur par famille ===== */
 .carte[data-fam]>.tete{border-left:3px solid var(--fam,var(--trait))}
@@ -1200,17 +1201,35 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
 <button id="haut" aria-label="Revenir en haut">↑</button>
 <div id="voile-saisie"><div id="panneau-saisie">
   <div class="ps-poignee"></div>
-  <h4>Saisie rapide</h4>
+  <div class="op-sens" style="margin-bottom:var(--esp-3)">
+    <button class="op-choix actif" data-psnature="depense">🛒 Dépense ou entrée</button>
+    <button class="op-choix" data-psnature="dividende">💸 Dividende perçu</button>
+  </div>
   <div class="champs">
     <label class="ch"><span>Intitulé</span>
       <input id="ps-label" placeholder="ex. Boulangerie" autocomplete="off"></label>
     <label class="ch"><span>Montant</span>
       <span class="unite"><input id="ps-montant" inputmode="text" placeholder="0"><span class="u" id="ps-devise">€</span></span></label>
   </div>
-  <label class="ch" style="margin-top:9px"><span>Destination</span>
-    <select id="ps-cat"></select></label>
-  <select id="ps-vac" style="display:none;margin-top:8px"></select>
-  <div class="chips" id="ps-chips"></div>
+  <div id="ps-bloc-depense">
+    <label class="ch" style="margin-top:9px"><span>Destination</span>
+      <select id="ps-cat" name="destination"></select></label>
+    <select id="ps-vac" name="sous-destination" style="display:none;margin-top:8px"></select>
+    <div class="chips" id="ps-chips"></div>
+  </div>
+  <div id="ps-bloc-dividende" style="display:none">
+    <div class="champs" style="margin-top:9px">
+      <label class="ch"><span>Date de perception</span>
+        <input id="ps-div-date" name="date-dividende" type="date"></label>
+      <label class="ch" id="ps-div-champ-taux" style="display:none"><span>Prélèvements</span>
+        <span class="unite"><input id="ps-div-taux" name="taux" inputmode="decimal" value="30"><span class="u">%</span></span></label>
+    </div>
+    <div class="op-sens" style="margin-top:9px">
+      <button class="op-choix actif" data-psdivtype="net">💶 Montant reçu</button>
+      <button class="op-choix" data-psdivtype="brut">🧾 Avant prélèvements</button>
+    </div>
+    <p class="note" id="ps-div-note" style="margin-top:8px"></p>
+  </div>
   <div class="ps-actions">
     <button class="btn or" id="ps-valider">Enregistrer</button>
     <button class="btn" id="ps-fermer">Annuler</button>
@@ -1452,8 +1471,13 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '9.7.1';
+const APP_VERSION = '9.8.0';
 const CHANGELOG = [
+  {v: '9.8.0', d: '20/08/2026', pts: [
+    "Correction : la tuile « Investissements » comptait la valeur de marché tandis que la carte Patrimoine comptait le prix de revient — deux chiffres différents pour la même chose. Tout est aligné sur la valeur de marché.",
+    "Tuiles de l'Accueil repensées : reste de fin de mois, taux d'épargne, patrimoine net, performance. « Solde du mois » disparaît (redondant avec le reste de fin de mois).",
+    "Page Mois : quatre tuiles au lieu de six — le solde et le reste de fin de mois figuraient déjà sous le nom du mois.",
+    "Le bouton ＋ permet aussi d'enregistrer un dividende, avec sa date, son mode net ou brut et le mois de rattachement annoncé."]},
   {v: '9.7.1', d: '20/08/2026', pts: [
     "Les listes déroulantes générées (catégorie d'une position, règle et destination d'une poche, tri, comptes de transfert) portent maintenant un nom : plus aucune recommandation d'accessibilité dans la console du navigateur."]},
   {v: '9.7.0', d: '20/08/2026', pts: [
@@ -3779,12 +3803,23 @@ function rendreAccueil(){
   });
 
   const liv = calculerLivrets(), inv = calculerInvest(), avc = calculerAchatVente();
+  // Le patrimoine se compte à la valeur de marché : c'est ce qu'on obtiendrait
+  // en vendant aujourd'hui, et cela reste cohérent avec la carte Patrimoine.
+  const brutAcc = liv.total + inv.total + inv.perfTotale + avc.totalDispo;
+  const netAcc = brutAcc - totalPassifs();
+  // Part des entrées du mois qui n'est pas dépensée : l'indicateur le plus
+  // prédictif du patrimoine à long terme, bien plus que le choix des placements.
+  const tauxEp = c.totalEntrees > 0 ? (c.resteFin + Math.abs(c.totInv)) / c.totalEntrees : 0;
+  const perfPct = inv.total > 0 ? inv.perfTotale / inv.total * 100 : 0;
   const tuiles = [
-    ['💰 Solde du mois', fmt(c.solde), c.solde >= 0 ? 'entree' : 'sortie', `${libelleMois(cle)}`],
-    ['📅 Reste fin de mois', fmt(c.resteFin), c.resteFin >= 0 ? 'entree' : 'sortie', 'après charges et épargne'],
-    ['🏦 Épargne', fmt(liv.total), '', `${(etat.comptes || []).length} compte${(etat.comptes || []).length > 1 ? 's' : ''}`],
-    ['📈 Investissements', fmt(inv.total + inv.perfTotale), inv.perfTotale >= 0 ? 'entree' : 'sortie',
-     `${inv.perfTotale >= 0 ? '+' : ''}${fmt(inv.perfTotale)} de plus-value`],
+    ['📅 Reste fin de mois', fmt(c.resteFin), c.resteFin >= 0 ? 'entree' : 'sortie',
+     `après charges, épargne et investissements`],
+    ['🎯 Taux d\u2019épargne', (tauxEp * 100).toFixed(0) + ' %', tauxEp >= 0.15 ? 'entree' : '',
+     `${fmt(c.resteFin + Math.abs(c.totInv))} mis de côté ce mois-ci`],
+    ['🧭 Patrimoine net', fmt(netAcc), '',
+     `${fmt(liv.total)} d'épargne · ${fmt(inv.total + inv.perfTotale)} investis`],
+    ['📈 Performance', `${perfPct >= 0 ? '+' : ''}${perfPct.toFixed(1)} %`,
+     inv.perfTotale >= 0 ? 'entree' : 'sortie', `${fmtS(inv.perfTotale)} de plus-value latente`],
   ];
   document.getElementById('kpis-accueil').innerHTML = tuiles.map(([e, v, cl, s]) =>
     `<div class="tuile ${cl}"><span class="eti">${e}</span><div class="val">${v}</div>
@@ -3868,12 +3903,17 @@ function rendreAccueil(){
   document.getElementById('acc-dividendes').innerHTML = carteDividendes();
   majApercuDividende();
 
-  const brut = liv.total + inv.total + avc.totalDispo;
+
+  document.getElementById('acc-dividendes').innerHTML = carteDividendes();
+  majApercuDividende();
+
+  const brut = brutAcc;   // même base que la tuile : valeur de marché
   const dettes = totalPassifs();
   document.getElementById('patri-total').textContent = fmt(brut - dettes);
   document.getElementById('patri-detail').innerHTML = `
     <div class="ligne"><span class="lab">💰 Livrets (A + LDDS)</span><span class="mnt" style="width:auto">${fmt(liv.total)}</span></div>
-    <div class="ligne"><span class="lab">📈 Investissements (TR + PEA + PERin)</span><span class="mnt" style="width:auto">${fmt(inv.total)}</span></div>
+    <div class="ligne"><span class="lab">📈 Investissements (valeur actuelle)</span><span class="mnt pos" style="width:auto">${fmt(inv.total + inv.perfTotale)}</span></div>
+    <div class="ligne"><span class="lab" style="opacity:.75">↳ dont ${fmtS(inv.perfTotale)} de plus-value latente</span><span class="mnt ${cls(inv.perfTotale)}" style="width:auto">${fmt(inv.total)} investis</span></div>
     <div class="ligne"><span class="lab">💵 Disponible à l'investissement (TR)</span><span class="mnt ${cls(avc.dispo)}" style="width:auto">${fmt(avc.dispo)}</span></div>
     ${avc.dispoPEA > 0.004 ? `<div class="ligne"><span class="lab">📈 Cash dédié PEA</span><span class="mnt pos" style="width:auto">${fmt(avc.dispoPEA)}</span></div>` : ''}
     ${avc.dispoPER > 0.004 ? `<div class="ligne"><span class="lab">🛡️ Cash dédié PER</span><span class="mnt pos" style="width:auto">${fmt(avc.dispoPER)}</span></div>` : ''}
@@ -3901,14 +3941,15 @@ function rendreMois(){
   document.getElementById('mois-select').innerHTML =
     cles.map(k => `<option value="${k}" ${k === moisActif ? 'selected' : ''}>${libelleMois(k)}</option>`).join('');
   const m = etat.months[moisActif], c = calculerMois(moisActif), P = 'months.' + moisActif + '.';
+  // Le solde et le reste de fin de mois figurent déjà sous le nom du mois :
+  // les répéter ici brouillerait la lecture. On garde ce qui n'est nulle part ailleurs.
   document.getElementById('mois-bilan').innerHTML = [
-    ['💵 Entrées', fmt(c.totalEntrees), 'pos'],
-    ['💸 Sorties', fmt(c.totalSorties), 'neg'],
-    ['📊 Solde', fmtS(c.solde), cls(c.solde)],
-    ['📥 Reste enveloppe', fmt(c.resteEnv), cls(c.resteEnv)],
-    ['💰 Reste fin de mois', fmt(c.resteFin), cls(c.resteFin)],
-    ['📈 Investi', fmt(-c.totInv), 'pos'],
-  ].map(([e, v, k]) => `<div><span class="e">${e}</span><span class="v ${k}">${v}</span></div>`).join('');
+    ['💵 Entrées', fmt(c.totalEntrees), 'pos', 'salaires et remboursements'],
+    ['💸 Sorties', fmt(c.totalSorties), 'neg', 'charges, abonnements, vie courante'],
+    ['📥 Reste à dépenser', fmt(c.resteEnv), cls(c.resteEnv), `sur ${fmt(c.sommeMois)} d'enveloppe`],
+    ['📈 Investi', fmt(-c.totInv), 'pos', 'plans et versements du mois'],
+  ].map(([e, v, k, s]) => `<div><span class="e">${e}</span><span class="v ${k}">${v}</span>
+    <span class="s">${s}</span></div>`).join('');
   // rappel du solde sous le sélecteur de mois
   const sm = document.getElementById('mois-solde');
   if (sm){
@@ -6358,6 +6399,28 @@ addEventListener('keydown', e => {
 /* ===== Saisie rapide accessible partout =====
    Le geste le plus fréquent — noter une dépense — ne doit pas imposer de
    revenir à l'Accueil. Une feuille monte depuis le bas, quelle que soit la page. */
+/* Nature de la saisie : une dépense (ou une entrée) sur le mois en cours, ou un
+   dividende, qui suit sa propre règle — compté au mois suivant, net ou brut. */
+function natureSaisie(){
+  const b = document.querySelector('[data-psnature].actif');
+  return b ? b.dataset.psnature : 'depense';
+}
+function majFeuilleSaisie(){
+  const div = natureSaisie() === 'dividende';
+  document.getElementById('ps-bloc-depense').style.display = div ? 'none' : '';
+  document.getElementById('ps-bloc-dividende').style.display = div ? '' : 'none';
+  document.querySelector('label[for="ps-label"], #ps-label').previousElementSibling;
+  const etiq = document.querySelector('#panneau-saisie .champs .ch span');
+  if (etiq) etiq.textContent = div ? 'Source' : 'Intitulé';
+  document.getElementById('ps-label').placeholder = div ? 'ex. TotalEnergies' : 'ex. Boulangerie';
+  if (div){
+    const brut = (document.querySelector('[data-psdivtype].actif') || {dataset: {}}).dataset.psdivtype === 'brut';
+    document.getElementById('ps-div-champ-taux').style.display = brut ? '' : 'none';
+    const d = document.getElementById('ps-div-date').value || jourISO();
+    document.getElementById('ps-div-note').innerHTML =
+      `Sera compté dans les entrées de <b>${libelleMois(moisSuivantDe(d))}</b>, comme sur ton relevé.`;
+  }
+}
 function ouvrirSaisie(){
   const sel = document.getElementById('ps-cat');
   if (!sel.options.length)
@@ -6373,12 +6436,30 @@ function ouvrirSaisie(){
     ? puces.map(f => `<button class="chip" data-pschip="${echap(f.label)}" data-psmnt="${Math.abs(f.montant)}">${echap(f.label)} · ${fmt(Math.abs(f.montant))}</button>`).join('')
     : `<p class="note" style="margin:0">Les libellés que tu saisis souvent apparaîtront ici en raccourci.${
         (etat.config.chipsMasquees || []).length ? ` (${etat.config.chipsMasquees.length} masqué${etat.config.chipsMasquees.length > 1 ? 's' : ''} — réaffichables dans Réglages.)` : ''}</p>`;
+  document.getElementById('ps-div-date').value = jourISO();
+  // la dépense est le cas de loin le plus fréquent : on y revient à chaque ouverture
+  document.querySelectorAll('[data-psnature]').forEach(b =>
+    b.classList.toggle('actif', b.dataset.psnature === 'depense'));
+  majFeuilleSaisie();
   document.getElementById('voile-saisie').classList.add('vu');
   setTimeout(() => document.getElementById('ps-label').focus(), 120);
 }
 function fermerSaisie(){ document.getElementById('voile-saisie').classList.remove('vu'); }
 function validerSaisie(){
   const label = document.getElementById('ps-label').value.trim();
+  if (natureSaisie() === 'dividende'){
+    const brut = (document.querySelector('[data-psdivtype].actif') || {dataset: {}}).dataset.psdivtype === 'brut';
+    const r = enregistrerDividende({
+      source: label,
+      date: document.getElementById('ps-div-date').value,
+      montant: evalMontant(document.getElementById('ps-montant').value),
+      brut, taux: Number(document.getElementById('ps-div-taux').value),
+    });
+    if (!r.ok) return toast('⚠️ ' + r.msg);
+    memoriserPourAnnuler('saisie du dividende');
+    sauver(); fermerSaisie(); rafraichirPage();
+    return toast(`💸 ${fmt(r.net)} net compté en ${libelleMois(r.cle)}${r.prelev > 0.004 ? ` (${fmt(r.prelev)} de prélèvements)` : ''}`, true);
+  }
   if (!label) return toast('Indique un intitulé');
   const brut = evalMontant(document.getElementById('ps-montant').value);
   if (isNaN(brut) || Math.abs(brut) < 0.005) return toast('Montant invalide');
@@ -6407,6 +6488,20 @@ document.getElementById('ps-valider').onclick = validerSaisie;
 document.getElementById('voile-saisie').addEventListener('click', e => {
   if (e.target.id === 'voile-saisie') fermerSaisie();
 });
+document.getElementById('panneau-saisie').addEventListener('click', e => {
+  const n = e.target.closest('[data-psnature]');
+  if (n){
+    document.querySelectorAll('[data-psnature]').forEach(b => b.classList.toggle('actif', b === n));
+    majFeuilleSaisie();
+    return;
+  }
+  const d = e.target.closest('[data-psdivtype]');
+  if (d){
+    document.querySelectorAll('[data-psdivtype]').forEach(b => b.classList.toggle('actif', b === d));
+    majFeuilleSaisie();
+  }
+});
+document.getElementById('ps-div-date').addEventListener('change', majFeuilleSaisie);
 document.getElementById('ps-cat').addEventListener('change', e => {
   document.getElementById('ps-vac').style.display = e.target.value === 'vac' ? '' : 'none';
 });

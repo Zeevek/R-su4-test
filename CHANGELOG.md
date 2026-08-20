@@ -9,6 +9,24 @@ Toutes les évolutions notables de l'application. Le journal est aussi consultab
 - **Symboles 🔗 conservés au ré-import** d'un classeur (appariement par intitulé) + date de dernière mise à jour des cours préservée.
 - Produits non cotés (private equity, fonds fermés) : message explicite — leur prix se met à jour à la main.
 
+## v9.8.0 — 20/08/2026 — *pertinence des indicateurs*
+
+### Une incohérence de chiffres
+La tuile « Investissements » affichait **35 385 €** (valeur de marché) tandis que la carte Patrimoine, quelques centimètres plus bas, affichait **29 090 €** (prix de revient) — deux chiffres pour la même chose sur le même écran. Tout est désormais compté à la **valeur de marché**, c'est-à-dire ce qu'on obtiendrait en vendant aujourd'hui, avec le prix de revient et la plus-value en sous-ligne.
+
+### Tuiles de l'Accueil
+« Solde du mois » et « Reste fin de mois » mesuraient deux choses voisines sans qu'on puisse les distinguer, et « Épargne » + « Investissements » redisaient ce que la carte Patrimoine détaille déjà. Les quatre tuiles deviennent :
+- **Reste fin de mois** — ce qui restera une fois tout passé ;
+- **Taux d'épargne** — la part des entrées mise de côté ce mois-ci, l'indicateur le plus prédictif du patrimoine à long terme ;
+- **Patrimoine net** — un chiffre unique, identique à celui de la carte détaillée ;
+- **Performance** — la plus-value latente en pourcentage et en euros, seule tuile où le vert signale un vrai gain.
+
+### Bilan du mois
+Six tuiles dont deux faisaient doublon avec la barre de mois collante, qui affiche déjà « solde … · reste … ». Il en reste quatre, chacune avec un sous-titre explicatif : entrées, sorties, **reste à dépenser** (rapporté à l'enveloppe) et investi.
+
+### Dividendes depuis le bouton ＋
+La feuille de saisie rapide propose maintenant deux natures : **dépense ou entrée**, et **dividende perçu**. Le second mode affiche la date de perception, le choix net ou brut avec son taux de prélèvements, et annonce le mois de rattachement avant validation. La feuille revient toujours sur « dépense » à l'ouverture, cas de loin le plus fréquent.
+
 ## v9.7.1 — 20/08/2026
 - **Listes déroulantes nommées.** Le correctif précédent n'avait couvert que les champs de texte : les 48 recommandations restantes venaient des `<select>` générés (catégorie d'une position, règle de calcul et destination d'une poche, tri, comptes de transfert). Ils portent désormais un nom. Mon propre contrôle avait le même angle mort — il ne vérifiait que les `<input>` — et couvre maintenant listes et zones de texte.
 
