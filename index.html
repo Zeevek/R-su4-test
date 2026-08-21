@@ -5,7 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0F1117">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="256x256" href="icon-256.png">
+<meta name="application-name" content="Budget">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Budget">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Budget v4">
@@ -246,7 +252,7 @@ details.aide summary{cursor:pointer;font-weight:600;color:var(--laiton)}
 .saisie-rapide button{flex:none;padding:9px 14px}
 .sel-rapide{width:100%;margin-top:6px;border:1px solid var(--trait);border-radius:9px;padding:9px 10px;
   background:var(--carte);color:var(--encre);font-weight:600;font-size:13px}
-/* Sous-cartes rattachées à leur carte parente (plans Trade Republic) */
+/* Sous-cartes rattachées à leur carte parente (plans du compte-titres) */
 .sous-cartes{margin:6px -14px -12px;padding:8px 10px 4px;background:rgba(176,141,62,.05);
   border-top:1px solid var(--trait)}
 .sous-cartes .carte{margin-bottom:6px;box-shadow:none;border:1px solid var(--trait)}
@@ -623,6 +629,15 @@ button, select, input[type="date"], input[type="checkbox"]{min-height:40px}
 .ryt-legende i.cette{background:var(--menthe)}
 .ryt-legende i.avant{background:var(--trait)}
 
+
+/* ===== Guide d'installation ===== */
+.inst-guide{background:var(--carte2);border-radius:var(--r-m);padding:12px 14px;margin-top:var(--esp-2)}
+.inst-titre{font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--violet);margin-bottom:8px}
+.inst-guide ol{margin:0;padding-left:20px}
+.inst-guide li{font-size:13px;line-height:1.6;color:var(--encre);margin-bottom:5px}
+.inst-guide li:last-child{margin-bottom:0}
+
 /* ===== Micro-interactions =====
    Le mouvement sert à comprendre : d'où vient un élément, ce qui vient de
    changer, ce qui est en cours. Tout est désactivé si le système demande
@@ -967,7 +982,7 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
       <div class="corps">
         <svg class="graph" id="inv-graph" viewBox="0 0 720 300" role="img" aria-label="Évolution des performances"></svg>
         <div class="legende">
-          <span style="--c:#7C5CFF">Trade Republic</span>
+          <span style="--c:#7C5CFF">Compte-titres</span>
           <span style="--c:#2FD9A0">PEA</span>
           <span style="--c:#4DA3FF">PERin</span>
           <span style="--c:#FFB84D">Total</span>
@@ -1058,6 +1073,10 @@ details.etaler .eta-n{width:76px;text-align:right;font-weight:600}
       </div>
     </div>
     <h2 class="sect">Confort et sécurité</h2>
+    <div class="carte">
+      <div class="tete"><h3>📥 Installer l'application</h3><button class="info-btn" data-infocle="installer" aria-label="Informations">i</button></div>
+      <div class="corps" id="installer-corps"></div>
+    </div>
     <div class="carte">
       <div class="tete"><h3>🎨 Apparence</h3></div>
       <div class="corps">
@@ -1434,7 +1453,7 @@ async function exporterJSON(chiffrer){
 /* ===== Bulles d'information ⓘ ===== */
 const INFOS = {
   hero: ['Reste du jour', "Montant que tu peux dépenser chaque jour d'ici la fin du mois pour finir à zéro. Calculé sur le reste d'enveloppe du mois (modifiable dans « Estimation dépense par jour »)."],
-  enveloppe: ['Enveloppe du mois', "Budget de vie du mois : soit un taux journalier (ex. 41,43 €/jour × nombre de jours), soit un montant fixe mensuel — réglable dans Réglages. Un changement ne s'applique qu'à partir du mois suivant, pour ne pas fausser le mois entamé."],
+  enveloppe: ['Enveloppe du mois', "Budget de vie du mois : soit un taux journalier (montant par jour × nombre de jours), soit un montant fixe mensuel — réglable dans Réglages. Un changement ne s'applique qu'à partir du mois suivant, pour ne pas fausser le mois entamé."],
   repartition: ['Répartition du non attribué', "Le « non attribué » = entrées (avec report du mois précédent) + charges fixes + abonnements obligatoires + investissements − enveloppe. Il est ventilé dans tes poches définies dans Réglages : part égale (la fraction s'adapte au nombre de poches : 1/3, 1/4, 1/2…), pourcentage, montant fixe ou reste. Une modification des poches ne prend effet qu'à partir du mois suivant — le mois en cours et l'historique sont figés."],
   etaler: ['Étaler un paiement', "Divise une somme en mensualités égales arrondies au centime à partir du mois affiché — la dernière récupère le reste des arrondis (10 € / 3 mois → 3,33 · 3,33 · 3,34). Les mois manquants sont créés, et le compteur (n/N) avance tout seul chaque mois."],
   recurrents: ['Dépenses récurrentes', "Toute ligne ajoutée ici apparaît automatiquement dans les mois suivants. Une modification ou suppression n'est répercutée que sur les mois à venir : l'historique n'est jamais réécrit."],
@@ -1455,6 +1474,7 @@ const INFOS = {
   cashcomptes: ['Cash dédié PEA / PER', "Une poche « → Cash PEA » ou « → Cash PER » met de l'argent de côté pour ces comptes, en plus de tes versements mensuels programmés (qui restent prélevés sur le budget du mois). Le cash PEA est consommé par tes achats directs PEA ; le cash PER par les versements exceptionnels que tu saisis ici. Si un achat PEA dépasse le cash dédié, le complément est pris sur le disponible général."],
   raccourci: ['Raccourci iOS / Android', "L'application peut enregistrer une dépense directement depuis une adresse : ?ajout=Boulangerie&montant=6 ajoute 6 € en dépenses libres du mois en cours, avec une confirmation à l'écran. Sur iPhone, l'app Raccourcis permet d'en faire un bouton d'écran d'accueil ou une commande Siri (« Dis Siri, ajoute une dépense »). Ajoute &cat=transport (ou une autre catégorie) pour changer la destination. L'adresse est nettoyée après enregistrement : recharger la page ne crée pas de doublon."],
   clavier: ['Raccourcis clavier', "Sur ordinateur : les touches 1 à 6 ouvrent les onglets dans l'ordre de la barre du bas, « n » place le curseur dans la dépense rapide, « / » ou Ctrl+K (⌘K sur Mac) ouvre la recherche, Ctrl+Z (⌘Z) annule la dernière action, « ? » affiche cette aide. Les raccourcis sont ignorés pendant la saisie dans un champ."],
+  installer: ['Installer l\u2019application', "Installée, l'application s'ouvre dans sa propre fenêtre — sans barre d'adresse ni onglets — depuis le menu Démarrer, le Dock ou l'écran d'accueil, et fonctionne sans connexion. Les données restent celles du navigateur qui a servi à l'installer : elles ne sont ni copiées ni synchronisées ailleurs. Sur Chrome et Edge, un bouton lance l'installation directement ; Safari ne l'expose pas, d'où les instructions manuelles. Firefox pour ordinateur ne prend pas en charge cette fonction."],
   profils: ['Profils', "Plusieurs budgets indépendants sur le même appareil : chacun a ses mois, ses comptes, son portefeuille et ses réglages, sans aucun mélange. Pensé pour un couple qui gère séparément, ou pour distinguer un budget personnel d'une activité annexe. Le profil actif est mémorisé, et l'application se recharge au changement. Chaque profil s'exporte séparément, et le verrouillage reste commun à l'appareil."],
   etiquettes: ['Étiquettes', "Un mot précédé de # dans un libellé devient une étiquette : « Révision #voiture », « Croquettes #chat ». L'application additionne alors tout ce qui porte la même étiquette, quelles que soient les catégories et les mois — pratique pour savoir ce que coûte réellement une voiture, un animal, un enfant ou un projet, sans créer de rubriques dédiées. La recherche 🔍 accepte aussi les étiquettes."],
   bilanAnnuel: ['Bilan de l\u2019année', "Somme des mois écoulés de l'année civile : entrées, grandes catégories de dépenses, montant investi et épargne totale (ce qui est investi plus ce qui reste). Le taux d'épargne rapporte cette épargne aux entrées — c'est l'indicateur le plus prédictif du patrimoine à long terme, bien plus que le choix des placements. Les écarts avec l'année précédente s'affichent dès qu'elle est disponible."],
@@ -1488,8 +1508,19 @@ document.addEventListener('click', e => {
   if (e.target.id === 'info-fermer' || e.target.id === 'voile-info')
     document.getElementById('voile-info').classList.remove('vu');
 });
-const APP_VERSION = '9.9.0';
+const APP_VERSION = '10.0.1';
 const CHANGELOG = [
+  {v: '10.0.1', d: '20/08/2026', pts: [
+    "Nouvelle icône appliquée à toutes les tailles : 192, 256, 512 et 1024 px, plus une vignette Apple de 180 px et deux versions « maskable » pour Android.",
+    "Les captures d'écran de l'invite d'installation reprennent la nouvelle icône."]},
+  {v: '10.0.0', d: '20/08/2026', pts: [
+    "L'application s'installe sur ordinateur (Windows, macOS, Linux) comme sur téléphone : elle s'ouvre alors dans sa propre fenêtre, sans barre d'adresse, et fonctionne sans connexion.",
+    "Nouvelle carte « Installer l'application » dans les Réglages : bouton d'installation directe sur Chrome et Edge, marche à suivre détaillée sur Safari, iOS, Android et Linux.",
+    "Manifeste complet : icônes dédiées (dont versions « maskable » et 1024 px pour macOS), captures d'écran pour l'invite d'installation, trois raccourcis (saisir une dépense, voir le mois, portefeuille).",
+    "Les raccourcis ouvrent directement la bonne page ou la saisie rapide."]},
+  {v: '9.9.1', d: '20/08/2026', pts: [
+    "Journal des versions et README expurgés : plus aucun montant réel, nom d'établissement ou de personne — ces fichiers sont publics.",
+    "Les noms d'établissements codés en dur dans l'interface (courtier, assureur) laissent place à des libellés génériques : compte-titres, PEA, PER."]},
   {v: '9.9.0', d: '20/08/2026', pts: [
     "Le bouton ＋ revient à la seule saisie de dépense : les dividendes se saisissent dans leur carte, où le contexte est plus clair.",
     "Nouveau diagramme « Rythme des dividendes » : les encaissements mois par mois, avec l'année précédente en arrière-plan et la comparaison des cumuls à la même date.",
@@ -1620,7 +1651,7 @@ const CHANGELOG = [
     "Correction : le bouton « Transférer » ne réagissait pas (le gestionnaire écoutait la modification d'un champ au lieu du clic).",
     "Un transfert vers le compte courant alimente désormais les remboursements du mois en cours ; dans l'autre sens, il en sort.",
     "Correction : l'horizon 30 ans de la projection n'affichait aucun jalon au-delà de 20 ans.",
-    "Les plans Trade Republic sont regroupés à l'intérieur de leur carte, avec leur total en tête.",
+    "Les plans du compte-titres sont regroupés à l'intérieur de leur carte, avec leur total en tête.",
     "Menu déroulant de suggestions retiré de la dépense rapide : les puces suffisent et prennent moins de place.",
     "Raccourci iOS / Android : ouvrir l'app avec ?ajout=Boulangerie&montant=6 enregistre la dépense directement — de quoi créer un bouton d'écran d'accueil ou une commande Siri."]},
   {v: '7.0.0', d: '01/08/2026', pts: [
@@ -1728,7 +1759,7 @@ const CHANGELOG = [
     "Compte rendu imprimable / enregistrable en PDF : une page A4 par mois avec camembert des dépenses, répartition d'épargne, entrées et top des dépenses."]},
   {v: '4.1.0', d: '18/07/2026', pts: ["Nouvelle icône : logo personnalisé (bouclier, courbe, pièces et maison)."]},
   {v: '4.0.0', d: '18/07/2026', pts: [
-    "Version initiale : reprise fidèle du classeur Excel — budget mensuel (enveloppe 41,43 €/jour, report Reste Mois-1, répartition du Non Attribué), livrets, investissements avec performance, achat-vente, historique et graphique.",
+    "Version initiale : reprise fidèle du classeur Excel — budget mensuel (enveloppe quotidienne paramétrable, report Reste Mois-1, répartition du Non Attribué), livrets, investissements avec performance, achat-vente, historique et graphique.",
     "PWA 100 % hors-ligne (IndexedDB), import .xlsx, sauvegarde et restauration JSON."]},
 ];
 const SEED = {"config":{"eurParJour":41.43,"resteInitial":0},"months":{},"livrets":{"livretA":{"initial":0,"mouvements":[]},"ldds":{"initial":0,"mouvements":[]}},"investissements":{"initiaux":{"tr":0,"pea":0,"per":0},"positionsTR":[],"positionsPEA":[],"positionsPER":[]},"achatVente":{"initial":0,"sorties":[],"txTR":[],"txPEA":[]},"historique":[]};
@@ -2413,7 +2444,7 @@ function cumulDividendes(annee){
    Une opération met à jour la position correspondante : le nombre de parts et
    le prix de revient moyen sont recalculés, au lieu d'être ressaisis à la main. */
 const COMPTES_OPS = [
-  {id: 'txTR', nom: '🏦 Trade Republic', positions: 'positionsTR', cash: 'av'},
+  {id: 'txTR', nom: '🏦 Compte-titres', positions: 'positionsTR', cash: 'av'},
   {id: 'txPEA', nom: '📈 PEA', positions: 'positionsPEA', cash: 'pea'},
 ];
 function positionsDe(compteOps){
@@ -2807,7 +2838,7 @@ function construireFlux(cle){
     {nom: '📱 Abos obligatoires', v: -c.tAboO, coul: '#0EA5E9'},
     {nom: '🎮 Abos loisirs', v: -c.tLoisirs, coul: '#0EA5E9'},
     {nom: '📈 Investissements', v: -c.totInv, coul: '#2FD9A0', detail: [
-      {nom: '🏦 Trade Republic', v: -c.totTR}, {nom: '📈 PEA', v: -(+m.invPEA || 0)}, {nom: '🛡️ PER', v: -(+m.invPER || 0)},
+      {nom: '🏦 Compte-titres', v: -c.totTR}, {nom: '📈 PEA', v: -(+m.invPEA || 0)}, {nom: '🛡️ PER', v: -(+m.invPER || 0)},
     ].filter(d => d.v > 0.004)},
     {nom: '💳 Échelonnés', v: -c.tEch, coul: '#7FA98C'},
     {nom: '🚗 Transport', v: -c.tTrans, coul: '#4E79A7'},
@@ -3686,7 +3717,7 @@ function rechercher(terme, max = 60){
     for (const it of (c.mouvements || []))
       if (normaliserTexte(it.label).includes(q))
         res.push({ou: c.nom, quoi: '🏦 Mouvement', label: it.label, montant: +it.montant || 0, page: 'livrets'});
-  for (const [compte, nom] of [['positionsTR', '🏦 Trade Republic'], ['positionsPEA', '📈 PEA'], ['positionsPER', '🛡️ PER']])
+  for (const [compte, nom] of [['positionsTR', '🏦 Compte-titres'], ['positionsPEA', '📈 PEA'], ['positionsPER', '🛡️ PER']])
     for (const p of (etat.investissements[compte] || []))
       if (normaliserTexte(p.label).includes(q) || normaliserTexte(p.symbole).includes(q))
         res.push({ou: nom, quoi: '📊 Position', label: p.label,
@@ -4070,7 +4101,7 @@ function rendreMois(){
     ${carteListe('📱 Abo. obligatoires', P + 'aboObligatoires', m.aboObligatoires, {info: 'recurrents', etaler: true, fam: 'abo'})}
     <div class="carte"><div class="tete"><h3>📈 Investissements</h3><div class="tot neg">${fmt(c.totInv)}</div></div>
       <div class="corps">
-        <div class="ligne"><span class="lab">🏦 Trade Republic (détail ci-dessous)</span><span class="mnt neg">${fmt(detTR)}</span></div>
+        <div class="ligne"><span class="lab">🏦 Compte-titres (détail ci-dessous)</span><span class="mnt neg">${fmt(detTR)}</span></div>
         <div class="ligne"><span class="lab">📈 PEA</span>
           <input class="mnt neg" name="invest-pea" value="${m.invPEA}" data-direct="invPEA" inputmode="text"></div>
         <div class="ligne"><span class="lab">🛡️ PER</span>
@@ -4101,9 +4132,9 @@ function rendreMois(){
     ${carteListe('🍽️ Vacances · Alimentation', P + 'vacAlim', m.vacAlim, {fam: 'vacances'})}
     ${carteListe('🎢 Vacances · Loisirs', P + 'vacLoisirs', m.vacLoisirs, {fam: 'vacances'})}
     ${carteListe('📦 Vacances · Autres', P + 'vacAutres', m.vacAutres, {fam: 'vacances'})}
-    ${carteListe('💶 Vacances · Remboursements reçus', P + 'vacRemb', m.vacRemb, {signe: '+', exemple: 'Part de Léa (hôtel)', fam: 'vacances'})}` : ''}
+    ${carteListe('💶 Vacances · Remboursements reçus', P + 'vacRemb', m.vacRemb, {signe: '+', exemple: 'Part d\u2019un proche (hôtel)', fam: 'vacances'})}` : ''}
     <div class="sep"></div>
-    <div class="carte" data-fam="invest"><div class="tete"><h3>📈 Détail Trade Republic</h3>${infoBtn('recurrents')}<div class="tot neg">${fmt(detTR)}</div></div>
+    <div class="carte" data-fam="invest"><div class="tete"><h3>📈 Détail du compte-titres</h3>${infoBtn('recurrents')}<div class="tot neg">${fmt(detTR)}</div></div>
       <div class="corps">
         <p class="note">Plans d'épargne du mois — astuce : tape « -8*4 » pour 4 semaines à 8 €.</p>
         <div class="sous-cartes">
@@ -4476,8 +4507,8 @@ function tablePositions(titre, chemin, calc, totalCompte){
 }function rendreInvest(){
   const v = calculerInvest();
   document.getElementById('inv-kpis').innerHTML = [
-    ['📊 Total investi', fmt(v.total)], ['🏦 Trade Republic', fmt(v.totTR)],
-    ['📈 PEA Bourse Direct', fmt(v.totPEA)], ['🛡️ PERin BoursoBank', fmt(v.totPER)],
+    ['📊 Total investi', fmt(v.total)], ['🏦 Compte-titres', fmt(v.totTR)],
+    ['📈 PEA', fmt(v.totPEA)], ['🛡️ PER', fmt(v.totPER)],
   ].map(([e, x]) => `<div class="tuile"><span class="eti">${e}</span><div class="val">${x}</div></div>`).join('');
   document.getElementById('inv-blocs').innerHTML =
     `<div class="carte" data-fam="invest"><div class="tete"><h3>🔄 Cours de bourse</h3>${infoBtn('cours')}${infoBtn('fraicheur')}</div>
@@ -4500,9 +4531,9 @@ function tablePositions(titre, chemin, calc, totalCompte){
         })()}
         <p class="note" id="cours-statut">Renseigne l'ISIN ou le ticker dans la colonne 🔗 de chaque position, puis appuie ici (connexion internet requise, à la demande uniquement). Dernière mise à jour : ${etat.config.derniereMajCours ? new Date(etat.config.derniereMajCours).toLocaleDateString('fr-FR') : 'jamais'}.</p>
       </div></div>` +
-    tablePositions('🏦 Trade Republic — positions', 'positionsTR', v.pTR, v.totTR).replace('</h3>', '</h3>' + infoBtn('invest')) +
-    tablePositions('📈 PEA Bourse Direct — positions', 'positionsPEA', v.pPEA, v.totPEA) +
-    tablePositions('🛡️ PERin BoursoBank — positions', 'positionsPER', v.pPER, v.totPER) +
+    tablePositions('🏦 Compte-titres — positions', 'positionsTR', v.pTR, v.totTR).replace('</h3>', '</h3>' + infoBtn('invest')) +
+    tablePositions('📈 PEA — positions', 'positionsPEA', v.pPEA, v.totPEA) +
+    tablePositions('🛡️ PER — positions', 'positionsPER', v.pPER, v.totPER) +
     `<div class="carte"><div class="tete"><h3>📝 Enregistrer le mois dans l'historique</h3></div>
       <div class="corps">
         <p class="note">Fige la performance actuelle (€ et %) des trois portefeuilles pour la période choisie — l'équivalent du « Tapez OUI puis copiez vers Database ».</p>
@@ -4578,7 +4609,7 @@ function rendreHistTable(){
 function rendreAV(){
   const a = calculerAchatVente(), av = etat.achatVente;
   document.getElementById('av-kpis').innerHTML = [
-    ['💵 Dispo Trade Republic', fmt(a.dispo)], ['📈 Cash PEA', fmt(a.dispoPEA)],
+    ['💵 Dispo compte-titres', fmt(a.dispo)], ['📈 Cash PEA', fmt(a.dispoPEA)],
     ['🛡️ Cash PER', fmt(a.dispoPER)], ['🧮 Total disponible', fmt(a.totalDispo)],
   ].map(([e, v]) => `<div class="tuile"><span class="eti">${e}</span><div class="val">${v}</div></div>`).join('');
 
@@ -4680,8 +4711,8 @@ function rendreAV(){
         <div class="ligne"><span class="lab">Montant avant ${libelleMois(clesMois()[0]) || 'départ'}</span>
           <input class="mnt" name="dispo-initial" value="${av.initial}" data-init="avInitial" inputmode="text"></div>
         <div class="ligne"><span class="lab">Épargne dirigée vers l'investissement (auto)</span><span class="mnt pos">${fmt(a.cumulEpargne)}</span></div>
-        <div class="ligne"><span class="lab">− achats directs Trade Republic</span><span class="mnt ${cls(-a.netTR)}">${fmt(-a.netTR)}</span></div>
-        <div class="ligne"><span class="lab">= 💵 Disponible Trade Republic</span><span class="mnt ${cls(a.dispo)}"><b>${fmt(a.dispo)}</b></span></div>
+        <div class="ligne"><span class="lab">− achats directs compte-titres</span><span class="mnt ${cls(-a.netTR)}">${fmt(-a.netTR)}</span></div>
+        <div class="ligne"><span class="lab">= 💵 Disponible compte-titres</span><span class="mnt ${cls(a.dispo)}"><b>${fmt(a.dispo)}</b></span></div>
         <div class="separateur"></div>
         <div class="ligne"><span class="lab">📈 Cash PEA mis de côté (poches)</span><span class="mnt pos">${fmt(a.cashPEA)}</span></div>
         <div class="ligne"><span class="lab">− achats directs PEA</span><span class="mnt ${cls(-a.netPEA)}">${fmt(-a.netPEA)}</span></div>
@@ -4793,6 +4824,7 @@ function rendreReglages(){
         inputmode="decimal" placeholder="aucun plafond"><span class="u">${devise().sym}</span></span></label>`).join('');
 
   // ----- Profils -----
+  rendreInstallation();
   const pl = document.getElementById('profils-liste');
   if (pl){
     const actif = profilActif();
@@ -5667,7 +5699,7 @@ function pageRapport(cle){
         <table>${topLibres}</table>
         <h2>Investissements du mois — ${fmt(c.totInv)}</h2>
         <table>
-          <tr><td>🏦 Trade Republic (plans)</td><td class="neg">${fmt(c.totTR)}</td></tr>
+          <tr><td>🏦 Compte-titres (plans)</td><td class="neg">${fmt(c.totTR)}</td></tr>
           <tr><td>📈 PEA</td><td class="neg">${fmt(m.invPEA)}</td></tr>
           <tr><td>🛡️ PER</td><td class="neg">${fmt(m.invPER)}</td></tr>
         </table>
@@ -5683,8 +5715,8 @@ function pageRapport(cle){
 function pageReleve(){
   const v = calculerInvest(), liv = calculerLivrets(), avc = calculerAchatVente();
   const comptes = [
-    ['🏦 Trade Republic', v.pTR, v.totTR], ['📈 PEA Bourse Direct', v.pPEA, v.totPEA],
-    ['🛡️ PERin BoursoBank', v.pPER, v.totPER],
+    ['🏦 Compte-titres', v.pTR, v.totTR], ['📈 PEA', v.pPEA, v.totPEA],
+    ['🛡️ PER', v.pPER, v.totPER],
   ];
   // synthèse par catégorie, tous comptes confondus
   const parCat = {};
@@ -6149,8 +6181,8 @@ function importerClasseur(wb){
       return out;
     };
     res.investissements = {
-      initiaux: {tr: compteBilan(gi, '🏦 Trade Republic').initial,
-                 pea: compteBilan(gi, '📈 PEA Bourse Direct').initial,
+      initiaux: {tr: compteBilan(gi, '🏦 Compte-titres').initial,
+                 pea: compteBilan(gi, '📈 PEA').initial,
                  per: compteBilan(gi, '🛡️ PERin').initial},
       positionsTR: positions('🏦 TRADE REPUBLIC'),
       positionsPEA: positions('📈 PEA BOURSE DIRECT'),
@@ -6188,8 +6220,8 @@ function importerClasseur(wb){
       }
       return out;
     };
-    res.achatVente.txTR = txBloc('🏦 Trade Republic');
-    res.achatVente.txPEA = txBloc('📈 PEA Bourse Direct');
+    res.achatVente.txTR = txBloc('🏦 Compte-titres');
+    res.achatVente.txPEA = txBloc('📈 PEA');
   }
   // ---- Database (historique) ----
   const wd = wb.Sheets['Database'];
@@ -6314,7 +6346,7 @@ function dossierIA(opts = {}){
     for (const [cat, v] of Object.entries(alloc.parCat))
       if (v > 0.004) L.push(`| ${cat} | ${eur(v)} | ${(v / alloc.total * 100).toFixed(1)} % |`);
     L.push('');
-    L.push(`Enveloppes : Trade Republic ${eur(inv.totTR)}, PEA ${eur(inv.totPEA)}, PER ${eur(inv.totPER)} (montants investis).`);
+    L.push(`Enveloppes : compte-titres ${eur(inv.totTR)}, PEA ${eur(inv.totPEA)}, PER ${eur(inv.totPER)} (montants investis).`);
     if (perf && perf.tri != null)
       L.push('', `Performance mesurée sur ${perf.points} relevés : TRI ${(perf.tri * 100).toFixed(1)} %/an, TWR ${(perf.twr * 100).toFixed(1)} %/an.`,
         '*(TRI = rendement réellement obtenu compte tenu du calendrier des versements ; TWR = rendement du portefeuille hors effet des versements.)*');
@@ -6492,6 +6524,95 @@ addEventListener('keydown', e => {
   }, {passive: true});
 })();
 
+/* ===== Installation en application =====
+   Chrome et Edge fournissent une invite native qu'il faut capter puis déclencher
+   à la demande. Safari (iOS comme macOS) ne l'expose pas : on donne alors la
+   marche à suivre, différente sur chaque plateforme. */
+let _inviteInstall = null;
+addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _inviteInstall = e;
+  rendreInstallation();
+});
+addEventListener('appinstalled', () => {
+  _inviteInstall = null;
+  rendreInstallation();
+  toast('✅ Application installée');
+});
+function estInstallee(){
+  return matchMedia('(display-mode: standalone)').matches
+      || matchMedia('(display-mode: window-controls-overlay)').matches
+      || navigator.standalone === true;
+}
+function plateforme(){
+  const ua = navigator.userAgent;
+  const tactileMac = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+  if (/iPhone|iPad|iPod/.test(ua) || tactileMac) return 'ios';
+  if (/Android/.test(ua)) return 'android';
+  if (/Macintosh/.test(ua)) return 'mac';
+  if (/Windows/.test(ua)) return 'windows';
+  if (/Linux/.test(ua)) return 'linux';
+  return 'autre';
+}
+function navigateur(){
+  const ua = navigator.userAgent;
+  if (/Firefox\//.test(ua)) return 'firefox';
+  if (/Edg\//.test(ua)) return 'edge';
+  if (/OPR\//.test(ua)) return 'opera';
+  if (/Chrome\//.test(ua)) return 'chrome';
+  if (/Safari\//.test(ua)) return 'safari';
+  return 'autre';
+}
+function rendreInstallation(){
+  const zone = document.getElementById('installer-corps');
+  if (!zone) return;
+  if (estInstallee()){
+    zone.innerHTML = `<p class="note">✅ L'application est installée sur cet appareil : elle s'ouvre dans sa
+      propre fenêtre, sans barre d'adresse, et fonctionne sans connexion.</p>`;
+    return;
+  }
+  const p = plateforme(), n = navigateur();
+  const avantages = `<p class="note">Installée, l'application s'ouvre dans sa propre fenêtre depuis le menu Démarrer,
+    le Dock ou l'écran d'accueil, garde ses données au même endroit et fonctionne <b>sans connexion</b>.</p>`;
+  if (_inviteInstall){
+    zone.innerHTML = `${avantages}
+      <button class="btn or ligne2" id="btn-installer">📥 Installer maintenant</button>
+      <p class="note">Ton navigateur propose l'installation directe : un clic suffit.</p>`;
+    return;
+  }
+  const guides = {
+    ios: ['Sur iPhone et iPad (Safari)', [
+      'Touche le bouton <b>Partager</b> (le carré avec une flèche vers le haut), en bas de l\u2019écran.',
+      'Fais défiler puis choisis <b>« Sur l\u2019écran d\u2019accueil »</b>.',
+      'Confirme avec <b>Ajouter</b> : une icône apparaît comme pour une application classique.']],
+    mac: ['Sur Mac (Safari 17 ou plus récent)', [
+      'Menu <b>Fichier</b> → <b>« Ajouter au Dock… »</b>.',
+      'Confirme le nom, puis <b>Ajouter</b>.',
+      'Avec Chrome ou Edge : icône d\u2019installation à droite de la barre d\u2019adresse, ou menu ⋮ → <b>Installer…</b>']],
+    windows: ['Sur Windows (Chrome, Edge)', [
+      'Clique sur l\u2019icône <b>Installer</b> (un écran avec une flèche) à droite de la barre d\u2019adresse.',
+      'Ou menu <b>⋮</b> → <b>Applications</b> → <b>Installer cette page en tant qu\u2019application</b>.',
+      'L\u2019application apparaît alors dans le menu Démarrer et peut être épinglée à la barre des tâches.']],
+    linux: ['Sur Linux (Chrome, Chromium, Edge)', [
+      'Icône <b>Installer</b> à droite de la barre d\u2019adresse, ou menu <b>⋮</b> → <b>Installer…</b>',
+      'Un raccourci est créé dans le menu des applications.']],
+    android: ['Sur Android (Chrome)', [
+      'Menu <b>⋮</b> → <b>Ajouter à l\u2019écran d\u2019accueil</b> ou <b>Installer l\u2019application</b>.',
+      'Confirme : l\u2019icône rejoint ton écran d\u2019accueil.']],
+  };
+  const [titre, etapes] = guides[p] || ['Sur ton appareil', [
+    'Cherche l\u2019option <b>Installer</b> ou <b>Ajouter à l\u2019écran d\u2019accueil</b> dans le menu de ton navigateur.']];
+  const note = n === 'firefox'
+    ? `<p class="note">⚠️ Firefox pour ordinateur ne propose pas l'installation des applications web.
+       Chrome, Edge ou Safari le permettent — l'adresse et les données restent les mêmes,
+       à condition d'exporter ta sauvegarde puis de la réimporter dans l'autre navigateur.</p>` : '';
+  zone.innerHTML = `${avantages}
+    <div class="inst-guide">
+      <div class="inst-titre">${titre}</div>
+      <ol>${etapes.map(e => `<li>${e}</li>`).join('')}</ol>
+    </div>${note}`;
+}
+
 /* ===== Saisie rapide accessible partout =====
    Le geste le plus fréquent — noter une dépense — ne doit pas imposer de
    revenir à l'Accueil. Une feuille monte depuis le bas, quelle que soit la page. */
@@ -6540,6 +6661,15 @@ function validerSaisie(){
   signaler(document.querySelector('.hero'));
   toast(`${label} ${fmt(montant)}${sup}`, true);
 }
+document.addEventListener('click', e => {
+  if (e.target.id !== 'btn-installer' || !_inviteInstall) return;
+  _inviteInstall.prompt();
+  _inviteInstall.userChoice.then(r => {
+    if (r.outcome !== 'accepted') toast('Installation annulée — tu pourras la relancer depuis les Réglages');
+    _inviteInstall = null;
+    rendreInstallation();
+  });
+});
 document.getElementById('fab').onclick = ouvrirSaisie;
 document.getElementById('ps-fermer').onclick = fermerSaisie;
 document.getElementById('ps-valider').onclick = validerSaisie;
@@ -6717,6 +6847,13 @@ function traiterAjoutURL(){
   if (selTheme) selTheme.value = etat.config.theme || 'auto';
   rendreTout();
   if (traiterAjoutURL()) rendreTout();
+  // raccourcis du manifeste : ?page=mois, ?saisie=1
+  const _p = new URLSearchParams(location.search);
+  const _page = _p.get('page');
+  if (_page && document.querySelector(`nav button[data-page="${_page}"]`))
+    document.querySelector(`nav button[data-page="${_page}"]`).click();
+  if (_p.get('saisie')) setTimeout(ouvrirSaisie, 300);
+  if (_page || _p.get('saisie')) history.replaceState(null, '', location.pathname);
   // Assistant : seulement sur une application réellement vierge. Toute trace de
   // saisie (entrée, dépense, compte garni, position) signifie qu'il est inutile.
   const dejaUtilisee = clesMois().some(k => {
